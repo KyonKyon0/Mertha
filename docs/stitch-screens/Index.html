@@ -1,0 +1,954 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>index</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- React and Babel for Client Component -->
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#22502d",
+                      "secondary-container": "#bcebcb",
+                      "on-tertiary-container": "#ffcaad",
+                      "secondary": "#3d674e",
+                      "surface": "#fdf9ee",
+                      "tertiary": "#723200",
+                      "tertiary-container": "#964500",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed": "#321200",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#313129",
+                      "surface-tint": "#3a6843",
+                      "on-surface": "#1c1c15",
+                      "on-primary-container": "#afe2b3",
+                      "tertiary-fixed": "#ffdbc9",
+                      "on-secondary-fixed-variant": "#254f38",
+                      "surface-container-high": "#ece8dd",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-background": "#1c1c15",
+                      "secondary-fixed-dim": "#a3d1b3",
+                      "background": "#fdf9ee",
+                      "surface-container": "#f2eee3",
+                      "surface-bright": "#fdf9ee",
+                      "outline-variant": "#c1c9be",
+                      "on-surface-variant": "#414941",
+                      "inverse-primary": "#a0d3a5",
+                      "surface-variant": "#e6e2d8",
+                      "error": "#ba1a1a",
+                      "primary": "#204e2b",
+                      "inverse-on-surface": "#f4f1e6",
+                      "on-tertiary-fixed-variant": "#753400",
+                      "primary-fixed": "#bcefc0",
+                      "on-secondary-container": "#416b52",
+                      "surface-container-highest": "#e6e2d8",
+                      "primary-fixed-dim": "#a0d3a5",
+                      "surface-container-low": "#f7f3e8",
+                      "tertiary-fixed-dim": "#ffb68c",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#00210a",
+                      "primary-container": "#386641",
+                      "surface-dim": "#dddacf",
+                      "on-secondary-fixed": "#002111",
+                      "outline": "#727970",
+                      "secondary-fixed": "#bfedce"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "xl": "32px",
+                      "xs": "4px",
+                      "gutter": "16px",
+                      "container-margin": "20px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "8px",
+                      "xxl": "48px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "display": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdf9ee; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        /* Hide scrollbar for horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { min-height: max(884px, 100dvh); }
+        @media (prefers-reduced-motion: reduce) {
+            .transition-transform {
+                transition: none !important;
+            }
+        }
+    </style>
+<script>function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+var _React = React,
+  useState = _React.useState,
+  useEffect = _React.useEffect;
+function App() {
+  var _useState = useState(0),
+    _useState2 = _slicedToArray(_useState, 2),
+    currentSlide = _useState2[0],
+    setCurrentSlide = _useState2[1];
+  var _useState3 = useState(true),
+    _useState4 = _slicedToArray(_useState3, 2),
+    isPlaying = _useState4[0],
+    setIsPlaying = _useState4[1];
+  var _useState5 = useState(null),
+    _useState6 = _slicedToArray(_useState5, 2),
+    touchStart = _useState6[0],
+    setTouchStart = _useState6[1];
+  var _useState7 = useState(null),
+    _useState8 = _slicedToArray(_useState7, 2),
+    touchEnd = _useState8[0],
+    setTouchEnd = _useState8[1];
+  var slides = [{
+    title: "Makanan Baik Tidak Seharusnya Terbuang",
+    desc: "Selamatkan makanan layak dengan harga lebih hemat.",
+    bg: "url('/assets/asset_7.png')"
+  }, {
+    title: "Hemat Lebih Banyak Hari Ini",
+    desc: "Temukan promo makanan dari toko di dekatmu.",
+    bg: "url('/assets/asset_8.png')"
+  }, {
+    title: "Baik Untukmu, Baik Untuk Bumi",
+    desc: "Setiap pesanan membantu mengurangi sampah pangan.",
+    bg: "url('/assets/asset_9.png')"
+  }];
+  useEffect(function () {
+    var interval;
+    if (isPlaying) {
+      interval = setInterval(function () {
+        setCurrentSlide(function (prev) {
+          return (prev + 1) % slides.length;
+        });
+      }, 5000);
+    }
+    return function () {
+      return clearInterval(interval);
+    };
+  }, [isPlaying, slides.length]);
+  var minSwipeDistance = 50;
+  var onTouchStart = function onTouchStart(e) {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsPlaying(false);
+  };
+  var onTouchMove = function onTouchMove(e) {
+    return setTouchEnd(e.targetTouches[0].clientX);
+  };
+  var onTouchEnd = function onTouchEnd() {
+    if (!touchStart || !touchEnd) return;
+    var distance = touchStart - touchEnd;
+    var isLeftSwipe = distance > minSwipeDistance;
+    var isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      setCurrentSlide(function (prev) {
+        return (prev + 1) % slides.length;
+      });
+    }
+    if (isRightSwipe) {
+      setCurrentSlide(function (prev) {
+        return prev === 0 ? slides.length - 1 : prev - 1;
+      });
+    }
+  };
+  var togglePlay = function togglePlay() {
+    return setIsPlaying(!isPlaying);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface text-on-surface pb-[80px]"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "bg-surface shadow-sm docked full-width top-0 sticky z-50"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between items-center w-full px-container-margin py-md"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/assets/asset_5.png",
+    alt: "Mertha",
+    className: "h-8 object-contain"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#",
+    className: "flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[20px]"
+  }, "person"))))), /*#__PURE__*/React.createElement("main", {
+    className: "flex flex-col gap-xl"
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "relative"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-full h-[320px] bg-surface-container-highest relative overflow-hidden",
+    onTouchStart: onTouchStart,
+    onTouchMove: onTouchMove,
+    onTouchEnd: onTouchEnd
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex w-full h-full transition-transform duration-500 ease-out",
+    style: {
+      transform: "translateX(-".concat(currentSlide * 100, "%)")
+    }
+  }, slides.map(function (slide, index) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: index,
+      className: "w-full h-full shrink-0 relative bg-cover bg-center",
+      style: {
+        backgroundImage: slide.bg
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "absolute bottom-16 left-0 right-0 px-container-margin"
+    }, /*#__PURE__*/React.createElement("h1", {
+      className: "text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2"
+    }, slide.title), /*#__PURE__*/React.createElement("p", {
+      className: "text-body-md font-body-md text-surface-variant"
+    }, slide.desc)));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-6 left-0 right-0 flex px-container-margin items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: togglePlay,
+    "aria-label": isPlaying ? "Pause carousel" : "Play carousel",
+    className: "w-11 h-11 rounded-full bg-surface/30 backdrop-blur-sm flex items-center justify-center text-on-primary hover:bg-surface/40 transition-colors"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[24px]"
+  }, isPlaying ? 'pause' : 'play_arrow')), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-1.5 ml-2"
+  }, slides.map(function (_, index) {
+    return /*#__PURE__*/React.createElement("span", {
+      key: index,
+      className: "h-1.5 rounded-full transition-all duration-300 ".concat(currentSlide === index ? 'w-6 bg-primary-fixed' : 'w-1.5 bg-surface/50')
+    });
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "px-container-margin -mt-6 relative z-10"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-xl shadow-lg p-md border border-outline-variant/30 flex flex-col gap-md"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "relative"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+  }, "search"), /*#__PURE__*/React.createElement("input", {
+    className: "w-full h-12 pl-10 pr-4 rounded-lg bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md outline-none",
+    placeholder: "Cari makanan atau toko",
+    type: "text"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-sm"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "flex-1 bg-primary text-on-primary h-12 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 shadow-sm hover:bg-primary-container transition-colors"
+  }, "Cari di Sekitarku"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Gunakan Lokasiku",
+    className: "w-12 h-12 rounded-lg border border-primary text-primary flex justify-center items-center hover:bg-primary-fixed-dim transition-colors"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "my_location")))))), /*#__PURE__*/React.createElement("section", {
+    className: "px-container-margin"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-headline-md font-headline-md mb-md"
+  }, "Kategori"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-3 gap-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "near_me")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Terdekat")), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "redeem")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Mystery Bag")), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "nutrition")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Buah")), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "grass")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Sayur")), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "bakery_dining")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Bakery")), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "restaurant")), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-center"
+  }, "Siap Saji")))), /*#__PURE__*/React.createElement("section", {
+    className: "pl-container-margin"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-headline-md font-headline-md mb-md pr-container-margin"
+  }, "Pilihan Hemat di Dekatmu"), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-md overflow-x-auto no-scrollbar pb-lg pr-container-margin snap-x"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-[140px] w-full relative bg-cover bg-center",
+    style: {
+      backgroundImage: "url('/assets/asset_10.png')"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide"
+  }, "TERSEDIA"), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px]"
+  }, "schedule"), " 19:00 - 21:00")), /*#__PURE__*/React.createElement("div", {
+    className: "p-md flex flex-col flex-1 gap-2"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px]"
+  }, "storefront"), " Bakery Makmur"), /*#__PURE__*/React.createElement("h3", {
+    className: "text-body-lg font-body-lg font-semibold mt-1 line-clamp-1"
+  }, "Mystery Bag Bakery")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-end justify-between mt-auto pt-2 border-t border-surface-variant"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-on-surface-variant text-[12px] line-through"
+  }, "Rp 50.000"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-lg font-body-lg font-bold text-primary"
+  }, "Rp 20.000")), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col items-end"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1"
+  }, "Sisa 3"), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-on-surface-variant flex items-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px] mr-1"
+  }, "location_on"), "1.2 km"))), /*#__PURE__*/React.createElement("button", {
+    className: "w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors"
+  }, "Lihat Detail"))), /*#__PURE__*/React.createElement("div", {
+    className: "min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-[140px] w-full relative bg-cover bg-center",
+    style: {
+      backgroundImage: "url('/assets/asset_11.png')"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide"
+  }, "TERSEDIA"), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px]"
+  }, "schedule"), " 18:00 - 20:00")), /*#__PURE__*/React.createElement("div", {
+    className: "p-md flex flex-col flex-1 gap-2"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px]"
+  }, "storefront"), " Sayur Segar Jaya"), /*#__PURE__*/React.createElement("h3", {
+    className: "text-body-lg font-body-lg font-semibold mt-1 line-clamp-1"
+  }, "Paket Sayur Mix")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-end justify-between mt-auto pt-2 border-t border-surface-variant"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-on-surface-variant text-[12px] line-through"
+  }, "Rp 45.000"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-lg font-body-lg font-bold text-primary"
+  }, "Rp 15.000")), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col items-end"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1"
+  }, "Sisa 5"), /*#__PURE__*/React.createElement("span", {
+    className: "text-label-sm font-label-sm text-on-surface-variant flex items-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[14px] mr-1"
+  }, "location_on"), "2.5 km"))), /*#__PURE__*/React.createElement("button", {
+    className: "w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors"
+  }, "Lihat Detail"))))), /*#__PURE__*/React.createElement("section", {
+    className: "px-container-margin py-xl bg-surface-container-low"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-headline-md font-headline-md mb-lg text-center"
+  }, "Belanja Hemat, Dampak Baik"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[24px]"
+  }, "shopping_bag")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-body-lg font-body-lg font-semibold text-primary"
+  }, "Makanan terselamatkan"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant"
+  }, "2.540 kg bulan ini"))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary-container shrink-0"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[24px]"
+  }, "savings")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-body-lg font-body-lg font-semibold text-tertiary-container"
+  }, "Pengeluaran hemat"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant"
+  }, "Rp 150+ Juta oleh pengguna"))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined text-[24px]"
+  }, "recycling")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-body-lg font-body-lg font-semibold text-primary"
+  }, "Sampah pangan berkurang"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant"
+  }, "Berkontribusi ke bumi bersih"))))), /*#__PURE__*/React.createElement("section", {
+    className: "px-container-margin pb-xl"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-headline-md font-headline-md mb-lg text-center"
+  }, "Cara Kerja"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-lg relative"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute left-6 top-8 bottom-8 w-[2px] bg-outline-variant/30"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-md relative z-10"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "search")), /*#__PURE__*/React.createElement("div", {
+    className: "pt-2"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-body-lg font-body-lg font-semibold"
+  }, "1. Temukan Makanan"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant mt-1"
+  }, "Cari mystery bag atau makanan diskon dari toko terdekat."))), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-md relative z-10"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "shopping_cart_checkout")), /*#__PURE__*/React.createElement("div", {
+    className: "pt-2"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-body-lg font-body-lg font-semibold"
+  }, "2. Pesan & Bayar"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant mt-1"
+  }, "Lakukan pemesanan langsung melalui aplikasi dengan aman."))), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-md relative z-10"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "directions_walk")), /*#__PURE__*/React.createElement("div", {
+    className: "pt-2"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-body-lg font-body-lg font-semibold"
+  }, "3. Ambil Pesanan"), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant mt-1"
+  }, "Kunjungi toko pada waktu yang ditentukan untuk mengambil pesananmu.")))))), /*#__PURE__*/React.createElement("footer", {
+    className: "bg-surface-container dark:bg-surface-container-highest mt-xxl full-width p-xl pb-32"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col items-center text-center gap-lg w-full max-w-7xl mx-auto"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/assets/asset_6.png",
+    alt: "Mertha",
+    className: "h-10 object-contain mb-2"
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "text-body-md font-body-md text-on-surface-variant max-w-xs"
+  }, "Menyelamatkan makanan, melestarikan bumi."), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-md flex-wrap justify-center"
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity",
+    href: "#"
+  }, "Tentang"), /*#__PURE__*/React.createElement("a", {
+    className: "text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity",
+    href: "#"
+  }, "Bantuan"), /*#__PURE__*/React.createElement("a", {
+    className: "text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity",
+    href: "#"
+  }, "Merchant"), /*#__PURE__*/React.createElement("a", {
+    className: "text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity",
+    href: "#"
+  }, "Privasi")), /*#__PURE__*/React.createElement("div", {
+    className: "text-label-sm font-label-sm text-on-surface-variant mt-4"
+  }, "\xA9 2026 Mertha"))), /*#__PURE__*/React.createElement("nav", {
+    className: "bg-surface dark:bg-surface-container-lowest shadow-lg border-t border-outline-variant docked full-width bottom-0 fixed z-50 rounded-t-xl w-full h-16 flex justify-around items-center px-2 pb-safe md:hidden"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-secondary-container/30 rounded-full px-4 py-1 hover:text-primary transition-all scale-110 duration-200"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined",
+    style: {
+      fontVariationSettings: "'FILL' 1"
+    }
+  }, "home"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-label-sm mt-0.5"
+  }, "Beranda")), /*#__PURE__*/React.createElement("button", {
+    className: "flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "explore"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-label-sm mt-0.5"
+  }, "Jelajahi")), /*#__PURE__*/React.createElement("button", {
+    className: "flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "map"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-label-sm mt-0.5"
+  }, "Peta")), /*#__PURE__*/React.createElement("button", {
+    className: "flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "receipt_long"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-label-sm mt-0.5"
+  }, "Pesanan")), /*#__PURE__*/React.createElement("button", {
+    className: "flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "material-symbols-outlined"
+  }, "person"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-label-sm mt-0.5"
+  }, "Profil"))));
+}
+var root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(/*#__PURE__*/React.createElement(App, null));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiSW5saW5lIEJhYmVsIHNjcmlwdCJdLCJzb3VyY2VzQ29udGVudCI6WyJcbmNvbnN0IHsgdXNlU3RhdGUsIHVzZUVmZmVjdCB9ID0gUmVhY3Q7XG5cbmZ1bmN0aW9uIEFwcCgpIHtcbiAgICBjb25zdCBbY3VycmVudFNsaWRlLCBzZXRDdXJyZW50U2xpZGVdID0gdXNlU3RhdGUoMCk7XG4gICAgY29uc3QgW2lzUGxheWluZywgc2V0SXNQbGF5aW5nXSA9IHVzZVN0YXRlKHRydWUpO1xuICAgIGNvbnN0IFt0b3VjaFN0YXJ0LCBzZXRUb3VjaFN0YXJ0XSA9IHVzZVN0YXRlKG51bGwpO1xuICAgIGNvbnN0IFt0b3VjaEVuZCwgc2V0VG91Y2hFbmRdID0gdXNlU3RhdGUobnVsbCk7XG5cbiAgICBjb25zdCBzbGlkZXMgPSBbXG4gICAgICAgIHtcbiAgICAgICAgICAgIHRpdGxlOiBcIk1ha2FuYW4gQmFpayBUaWRhayBTZWhhcnVzbnlhIFRlcmJ1YW5nXCIsXG4gICAgICAgICAgICBkZXNjOiBcIlNlbGFtYXRrYW4gbWFrYW5hbiBsYXlhayBkZW5nYW4gaGFyZ2EgbGViaWggaGVtYXQuXCIsXG4gICAgICAgICAgICBiZzogXCJ1cmwoJ2h0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9haWRhLXB1YmxpYy9BQjZBWHVDUkhpaWxVVnhteE9UN1RnUTltREtjZWZaUExDSE9kRm9VYXk4SjNQZ2E5REtCekNPc0p4QmxtQ3g0ZFBtMVVfNzhaRzJKX2FSVjJER3V2RTRBR2stcXJCQ0RRcVlNa0YwQk55T09KbTd2eTRqd29STV8wbkJFQkdQVXNCM0dOdF9iUHFKV09lc01POEc1Q2h0cDhlYWN0RUJPaWlkSnM3UFhaemJyXzZwQTBvVHR2SzVOSXhoWi1uV2I0X1lfaDFIZkZ4LWRidklNY21qdXVBV2pMQnYxb1Y2NEpMbW82ajh2WGl2MDl4VVFUQWxaSGQ4NUlEam1yQScpXCJcbiAgICAgICAgfSxcbiAgICAgICAge1xuICAgICAgICAgICAgdGl0bGU6IFwiSGVtYXQgTGViaWggQmFueWFrIEhhcmkgSW5pXCIsXG4gICAgICAgICAgICBkZXNjOiBcIlRlbXVrYW4gcHJvbW8gbWFrYW5hbiBkYXJpIHRva28gZGkgZGVrYXRtdS5cIixcbiAgICAgICAgICAgIGJnOiBcInVybCgnaHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1NDI4MzgxMzItOTJjNTMzMDA0OTFlP2F1dG89Zm9ybWF0JmZpdD1jcm9wJnE9ODAmdz04MDAnKVwiXG4gICAgICAgIH0sXG4gICAgICAgIHtcbiAgICAgICAgICAgIHRpdGxlOiBcIkJhaWsgVW50dWttdSwgQmFpayBVbnR1ayBCdW1pXCIsXG4gICAgICAgICAgICBkZXNjOiBcIlNldGlhcCBwZXNhbmFuIG1lbWJhbnR1IG1lbmd1cmFuZ2kgc2FtcGFoIHBhbmdhbi5cIixcbiAgICAgICAgICAgIGJnOiBcInVybCgnaHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE0ODg0NTk3MTY3ODEtMzFkYjUyNTgyZmU5P2F1dG89Zm9ybWF0JmZpdD1jcm9wJnE9ODAmdz04MDAnKVwiXG4gICAgICAgIH1cbiAgICBdO1xuXG4gICAgdXNlRWZmZWN0KCgpID0+IHtcbiAgICAgICAgbGV0IGludGVydmFsO1xuICAgICAgICBpZiAoaXNQbGF5aW5nKSB7XG4gICAgICAgICAgICBpbnRlcnZhbCA9IHNldEludGVydmFsKCgpID0+IHtcbiAgICAgICAgICAgICAgICBzZXRDdXJyZW50U2xpZGUoKHByZXYpID0+IChwcmV2ICsgMSkgJSBzbGlkZXMubGVuZ3RoKTtcbiAgICAgICAgICAgIH0sIDUwMDApO1xuICAgICAgICB9XG4gICAgICAgIHJldHVybiAoKSA9PiBjbGVhckludGVydmFsKGludGVydmFsKTtcbiAgICB9LCBbaXNQbGF5aW5nLCBzbGlkZXMubGVuZ3RoXSk7XG5cbiAgICBjb25zdCBtaW5Td2lwZURpc3RhbmNlID0gNTA7XG5cbiAgICBjb25zdCBvblRvdWNoU3RhcnQgPSAoZSkgPT4ge1xuICAgICAgICBzZXRUb3VjaEVuZChudWxsKTtcbiAgICAgICAgc2V0VG91Y2hTdGFydChlLnRhcmdldFRvdWNoZXNbMF0uY2xpZW50WCk7XG4gICAgICAgIHNldElzUGxheWluZyhmYWxzZSk7XG4gICAgfTtcblxuICAgIGNvbnN0IG9uVG91Y2hNb3ZlID0gKGUpID0+IHNldFRvdWNoRW5kKGUudGFyZ2V0VG91Y2hlc1swXS5jbGllbnRYKTtcblxuICAgIGNvbnN0IG9uVG91Y2hFbmQgPSAoKSA9PiB7XG4gICAgICAgIGlmICghdG91Y2hTdGFydCB8fCAhdG91Y2hFbmQpIHJldHVybjtcbiAgICAgICAgY29uc3QgZGlzdGFuY2UgPSB0b3VjaFN0YXJ0IC0gdG91Y2hFbmQ7XG4gICAgICAgIGNvbnN0IGlzTGVmdFN3aXBlID0gZGlzdGFuY2UgPiBtaW5Td2lwZURpc3RhbmNlO1xuICAgICAgICBjb25zdCBpc1JpZ2h0U3dpcGUgPSBkaXN0YW5jZSA8IC1taW5Td2lwZURpc3RhbmNlO1xuICAgICAgICBpZiAoaXNMZWZ0U3dpcGUpIHtcbiAgICAgICAgICAgIHNldEN1cnJlbnRTbGlkZSgocHJldikgPT4gKHByZXYgKyAxKSAlIHNsaWRlcy5sZW5ndGgpO1xuICAgICAgICB9XG4gICAgICAgIGlmIChpc1JpZ2h0U3dpcGUpIHtcbiAgICAgICAgICAgIHNldEN1cnJlbnRTbGlkZSgocHJldikgPT4gKHByZXYgPT09IDAgPyBzbGlkZXMubGVuZ3RoIC0gMSA6IHByZXYgLSAxKSk7XG4gICAgICAgIH1cbiAgICB9O1xuXG4gICAgY29uc3QgdG9nZ2xlUGxheSA9ICgpID0+IHNldElzUGxheWluZyghaXNQbGF5aW5nKTtcblxuICAgIHJldHVybiAoXG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYmctc3VyZmFjZSB0ZXh0LW9uLXN1cmZhY2UgcGItWzgwcHhdXCI+XG4gICAgICAgICAgICB7LyogVG9wQXBwQmFyICovfVxuICAgICAgICAgICAgPGhlYWRlciBjbGFzc05hbWU9XCJiZy1zdXJmYWNlIHNoYWRvdy1zbSBkb2NrZWQgZnVsbC13aWR0aCB0b3AtMCBzdGlja3kgei01MFwiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBqdXN0aWZ5LWJldHdlZW4gaXRlbXMtY2VudGVyIHctZnVsbCBweC1jb250YWluZXItbWFyZ2luIHB5LW1kXCI+XG4gICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxpbWcgc3JjPVwiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2FpZGEtcHVibGljL0FCNkFYdUNTZGVsWkRDRU5OZWxCTFR6S1VLV2t0YUpvdXNFNnJZdmY0T091Z3VPWXlubFNBREJCRFhuRFVpdU9ZdjZodmhaeGE2a0VWU1pHOXc4US1neFVqV3RwREkwQnFJdmVSRjBvb0NpTDNsMmctYUxqSE1ZVmQ3Y25tSjNyUWJiZGl5Sk9FVVpxUHlYUkRZa3FMdVFBWVlQWjhURERIN1JBZnZaVkh5dGdXOHNLdEttbi1fejVpMkRKYUY1OEgxOS03Nkk2d21NMXIxeFBfUi1NTE9rVzdSQ09EWDQ4VGRhN0JtanJPdXhjOHlUSHZXQVFhS2ZNdXd6MlFPVTNBazRfcXRrRlAzOFwiIGFsdD1cIk1lcnRoYVwiIGNsYXNzTmFtZT1cImgtOCBvYmplY3QtY29udGFpblwiIC8+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC0yXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8YSBocmVmPVwiI1wiIGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHctOCBoLTggcm91bmRlZC1mdWxsIGJnLXByaW1hcnktY29udGFpbmVyIHRleHQtb24tcHJpbWFyeS1jb250YWluZXIgaG92ZXI6YmctcHJpbWFyeSBob3Zlcjp0ZXh0LW9uLXByaW1hcnkgdHJhbnNpdGlvbi1jb2xvcnNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkIHRleHQtWzIwcHhdXCI+cGVyc29uPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9hPlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvaGVhZGVyPlxuXG4gICAgICAgICAgICA8bWFpbiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGdhcC14bFwiPlxuICAgICAgICAgICAgICAgIHsvKiBIZXJvIFNlY3Rpb24gJiBTZWFyY2ggT3ZlcmxhcCAqL31cbiAgICAgICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJyZWxhdGl2ZVwiPlxuICAgICAgICAgICAgICAgICAgICB7LyogQ2Fyb3VzZWwgQ29udGFpbmVyICovfVxuICAgICAgICAgICAgICAgICAgICA8ZGl2IFxuICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPVwidy1mdWxsIGgtWzMyMHB4XSBiZy1zdXJmYWNlLWNvbnRhaW5lci1oaWdoZXN0IHJlbGF0aXZlIG92ZXJmbG93LWhpZGRlblwiXG4gICAgICAgICAgICAgICAgICAgICAgICBvblRvdWNoU3RhcnQ9e29uVG91Y2hTdGFydH1cbiAgICAgICAgICAgICAgICAgICAgICAgIG9uVG91Y2hNb3ZlPXtvblRvdWNoTW92ZX1cbiAgICAgICAgICAgICAgICAgICAgICAgIG9uVG91Y2hFbmQ9e29uVG91Y2hFbmR9XG4gICAgICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgICAgICAgIHsvKiBTbGlkZXMgKi99XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImZsZXggdy1mdWxsIGgtZnVsbCB0cmFuc2l0aW9uLXRyYW5zZm9ybSBkdXJhdGlvbi01MDAgZWFzZS1vdXRcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0eWxlPXt7IHRyYW5zZm9ybTogYHRyYW5zbGF0ZVgoLSR7Y3VycmVudFNsaWRlICogMTAwfSUpYCB9fVxuICAgICAgICAgICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtzbGlkZXMubWFwKChzbGlkZSwgaW5kZXgpID0+IChcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGtleT17aW5kZXh9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJ3LWZ1bGwgaC1mdWxsIHNocmluay0wIHJlbGF0aXZlIGJnLWNvdmVyIGJnLWNlbnRlclwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHlsZT17eyBiYWNrZ3JvdW5kSW1hZ2U6IHNsaWRlLmJnIH19XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYWJzb2x1dGUgaW5zZXQtMCBiZy1ncmFkaWVudC10by10IGZyb20tYmxhY2svNzAgdmlhLWJsYWNrLzMwIHRvLXRyYW5zcGFyZW50XCI+PC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFic29sdXRlIGJvdHRvbS0xNiBsZWZ0LTAgcmlnaHQtMCBweC1jb250YWluZXItbWFyZ2luXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT1cInRleHQtaGVhZGxpbmUtbGctbW9iaWxlIGZvbnQtaGVhZGxpbmUtbGctbW9iaWxlIHRleHQtb24tcHJpbWFyeSBtYi0yXCI+e3NsaWRlLnRpdGxlfTwvaDE+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1ib2R5LW1kIGZvbnQtYm9keS1tZCB0ZXh0LXN1cmZhY2UtdmFyaWFudFwiPntzbGlkZS5kZXNjfTwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICApKX1cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgICAgICAgICAgICB7LyogQ29udHJvbHMgKi99XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFic29sdXRlIGJvdHRvbS02IGxlZnQtMCByaWdodC0wIGZsZXggcHgtY29udGFpbmVyLW1hcmdpbiBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17dG9nZ2xlUGxheX1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFyaWEtbGFiZWw9e2lzUGxheWluZyA/IFwiUGF1c2UgY2Fyb3VzZWxcIiA6IFwiUGxheSBjYXJvdXNlbFwifSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cInctMTEgaC0xMSByb3VuZGVkLWZ1bGwgYmctc3VyZmFjZS8zMCBiYWNrZHJvcC1ibHVyLXNtIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHRleHQtb24tcHJpbWFyeSBob3ZlcjpiZy1zdXJmYWNlLzQwIHRyYW5zaXRpb24tY29sb3JzXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCB0ZXh0LVsyNHB4XVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtpc1BsYXlpbmcgPyAncGF1c2UnIDogJ3BsYXlfYXJyb3cnfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGdhcC0xLjUgbWwtMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAge3NsaWRlcy5tYXAoKF8sIGluZGV4KSA9PiAoXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGtleT17aW5kZXh9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17YGgtMS41IHJvdW5kZWQtZnVsbCB0cmFuc2l0aW9uLWFsbCBkdXJhdGlvbi0zMDAgJHtcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGN1cnJlbnRTbGlkZSA9PT0gaW5kZXggPyAndy02IGJnLXByaW1hcnktZml4ZWQnIDogJ3ctMS41IGJnLXN1cmZhY2UvNTAnXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH1gfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgID48L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICApKX1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgICAgICAgey8qIFNlYXJjaCBDYXJkIE92ZXJsYXBwaW5nICovfVxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInB4LWNvbnRhaW5lci1tYXJnaW4gLW10LTYgcmVsYXRpdmUgei0xMFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlLWNvbnRhaW5lci1sb3dlc3Qgcm91bmRlZC14bCBzaGFkb3ctbGcgcC1tZCBib3JkZXIgYm9yZGVyLW91dGxpbmUtdmFyaWFudC8zMCBmbGV4IGZsZXgtY29sIGdhcC1tZFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicmVsYXRpdmVcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCBhYnNvbHV0ZSBsZWZ0LTMgdG9wLTEvMiAtdHJhbnNsYXRlLXktMS8yIHRleHQtb24tc3VyZmFjZS12YXJpYW50XCI+c2VhcmNoPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8aW5wdXQgY2xhc3NOYW1lPVwidy1mdWxsIGgtMTIgcGwtMTAgcHItNCByb3VuZGVkLWxnIGJnLXN1cmZhY2UgYm9yZGVyIGJvcmRlci1vdXRsaW5lLXZhcmlhbnQgZm9jdXM6Ym9yZGVyLXByaW1hcnkgZm9jdXM6cmluZy0xIGZvY3VzOnJpbmctcHJpbWFyeSB0ZXh0LWJvZHktbWQgZm9udC1ib2R5LW1kIG91dGxpbmUtbm9uZVwiIHBsYWNlaG9sZGVyPVwiQ2FyaSBtYWthbmFuIGF0YXUgdG9rb1wiIHR5cGU9XCJ0ZXh0XCIgLz5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZ2FwLXNtXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwiZmxleC0xIGJnLXByaW1hcnkgdGV4dC1vbi1wcmltYXJ5IGgtMTIgcm91bmRlZC1sZyBmb250LWxhYmVsLW1kIHRleHQtbGFiZWwtbWQgZmxleCBqdXN0aWZ5LWNlbnRlciBpdGVtcy1jZW50ZXIgZ2FwLTIgc2hhZG93LXNtIGhvdmVyOmJnLXByaW1hcnktY29udGFpbmVyIHRyYW5zaXRpb24tY29sb3JzXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBDYXJpIGRpIFNla2l0YXJrdVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBhcmlhLWxhYmVsPVwiR3VuYWthbiBMb2thc2lrdVwiIGNsYXNzTmFtZT1cInctMTIgaC0xMiByb3VuZGVkLWxnIGJvcmRlciBib3JkZXItcHJpbWFyeSB0ZXh0LXByaW1hcnkgZmxleCBqdXN0aWZ5LWNlbnRlciBpdGVtcy1jZW50ZXIgaG92ZXI6YmctcHJpbWFyeS1maXhlZC1kaW0gdHJhbnNpdGlvbi1jb2xvcnNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWRcIj5teV9sb2NhdGlvbjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgPC9zZWN0aW9uPlxuXG4gICAgICAgICAgICAgICAgey8qIENhdGVnb3JpZXMgKi99XG4gICAgICAgICAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPVwicHgtY29udGFpbmVyLW1hcmdpblwiPlxuICAgICAgICAgICAgICAgICAgICA8aDIgY2xhc3NOYW1lPVwidGV4dC1oZWFkbGluZS1tZCBmb250LWhlYWRsaW5lLW1kIG1iLW1kXCI+S2F0ZWdvcmk8L2gyPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdyaWQgZ3JpZC1jb2xzLTMgZ2FwLXNtXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJnLXN1cmZhY2UtY29udGFpbmVyLWxvd2VzdCByb3VuZGVkLWxnIHAtc20gc2hhZG93LXNtIGJvcmRlciBib3JkZXItb3V0bGluZS12YXJpYW50LzIwIGZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGdhcC0xIGFzcGVjdC1zcXVhcmVcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInctMTAgaC0xMCByb3VuZGVkLWZ1bGwgYmctc2Vjb25kYXJ5LWNvbnRhaW5lci81MCB0ZXh0LXByaW1hcnkgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgbWItMVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+bmVhcl9tZTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC1jZW50ZXJcIj5UZXJkZWthdDwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlLWNvbnRhaW5lci1sb3dlc3Qgcm91bmRlZC1sZyBwLXNtIHNoYWRvdy1zbSBib3JkZXIgYm9yZGVyLW91dGxpbmUtdmFyaWFudC8yMCBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtMSBhc3BlY3Qtc3F1YXJlXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LTEwIGgtMTAgcm91bmRlZC1mdWxsIGJnLXRlcnRpYXJ5LWZpeGVkLzUwIHRleHQtdGVydGlhcnktY29udGFpbmVyIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIG1iLTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZFwiPnJlZGVlbTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC1jZW50ZXJcIj5NeXN0ZXJ5IEJhZzwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlLWNvbnRhaW5lci1sb3dlc3Qgcm91bmRlZC1sZyBwLXNtIHNoYWRvdy1zbSBib3JkZXIgYm9yZGVyLW91dGxpbmUtdmFyaWFudC8yMCBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtMSBhc3BlY3Qtc3F1YXJlXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LTEwIGgtMTAgcm91bmRlZC1mdWxsIGJnLXByaW1hcnktZml4ZWQvNTAgdGV4dC1wcmltYXJ5IGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIG1iLTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZFwiPm51dHJpdGlvbjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC1jZW50ZXJcIj5CdWFoPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJnLXN1cmZhY2UtY29udGFpbmVyLWxvd2VzdCByb3VuZGVkLWxnIHAtc20gc2hhZG93LXNtIGJvcmRlciBib3JkZXItb3V0bGluZS12YXJpYW50LzIwIGZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGdhcC0xIGFzcGVjdC1zcXVhcmVcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInctMTAgaC0xMCByb3VuZGVkLWZ1bGwgYmctcHJpbWFyeS1maXhlZC81MCB0ZXh0LXByaW1hcnkgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgbWItMVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+Z3Jhc3M8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1sYWJlbC1zbSBmb250LWxhYmVsLXNtIHRleHQtY2VudGVyXCI+U2F5dXI8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYmctc3VyZmFjZS1jb250YWluZXItbG93ZXN0IHJvdW5kZWQtbGcgcC1zbSBzaGFkb3ctc20gYm9yZGVyIGJvcmRlci1vdXRsaW5lLXZhcmlhbnQvMjAgZmxleCBmbGV4LWNvbCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgZ2FwLTEgYXNwZWN0LXNxdWFyZVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy0xMCBoLTEwIHJvdW5kZWQtZnVsbCBiZy10ZXJ0aWFyeS1maXhlZC81MCB0ZXh0LXRlcnRpYXJ5LWNvbnRhaW5lciBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBtYi0xXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWRcIj5iYWtlcnlfZGluaW5nPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LWNlbnRlclwiPkJha2VyeTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlLWNvbnRhaW5lci1sb3dlc3Qgcm91bmRlZC1sZyBwLXNtIHNoYWRvdy1zbSBib3JkZXIgYm9yZGVyLW91dGxpbmUtdmFyaWFudC8yMCBmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBnYXAtMSBhc3BlY3Qtc3F1YXJlXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LTEwIGgtMTAgcm91bmRlZC1mdWxsIGJnLXNlY29uZGFyeS1jb250YWluZXIvNTAgdGV4dC1wcmltYXJ5IGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIG1iLTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZFwiPnJlc3RhdXJhbnQ8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1sYWJlbC1zbSBmb250LWxhYmVsLXNtIHRleHQtY2VudGVyXCI+U2lhcCBTYWppPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgIDwvc2VjdGlvbj5cblxuICAgICAgICAgICAgICAgIHsvKiBQcm9kdWN0cyAqL31cbiAgICAgICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJwbC1jb250YWluZXItbWFyZ2luXCI+XG4gICAgICAgICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9XCJ0ZXh0LWhlYWRsaW5lLW1kIGZvbnQtaGVhZGxpbmUtbWQgbWItbWQgcHItY29udGFpbmVyLW1hcmdpblwiPlBpbGloYW4gSGVtYXQgZGkgRGVrYXRtdTwvaDI+XG4gICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBnYXAtbWQgb3ZlcmZsb3cteC1hdXRvIG5vLXNjcm9sbGJhciBwYi1sZyBwci1jb250YWluZXItbWFyZ2luIHNuYXAteFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtaW4tdy1bMjQwcHhdIHctWzI0MHB4XSBzbmFwLXN0YXJ0IGJnLXN1cmZhY2UtY29udGFpbmVyLWxvd2VzdCByb3VuZGVkLXhsIHNoYWRvdy1zbSBib3JkZXIgYm9yZGVyLW91dGxpbmUtdmFyaWFudC8zMCBmbGV4IGZsZXgtY29sIG92ZXJmbG93LWhpZGRlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaC1bMTQwcHhdIHctZnVsbCByZWxhdGl2ZSBiZy1jb3ZlciBiZy1jZW50ZXJcIiBzdHlsZT17e2JhY2tncm91bmRJbWFnZTogXCJ1cmwoJ2h0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9haWRhLXB1YmxpYy9BQjZBWHVEcXRpMXcwOGhROFdEUjA5MVJmaGZFb1RvV2c3Y2pOQnVDQ2ZTSkJnNjdiMUpyaVZPSE81YVpLVDNSUHlhRk5oa0d0bkZzb1VRRmxnTHB0RmNNdV9sOTJnd3JRT2lHempSdG5LTUhuWl9mSjY2UVhKSkFHU2VIaDhyOTF2RWRUZDFIMDhBUDI5R1JfRE9ZMWRIWGlDRnBhUzJYNXRQTTBYY0h3YXJDNEdmU0dJNHJZMmlwc3RUb3pSaDJpYl83cG5CN3EySXlSSjQ0Mmw3M0lNN0ZBZjN6SGtYaVRTNlM1ZFJSbFlMdE5zTXVaLTJEekhyd1BoeDc2ZycpXCJ9fT5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhYnNvbHV0ZSB0b3AtMiBsZWZ0LTIgYmctc3VyZmFjZS85MCBiYWNrZHJvcC1ibHVyIHRleHQtcHJpbWFyeSBweC0yIHB5LTEgcm91bmRlZCB0ZXh0LVsxMHB4XSBmb250LWJvbGQgdHJhY2tpbmctd2lkZVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVEVSU0VESUFcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYWJzb2x1dGUgYm90dG9tLTIgcmlnaHQtMiBiZy10ZXJ0aWFyeS1jb250YWluZXIgdGV4dC1vbi10ZXJ0aWFyeSBweC0yIHB5LTEgcm91bmRlZC1mdWxsIHRleHQtbGFiZWwtc20gZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWQgdGV4dC1bMTRweF1cIj5zY2hlZHVsZTwvc3Bhbj4gMTk6MDAgLSAyMTowMFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInAtbWQgZmxleCBmbGV4LWNvbCBmbGV4LTEgZ2FwLTJcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWQgdGV4dC1bMTRweF1cIj5zdG9yZWZyb250PC9zcGFuPiBCYWtlcnkgTWFrbXVyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC1ib2R5LWxnIGZvbnQtYm9keS1sZyBmb250LXNlbWlib2xkIG10LTEgbGluZS1jbGFtcC0xXCI+TXlzdGVyeSBCYWcgQmFrZXJ5PC9oMz5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1lbmQganVzdGlmeS1iZXR3ZWVuIG10LWF1dG8gcHQtMiBib3JkZXItdCBib3JkZXItc3VyZmFjZS12YXJpYW50XCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtb24tc3VyZmFjZS12YXJpYW50IHRleHQtWzEycHhdIGxpbmUtdGhyb3VnaFwiPlJwIDUwLjAwMDwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtYm9sZCB0ZXh0LXByaW1hcnlcIj5ScCAyMC4wMDA8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBmbGV4LWNvbCBpdGVtcy1lbmRcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC10ZXJ0aWFyeS1jb250YWluZXIgYmctdGVydGlhcnktZml4ZWQvMzAgcHgtMiBweS0wLjUgcm91bmRlZC1mdWxsIG1iLTFcIj5TaXNhIDM8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1sYWJlbC1zbSBmb250LWxhYmVsLXNtIHRleHQtb24tc3VyZmFjZS12YXJpYW50IGZsZXggaXRlbXMtY2VudGVyXCI+PHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCB0ZXh0LVsxNHB4XSBtci0xXCI+bG9jYXRpb25fb248L3NwYW4+MS4yIGttPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cInctZnVsbCBtdC0yIHB5LTIgYm9yZGVyIGJvcmRlci1wcmltYXJ5IHRleHQtcHJpbWFyeSByb3VuZGVkLWxnIGZvbnQtbGFiZWwtbWQgdGV4dC1sYWJlbC1tZCBob3ZlcjpiZy1wcmltYXJ5LzUgdHJhbnNpdGlvbi1jb2xvcnNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIExpaGF0IERldGFpbFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm1pbi13LVsyNDBweF0gdy1bMjQwcHhdIHNuYXAtc3RhcnQgYmctc3VyZmFjZS1jb250YWluZXItbG93ZXN0IHJvdW5kZWQteGwgc2hhZG93LXNtIGJvcmRlciBib3JkZXItb3V0bGluZS12YXJpYW50LzMwIGZsZXggZmxleC1jb2wgb3ZlcmZsb3ctaGlkZGVuXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJoLVsxNDBweF0gdy1mdWxsIHJlbGF0aXZlIGJnLWNvdmVyIGJnLWNlbnRlclwiIHN0eWxlPXt7YmFja2dyb3VuZEltYWdlOiBcInVybCgnaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2FpZGEtcHVibGljL0FCNkFYdUJHZElranJUSFBuUFFaUXdKNzBZNTMyVkE5VW0wMXZCcDg1S0tFN250aTZ0NTdGQWlHdVE4Y2Y0SWNpeHI1QzFBU1ZuVWhZTGdkVFoxYXJkeGU4UjdNb1cwNG8xZkpvT1N4OVc4TklWQklBLXhZY1pfcG5BN3RyOTBCZFZXbHdXNjU3NmVwWkR4aDN3RmE2YVRFS3VURkxmQ2FkYjFXY0tSVW9oU2tKYkhYWlk4WjJsb2l6d0Z2TGFBSEx3aTUwUmRhVEdUdnFmQkVhYkJUUUFYZXZWMGJGeXRXQmVvMlAtSDJYZVVSbmZzWWg2TGRzV1BFWnJkRFF3JylcIn19PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFic29sdXRlIHRvcC0yIGxlZnQtMiBiZy1zdXJmYWNlLzkwIGJhY2tkcm9wLWJsdXIgdGV4dC1wcmltYXJ5IHB4LTIgcHktMSByb3VuZGVkIHRleHQtWzEwcHhdIGZvbnQtYm9sZCB0cmFja2luZy13aWRlXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBURVJTRURJQVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhYnNvbHV0ZSBib3R0b20tMiByaWdodC0yIGJnLXRlcnRpYXJ5LWNvbnRhaW5lciB0ZXh0LW9uLXRlcnRpYXJ5IHB4LTIgcHktMSByb3VuZGVkLWZ1bGwgdGV4dC1sYWJlbC1zbSBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCB0ZXh0LVsxNHB4XVwiPnNjaGVkdWxlPC9zcGFuPiAxODowMCAtIDIwOjAwXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicC1tZCBmbGV4IGZsZXgtY29sIGZsZXgtMSBnYXAtMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1sYWJlbC1zbSBmb250LWxhYmVsLXNtIHRleHQtb24tc3VyZmFjZS12YXJpYW50IGZsZXggaXRlbXMtY2VudGVyIGdhcC0xXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCB0ZXh0LVsxNHB4XVwiPnN0b3JlZnJvbnQ8L3NwYW4+IFNheXVyIFNlZ2FyIEpheWFcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtc2VtaWJvbGQgbXQtMSBsaW5lLWNsYW1wLTFcIj5QYWtldCBTYXl1ciBNaXg8L2gzPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWVuZCBqdXN0aWZ5LWJldHdlZW4gbXQtYXV0byBwdC0yIGJvcmRlci10IGJvcmRlci1zdXJmYWNlLXZhcmlhbnRcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgdGV4dC1bMTJweF0gbGluZS10aHJvdWdoXCI+UnAgNDUuMDAwPC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtYm9keS1sZyBmb250LWJvZHktbGcgZm9udC1ib2xkIHRleHQtcHJpbWFyeVwiPlJwIDE1LjAwMDwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGl0ZW1zLWVuZFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LXRlcnRpYXJ5LWNvbnRhaW5lciBiZy10ZXJ0aWFyeS1maXhlZC8zMCBweC0yIHB5LTAuNSByb3VuZGVkLWZ1bGwgbWItMVwiPlNpc2EgNTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgZmxleCBpdGVtcy1jZW50ZXJcIj48c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkIHRleHQtWzE0cHhdIG1yLTFcIj5sb2NhdGlvbl9vbjwvc3Bhbj4yLjUga208L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwidy1mdWxsIG10LTIgcHktMiBib3JkZXIgYm9yZGVyLXByaW1hcnkgdGV4dC1wcmltYXJ5IHJvdW5kZWQtbGcgZm9udC1sYWJlbC1tZCB0ZXh0LWxhYmVsLW1kIGhvdmVyOmJnLXByaW1hcnkvNSB0cmFuc2l0aW9uLWNvbG9yc1wiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTGloYXQgRGV0YWlsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgIDwvc2VjdGlvbj5cblxuICAgICAgICAgICAgICAgIHsvKiBJbXBhY3QgU2VjdGlvbiAqL31cbiAgICAgICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJweC1jb250YWluZXItbWFyZ2luIHB5LXhsIGJnLXN1cmZhY2UtY29udGFpbmVyLWxvd1wiPlxuICAgICAgICAgICAgICAgICAgICA8aDIgY2xhc3NOYW1lPVwidGV4dC1oZWFkbGluZS1tZCBmb250LWhlYWRsaW5lLW1kIG1iLWxnIHRleHQtY2VudGVyXCI+QmVsYW5qYSBIZW1hdCwgRGFtcGFrIEJhaWs8L2gyPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZmxleC1jb2wgZ2FwLXNtXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJnLXN1cmZhY2UtY29udGFpbmVyLWxvd2VzdCBwLW1kIHJvdW5kZWQteGwgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLW1kIHNoYWRvdy1zbVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy0xMiBoLTEyIHJvdW5kZWQtZnVsbCBiZy1zZWNvbmRhcnktY29udGFpbmVyIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHRleHQtcHJpbWFyeSBzaHJpbmstMFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkIHRleHQtWzI0cHhdXCI+c2hvcHBpbmdfYmFnPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxoNCBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtc2VtaWJvbGQgdGV4dC1wcmltYXJ5XCI+TWFrYW5hbiB0ZXJzZWxhbWF0a2FuPC9oND5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1ib2R5LW1kIGZvbnQtYm9keS1tZCB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudFwiPjIuNTQwIGtnIGJ1bGFuIGluaTwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlLWNvbnRhaW5lci1sb3dlc3QgcC1tZCByb3VuZGVkLXhsIGZsZXggaXRlbXMtY2VudGVyIGdhcC1tZCBzaGFkb3ctc21cIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInctMTIgaC0xMiByb3VuZGVkLWZ1bGwgYmctdGVydGlhcnktZml4ZWQgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgdGV4dC10ZXJ0aWFyeS1jb250YWluZXIgc2hyaW5rLTBcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZCB0ZXh0LVsyNHB4XVwiPnNhdmluZ3M8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGg0IGNsYXNzTmFtZT1cInRleHQtYm9keS1sZyBmb250LWJvZHktbGcgZm9udC1zZW1pYm9sZCB0ZXh0LXRlcnRpYXJ5LWNvbnRhaW5lclwiPlBlbmdlbHVhcmFuIGhlbWF0PC9oND5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1ib2R5LW1kIGZvbnQtYm9keS1tZCB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudFwiPlJwIDE1MCsgSnV0YSBvbGVoIHBlbmdndW5hPC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJnLXN1cmZhY2UtY29udGFpbmVyLWxvd2VzdCBwLW1kIHJvdW5kZWQteGwgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLW1kIHNoYWRvdy1zbVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy0xMiBoLTEyIHJvdW5kZWQtZnVsbCBiZy1wcmltYXJ5LWZpeGVkIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHRleHQtcHJpbWFyeSBzaHJpbmstMFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkIHRleHQtWzI0cHhdXCI+cmVjeWNsaW5nPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxoNCBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtc2VtaWJvbGQgdGV4dC1wcmltYXJ5XCI+U2FtcGFoIHBhbmdhbiBiZXJrdXJhbmc8L2g0PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbWQgZm9udC1ib2R5LW1kIHRleHQtb24tc3VyZmFjZS12YXJpYW50XCI+QmVya29udHJpYnVzaSBrZSBidW1pIGJlcnNpaDwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L3NlY3Rpb24+XG5cbiAgICAgICAgICAgICAgICB7LyogSG93IGl0IFdvcmtzICovfVxuICAgICAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cInB4LWNvbnRhaW5lci1tYXJnaW4gcGIteGxcIj5cbiAgICAgICAgICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT1cInRleHQtaGVhZGxpbmUtbWQgZm9udC1oZWFkbGluZS1tZCBtYi1sZyB0ZXh0LWNlbnRlclwiPkNhcmEgS2VyamE8L2gyPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZmxleC1jb2wgZ2FwLWxnIHJlbGF0aXZlXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFic29sdXRlIGxlZnQtNiB0b3AtOCBib3R0b20tOCB3LVsycHhdIGJnLW91dGxpbmUtdmFyaWFudC8zMFwiPjwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGdhcC1tZCByZWxhdGl2ZSB6LTEwXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LTEyIGgtMTIgcm91bmRlZC1mdWxsIGJnLXByaW1hcnkgdGV4dC1vbi1wcmltYXJ5IGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHNocmluay0wIHNoYWRvdy1tZFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+c2VhcmNoPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicHQtMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC1ib2R5LWxnIGZvbnQtYm9keS1sZyBmb250LXNlbWlib2xkXCI+MS4gVGVtdWthbiBNYWthbmFuPC9oMz5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1ib2R5LW1kIGZvbnQtYm9keS1tZCB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBtdC0xXCI+Q2FyaSBteXN0ZXJ5IGJhZyBhdGF1IG1ha2FuYW4gZGlza29uIGRhcmkgdG9rbyB0ZXJkZWthdC48L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBnYXAtbWQgcmVsYXRpdmUgei0xMFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy0xMiBoLTEyIHJvdW5kZWQtZnVsbCBiZy1wcmltYXJ5IHRleHQtb24tcHJpbWFyeSBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaHJpbmstMCBzaGFkb3ctbWRcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZFwiPnNob3BwaW5nX2NhcnRfY2hlY2tvdXQ8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJwdC0yXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtc2VtaWJvbGRcIj4yLiBQZXNhbiAmYW1wOyBCYXlhcjwvaDM+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtYm9keS1tZCBmb250LWJvZHktbWQgdGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgbXQtMVwiPkxha3VrYW4gcGVtZXNhbmFuIGxhbmdzdW5nIG1lbGFsdWkgYXBsaWthc2kgZGVuZ2FuIGFtYW4uPC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZ2FwLW1kIHJlbGF0aXZlIHotMTBcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInctMTIgaC0xMiByb3VuZGVkLWZ1bGwgYmctcHJpbWFyeSB0ZXh0LW9uLXByaW1hcnkgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hyaW5rLTAgc2hhZG93LW1kXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWRcIj5kaXJlY3Rpb25zX3dhbGs8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJwdC0yXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LWJvZHktbGcgZm9udC1ib2R5LWxnIGZvbnQtc2VtaWJvbGRcIj4zLiBBbWJpbCBQZXNhbmFuPC9oMz5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1ib2R5LW1kIGZvbnQtYm9keS1tZCB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBtdC0xXCI+S3VuanVuZ2kgdG9rbyBwYWRhIHdha3R1IHlhbmcgZGl0ZW50dWthbiB1bnR1ayBtZW5nYW1iaWwgcGVzYW5hbm11LjwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L3NlY3Rpb24+XG4gICAgICAgICAgICA8L21haW4+XG5cbiAgICAgICAgICAgIHsvKiBGb290ZXIgKi99XG4gICAgICAgICAgICA8Zm9vdGVyIGNsYXNzTmFtZT1cImJnLXN1cmZhY2UtY29udGFpbmVyIGRhcms6Ymctc3VyZmFjZS1jb250YWluZXItaGlnaGVzdCBtdC14eGwgZnVsbC13aWR0aCBwLXhsIHBiLTMyXCI+XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciB0ZXh0LWNlbnRlciBnYXAtbGcgdy1mdWxsIG1heC13LTd4bCBteC1hdXRvXCI+XG4gICAgICAgICAgICAgICAgICAgIDxpbWcgc3JjPVwiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2FpZGEtcHVibGljL0FCNkFYdUNZRVY3S1k2OHA3dDNrSGFMMl8wY08xUk13elE3R0hrOEZkVUpUNmwtVFVidWtuQjZLdktXMnZnSklnYU4tc3NBX0JMVEpBX2U5b0RYLTFzenBsTUdCbEVHUVRVSnF2cVh1RE5uSFNHelNpbF9pdmZHTDVxMzJPVEhqTzlLLVhnZ1p6UzYwbXVSdDRjZGFOa0YySjMza2xnWmpNN1hqVTZSSjkwLWtMWDBQak82ZVE0STJfS2o4VnZ2NUY4MFh5VEQtNXpOMnVQSkkwT1I3UmswV2RXbS1kSTltQjdmSC1tSDFVMGpHc1BZSWROeHhyN1BKc2tSTE1xY0p6NzA4U1VrczY5c1wiIGFsdD1cIk1lcnRoYVwiIGNsYXNzTmFtZT1cImgtMTAgb2JqZWN0LWNvbnRhaW4gbWItMlwiIC8+XG4gICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtYm9keS1tZCBmb250LWJvZHktbWQgdGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgbWF4LXcteHNcIj5NZW55ZWxhbWF0a2FuIG1ha2FuYW4sIG1lbGVzdGFyaWthbiBidW1pLjwvcD5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGdhcC1tZCBmbGV4LXdyYXAganVzdGlmeS1jZW50ZXJcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxhIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBob3Zlcjp1bmRlcmxpbmUgaG92ZXI6dGV4dC1wcmltYXJ5IHRyYW5zaXRpb24tb3BhY2l0eVwiIGhyZWY9XCIjXCI+VGVudGFuZzwvYT5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxhIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBob3Zlcjp1bmRlcmxpbmUgaG92ZXI6dGV4dC1wcmltYXJ5IHRyYW5zaXRpb24tb3BhY2l0eVwiIGhyZWY9XCIjXCI+QmFudHVhbjwvYT5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxhIGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBob3Zlcjp1bmRlcmxpbmUgaG92ZXI6dGV4dC1wcmltYXJ5IHRyYW5zaXRpb24tb3BhY2l0eVwiIGhyZWY9XCIjXCI+TWVyY2hhbnQ8L2E+XG4gICAgICAgICAgICAgICAgICAgICAgICA8YSBjbGFzc05hbWU9XCJ0ZXh0LWxhYmVsLXNtIGZvbnQtbGFiZWwtc20gdGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgaG92ZXI6dW5kZXJsaW5lIGhvdmVyOnRleHQtcHJpbWFyeSB0cmFuc2l0aW9uLW9wYWNpdHlcIiBocmVmPVwiI1wiPlByaXZhc2k8L2E+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInRleHQtbGFiZWwtc20gZm9udC1sYWJlbC1zbSB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBtdC00XCI+XG4gICAgICAgICAgICAgICAgICAgICAgICDCqSAyMDI2IE1lcnRoYVxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZm9vdGVyPlxuXG4gICAgICAgICAgICB7LyogQm90dG9tTmF2QmFyICovfVxuICAgICAgICAgICAgPG5hdiBjbGFzc05hbWU9XCJiZy1zdXJmYWNlIGRhcms6Ymctc3VyZmFjZS1jb250YWluZXItbG93ZXN0IHNoYWRvdy1sZyBib3JkZXItdCBib3JkZXItb3V0bGluZS12YXJpYW50IGRvY2tlZCBmdWxsLXdpZHRoIGJvdHRvbS0wIGZpeGVkIHotNTAgcm91bmRlZC10LXhsIHctZnVsbCBoLTE2IGZsZXgganVzdGlmeS1hcm91bmQgaXRlbXMtY2VudGVyIHB4LTIgcGItc2FmZSBtZDpoaWRkZW5cIj5cbiAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cImZsZXggZmxleC1jb2wgaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHRleHQtcHJpbWFyeSBkYXJrOnRleHQtcHJpbWFyeS1maXhlZC1kaW0gYmctc2Vjb25kYXJ5LWNvbnRhaW5lci8zMCByb3VuZGVkLWZ1bGwgcHgtNCBweS0xIGhvdmVyOnRleHQtcHJpbWFyeSB0cmFuc2l0aW9uLWFsbCBzY2FsZS0xMTAgZHVyYXRpb24tMjAwXCI+XG4gICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm1hdGVyaWFsLXN5bWJvbHMtb3V0bGluZWRcIiBzdHlsZT17e2ZvbnRWYXJpYXRpb25TZXR0aW5nczogXCInRklMTCcgMVwifX0+aG9tZTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1bMTBweF0gZm9udC1sYWJlbC1zbSBtdC0wLjVcIj5CZXJhbmRhPC9zcGFuPlxuICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwiZmxleCBmbGV4LWNvbCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgdGV4dC1vbi1zdXJmYWNlLXZhcmlhbnQgZGFyazp0ZXh0LXN1cmZhY2UtdmFyaWFudCBob3Zlcjp0ZXh0LXByaW1hcnkgdHJhbnNpdGlvbi1hbGxcIj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibWF0ZXJpYWwtc3ltYm9scy1vdXRsaW5lZFwiPmV4cGxvcmU8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtWzEwcHhdIGZvbnQtbGFiZWwtc20gbXQtMC41XCI+SmVsYWphaGk8L3NwYW4+XG4gICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBkYXJrOnRleHQtc3VyZmFjZS12YXJpYW50IGhvdmVyOnRleHQtcHJpbWFyeSB0cmFuc2l0aW9uLWFsbFwiPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+bWFwPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LVsxMHB4XSBmb250LWxhYmVsLXNtIG10LTAuNVwiPlBldGE8L3NwYW4+XG4gICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBkYXJrOnRleHQtc3VyZmFjZS12YXJpYW50IGhvdmVyOnRleHQtcHJpbWFyeSB0cmFuc2l0aW9uLWFsbFwiPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+cmVjZWlwdF9sb25nPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LVsxMHB4XSBmb250LWxhYmVsLXNtIG10LTAuNVwiPlBlc2FuYW48L3NwYW4+XG4gICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtY29sIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciB0ZXh0LW9uLXN1cmZhY2UtdmFyaWFudCBkYXJrOnRleHQtc3VyZmFjZS12YXJpYW50IGhvdmVyOnRleHQtcHJpbWFyeSB0cmFuc2l0aW9uLWFsbFwiPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtYXRlcmlhbC1zeW1ib2xzLW91dGxpbmVkXCI+cGVyc29uPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LVsxMHB4XSBmb250LWxhYmVsLXNtIG10LTAuNVwiPlByb2ZpbDwvc3Bhbj5cbiAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgIDwvbmF2PlxuICAgICAgICA8L2Rpdj5cbiAgICApO1xufVxuXG5jb25zdCByb290ID0gUmVhY3RET00uY3JlYXRlUm9vdChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncm9vdCcpKTtcbnJvb3QucmVuZGVyKDxBcHAgLz4pO1xuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFDQSxhQUFnQyxLQUFLO0VBQTdCLFFBQVEsVUFBUixRQUFRO0VBQUUsU0FBUyxVQUFULFNBQVM7QUFFM0IsU0FBUyxHQUFHLEdBQUc7RUFDWCxnQkFBd0MsUUFBUSxDQUFDLENBQUMsQ0FBQztJQUFBO0lBQTVDLFlBQVk7SUFBRSxlQUFl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</script></head>
+<body>
+<div id="root"><div class="bg-surface text-on-surface pb-[80px]"><header class="bg-surface shadow-sm docked full-width top-0 sticky z-50"><div class="flex justify-between items-center w-full px-container-margin py-md"><div class="flex items-center gap-1"><img src="/assets/asset_5.png" alt="Mertha" class="h-8 object-contain"></div><div class="flex items-center gap-2"><a href="#" class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors"><span class="material-symbols-outlined text-[20px]">person</span></a></div></div></header><main class="flex flex-col gap-xl"><section class="relative"><div class="w-full h-[320px] bg-surface-container-highest relative overflow-hidden"><div class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(-200%);"><div class="w-full h-full shrink-0 relative bg-cover bg-center" style="background-image: url(&quot;/assets/asset_7.png&quot;);"><div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div><div class="absolute bottom-16 left-0 right-0 px-container-margin"><h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2">Makanan Baik Tidak Seharusnya Terbuang</h1><p class="text-body-md font-body-md text-surface-variant">Selamatkan makanan layak dengan harga lebih hemat.</p></div></div><div class="w-full h-full shrink-0 relative bg-cover bg-center" style="background-image: url(&quot;https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot;);"><div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div><div class="absolute bottom-16 left-0 right-0 px-container-margin"><h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2">Hemat Lebih Banyak Hari Ini</h1><p class="text-body-md font-body-md text-surface-variant">Temukan promo makanan dari toko di dekatmu.</p></div></div><div class="w-full h-full shrink-0 relative bg-cover bg-center" style="background-image: url(&quot;https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot;);"><div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div><div class="absolute bottom-16 left-0 right-0 px-container-margin"><h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2">Baik Untukmu, Baik Untuk Bumi</h1><p class="text-body-md font-body-md text-surface-variant">Setiap pesanan membantu mengurangi sampah pangan.</p></div></div></div><div class="absolute bottom-6 left-0 right-0 flex px-container-margin items-center justify-between"><div class="flex items-center gap-2"><button aria-label="Pause carousel" class="w-11 h-11 rounded-full bg-surface/30 backdrop-blur-sm flex items-center justify-center text-on-primary hover:bg-surface/40 transition-colors"><span class="material-symbols-outlined text-[24px]">pause</span></button><div class="flex gap-1.5 ml-2"><span class="h-1.5 rounded-full transition-all duration-300 w-1.5 bg-surface/50"></span><span class="h-1.5 rounded-full transition-all duration-300 w-1.5 bg-surface/50"></span><span class="h-1.5 rounded-full transition-all duration-300 w-6 bg-primary-fixed"></span></div></div></div></div><div class="px-container-margin -mt-6 relative z-10"><div class="bg-surface-container-lowest rounded-xl shadow-lg p-md border border-outline-variant/30 flex flex-col gap-md"><div class="relative"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span><input class="w-full h-12 pl-10 pr-4 rounded-lg bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md outline-none" placeholder="Cari makanan atau toko" type="text"></div><div class="flex gap-sm"><button class="flex-1 bg-primary text-on-primary h-12 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 shadow-sm hover:bg-primary-container transition-colors">Cari di Sekitarku</button><button aria-label="Gunakan Lokasiku" class="w-12 h-12 rounded-lg border border-primary text-primary flex justify-center items-center hover:bg-primary-fixed-dim transition-colors"><span class="material-symbols-outlined">my_location</span></button></div></div></div></section><section class="px-container-margin"><h2 class="text-headline-md font-headline-md mb-md">Kategori</h2><div class="grid grid-cols-3 gap-sm"><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1"><span class="material-symbols-outlined">near_me</span></div><span class="text-label-sm font-label-sm text-center">Terdekat</span></div><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1"><span class="material-symbols-outlined">redeem</span></div><span class="text-label-sm font-label-sm text-center">Mystery Bag</span></div><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1"><span class="material-symbols-outlined">nutrition</span></div><span class="text-label-sm font-label-sm text-center">Buah</span></div><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1"><span class="material-symbols-outlined">grass</span></div><span class="text-label-sm font-label-sm text-center">Sayur</span></div><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1"><span class="material-symbols-outlined">bakery_dining</span></div><span class="text-label-sm font-label-sm text-center">Bakery</span></div><div class="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square"><div class="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1"><span class="material-symbols-outlined">restaurant</span></div><span class="text-label-sm font-label-sm text-center">Siap Saji</span></div></div></section><section class="pl-container-margin"><h2 class="text-headline-md font-headline-md mb-md pr-container-margin">Pilihan Hemat di Dekatmu</h2><div class="flex gap-md overflow-x-auto no-scrollbar pb-lg pr-container-margin snap-x"><div class="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden"><div class="h-[140px] w-full relative bg-cover bg-center" style="background-image: url(&quot;/assets/asset_10.png&quot;);"><div class="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">TERSEDIA</div><div class="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 19:00 - 21:00</div></div><div class="p-md flex flex-col flex-1 gap-2"><div><p class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">storefront</span> Bakery Makmur</p><h3 class="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Mystery Bag Bakery</h3></div><div class="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant"><div><p class="text-on-surface-variant text-[12px] line-through">Rp 50.000</p><p class="text-body-lg font-body-lg font-bold text-primary">Rp 20.000</p></div><div class="flex flex-col items-end"><span class="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 3</span><span class="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span class="material-symbols-outlined text-[14px] mr-1">location_on</span>1.2 km</span></div></div><button class="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">Lihat Detail</button></div></div><div class="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden"><div class="h-[140px] w-full relative bg-cover bg-center" style="background-image: url(&quot;/assets/asset_11.png&quot;);"><div class="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">TERSEDIA</div><div class="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 18:00 - 20:00</div></div><div class="p-md flex flex-col flex-1 gap-2"><div><p class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">storefront</span> Sayur Segar Jaya</p><h3 class="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Paket Sayur Mix</h3></div><div class="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant"><div><p class="text-on-surface-variant text-[12px] line-through">Rp 45.000</p><p class="text-body-lg font-body-lg font-bold text-primary">Rp 15.000</p></div><div class="flex flex-col items-end"><span class="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 5</span><span class="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span class="material-symbols-outlined text-[14px] mr-1">location_on</span>2.5 km</span></div></div><button class="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">Lihat Detail</button></div></div></div></section><section class="px-container-margin py-xl bg-surface-container-low"><h2 class="text-headline-md font-headline-md mb-lg text-center">Belanja Hemat, Dampak Baik</h2><div class="flex flex-col gap-sm"><div class="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"><div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-[24px]">shopping_bag</span></div><div><h4 class="text-body-lg font-body-lg font-semibold text-primary">Makanan terselamatkan</h4><p class="text-body-md font-body-md text-on-surface-variant">2.540 kg bulan ini</p></div></div><div class="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"><div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary-container shrink-0"><span class="material-symbols-outlined text-[24px]">savings</span></div><div><h4 class="text-body-lg font-body-lg font-semibold text-tertiary-container">Pengeluaran hemat</h4><p class="text-body-md font-body-md text-on-surface-variant">Rp 150+ Juta oleh pengguna</p></div></div><div class="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm"><div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-[24px]">recycling</span></div><div><h4 class="text-body-lg font-body-lg font-semibold text-primary">Sampah pangan berkurang</h4><p class="text-body-md font-body-md text-on-surface-variant">Berkontribusi ke bumi bersih</p></div></div></div></section><section class="px-container-margin pb-xl"><h2 class="text-headline-md font-headline-md mb-lg text-center">Cara Kerja</h2><div class="flex flex-col gap-lg relative"><div class="absolute left-6 top-8 bottom-8 w-[2px] bg-outline-variant/30"></div><div class="flex gap-md relative z-10"><div class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"><span class="material-symbols-outlined">search</span></div><div class="pt-2"><h3 class="text-body-lg font-body-lg font-semibold">1. Temukan Makanan</h3><p class="text-body-md font-body-md text-on-surface-variant mt-1">Cari mystery bag atau makanan diskon dari toko terdekat.</p></div></div><div class="flex gap-md relative z-10"><div class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"><span class="material-symbols-outlined">shopping_cart_checkout</span></div><div class="pt-2"><h3 class="text-body-lg font-body-lg font-semibold">2. Pesan &amp; Bayar</h3><p class="text-body-md font-body-md text-on-surface-variant mt-1">Lakukan pemesanan langsung melalui aplikasi dengan aman.</p></div></div><div class="flex gap-md relative z-10"><div class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md"><span class="material-symbols-outlined">directions_walk</span></div><div class="pt-2"><h3 class="text-body-lg font-body-lg font-semibold">3. Ambil Pesanan</h3><p class="text-body-md font-body-md text-on-surface-variant mt-1">Kunjungi toko pada waktu yang ditentukan untuk mengambil pesananmu.</p></div></div></div></section></main><footer class="bg-surface-container dark:bg-surface-container-highest mt-xxl full-width p-xl pb-32"><div class="flex flex-col items-center text-center gap-lg w-full max-w-7xl mx-auto"><img src="/assets/asset_6.png" alt="Mertha" class="h-10 object-contain mb-2"><p class="text-body-md font-body-md text-on-surface-variant max-w-xs">Menyelamatkan makanan, melestarikan bumi.</p><div class="flex gap-md flex-wrap justify-center"><a class="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Tentang</a><a class="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Bantuan</a><a class="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Merchant</a><a class="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Privasi</a></div><div class="text-label-sm font-label-sm text-on-surface-variant mt-4">© 2026 Mertha</div></div></footer><nav class="bg-surface dark:bg-surface-container-lowest shadow-lg border-t border-outline-variant docked full-width bottom-0 fixed z-50 rounded-t-xl w-full h-16 flex justify-around items-center px-2 pb-safe md:hidden"><button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-secondary-container/30 rounded-full px-4 py-1 hover:text-primary transition-all scale-110 duration-200"><span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">home</span><span class="text-[10px] font-label-sm mt-0.5">Beranda</span></button><button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">explore</span><span class="text-[10px] font-label-sm mt-0.5">Jelajahi</span></button><button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">map</span><span class="text-[10px] font-label-sm mt-0.5">Peta</span></button><button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">receipt_long</span><span class="text-[10px] font-label-sm mt-0.5">Pesanan</span></button><button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">person</span><span class="text-[10px] font-label-sm mt-0.5">Profil</span></button></nav></div></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function App() {
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    const slides = [
+        {
+            title: "Makanan Baik Tidak Seharusnya Terbuang",
+            desc: "Selamatkan makanan layak dengan harga lebih hemat.",
+            bg: "url('/assets/asset_7.png')"
+        },
+        {
+            title: "Hemat Lebih Banyak Hari Ini",
+            desc: "Temukan promo makanan dari toko di dekatmu.",
+            bg: "url('/assets/asset_8.png')"
+        },
+        {
+            title: "Baik Untukmu, Baik Untuk Bumi",
+            desc: "Setiap pesanan membantu mengurangi sampah pangan.",
+            bg: "url('/assets/asset_9.png')"
+        }
+    ];
+
+    useEffect(() => {
+        let interval;
+        if (isPlaying) {
+            interval = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % slides.length);
+            }, 5000);
+        }
+        return () => clearInterval(interval);
+    }, [isPlaying, slides.length]);
+
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+        setIsPlaying(false);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+        if (isLeftSwipe) {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }
+        if (isRightSwipe) {
+            setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+        }
+    };
+
+    const togglePlay = () => setIsPlaying(!isPlaying);
+
+    return (
+        <div className="bg-surface text-on-surface pb-[80px]">
+            {/* TopAppBar */}
+            <header className="bg-surface shadow-sm docked full-width top-0 sticky z-50">
+                <div className="flex justify-between items-center w-full px-container-margin py-md">
+                    <div className="flex items-center gap-1">
+                        <img src="/assets/asset_5.png" alt="Mertha" className="h-8 object-contain" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <a href="#" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors">
+                            <span className="material-symbols-outlined text-[20px]">person</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <main className="flex flex-col gap-xl">
+                {/* Hero Section & Search Overlap */}
+                <section className="relative">
+                    {/* Carousel Container */}
+                    <div 
+                        className="w-full h-[320px] bg-surface-container-highest relative overflow-hidden"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                    >
+                        {/* Slides */}
+                        <div 
+                            className="flex w-full h-full transition-transform duration-500 ease-out"
+                            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                        >
+                            {slides.map((slide, index) => (
+                                <div 
+                                    key={index}
+                                    className="w-full h-full shrink-0 relative bg-cover bg-center"
+                                    style={{ backgroundImage: slide.bg }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                                    <div className="absolute bottom-16 left-0 right-0 px-container-margin">
+                                        <h1 className="text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2">{slide.title}</h1>
+                                        <p className="text-body-md font-body-md text-surface-variant">{slide.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Controls */}
+                        <div className="absolute bottom-6 left-0 right-0 flex px-container-margin items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={togglePlay}
+                                    aria-label={isPlaying ? "Pause carousel" : "Play carousel"} 
+                                    className="w-11 h-11 rounded-full bg-surface/30 backdrop-blur-sm flex items-center justify-center text-on-primary hover:bg-surface/40 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-[24px]">
+                                        {isPlaying ? 'pause' : 'play_arrow'}
+                                    </span>
+                                </button>
+                                <div className="flex gap-1.5 ml-2">
+                                    {slides.map((_, index) => (
+                                        <span 
+                                            key={index}
+                                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                                                currentSlide === index ? 'w-6 bg-primary-fixed' : 'w-1.5 bg-surface/50'
+                                            }`}
+                                        ></span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Search Card Overlapping */}
+                    <div className="px-container-margin -mt-6 relative z-10">
+                        <div className="bg-surface-container-lowest rounded-xl shadow-lg p-md border border-outline-variant/30 flex flex-col gap-md">
+                            <div className="relative">
+                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                                <input className="w-full h-12 pl-10 pr-4 rounded-lg bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md outline-none" placeholder="Cari makanan atau toko" type="text" />
+                            </div>
+                            <div className="flex gap-sm">
+                                <button className="flex-1 bg-primary text-on-primary h-12 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 shadow-sm hover:bg-primary-container transition-colors">
+                                    Cari di Sekitarku
+                                </button>
+                                <button aria-label="Gunakan Lokasiku" className="w-12 h-12 rounded-lg border border-primary text-primary flex justify-center items-center hover:bg-primary-fixed-dim transition-colors">
+                                    <span className="material-symbols-outlined">my_location</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Categories */}
+                <section className="px-container-margin">
+                    <h2 className="text-headline-md font-headline-md mb-md">Kategori</h2>
+                    <div className="grid grid-cols-3 gap-sm">
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">near_me</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Terdekat</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">redeem</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Mystery Bag</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">nutrition</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Buah</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">grass</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Sayur</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">bakery_dining</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Bakery</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">restaurant</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Siap Saji</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Products */}
+                <section className="pl-container-margin">
+                    <h2 className="text-headline-md font-headline-md mb-md pr-container-margin">Pilihan Hemat di Dekatmu</h2>
+                    <div className="flex gap-md overflow-x-auto no-scrollbar pb-lg pr-container-margin snap-x">
+                        <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
+                            <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('/assets/asset_10.png')"}}>
+                                <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
+                                    TERSEDIA
+                                </div>
+                                <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[14px]">schedule</span> 19:00 - 21:00
+                                </div>
+                            </div>
+                            <div className="p-md flex flex-col flex-1 gap-2">
+                                <div>
+                                    <p className="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-[14px]">storefront</span> Bakery Makmur
+                                    </p>
+                                    <h3 className="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Mystery Bag Bakery</h3>
+                                </div>
+                                <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
+                                    <div>
+                                        <p className="text-on-surface-variant text-[12px] line-through">Rp 50.000</p>
+                                        <p className="text-body-lg font-body-lg font-bold text-primary">Rp 20.000</p>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 3</span>
+                                        <span className="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span className="material-symbols-outlined text-[14px] mr-1">location_on</span>1.2 km</span>
+                                    </div>
+                                </div>
+                                <button className="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
+                            <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('/assets/asset_11.png')"}}>
+                                <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
+                                    TERSEDIA
+                                </div>
+                                <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[14px]">schedule</span> 18:00 - 20:00
+                                </div>
+                            </div>
+                            <div className="p-md flex flex-col flex-1 gap-2">
+                                <div>
+                                    <p className="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-[14px]">storefront</span> Sayur Segar Jaya
+                                    </p>
+                                    <h3 className="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Paket Sayur Mix</h3>
+                                </div>
+                                <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
+                                    <div>
+                                        <p className="text-on-surface-variant text-[12px] line-through">Rp 45.000</p>
+                                        <p className="text-body-lg font-body-lg font-bold text-primary">Rp 15.000</p>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 5</span>
+                                        <span className="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span className="material-symbols-outlined text-[14px] mr-1">location_on</span>2.5 km</span>
+                                    </div>
+                                </div>
+                                <button className="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Impact Section */}
+                <section className="px-container-margin py-xl bg-surface-container-low">
+                    <h2 className="text-headline-md font-headline-md mb-lg text-center">Belanja Hemat, Dampak Baik</h2>
+                    <div className="flex flex-col gap-sm">
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">shopping_bag</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-primary">Makanan terselamatkan</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">2.540 kg bulan ini</p>
+                            </div>
+                        </div>
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary-container shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">savings</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-tertiary-container">Pengeluaran hemat</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">Rp 150+ Juta oleh pengguna</p>
+                            </div>
+                        </div>
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">recycling</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-primary">Sampah pangan berkurang</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">Berkontribusi ke bumi bersih</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* How it Works */}
+                <section className="px-container-margin pb-xl">
+                    <h2 className="text-headline-md font-headline-md mb-lg text-center">Cara Kerja</h2>
+                    <div className="flex flex-col gap-lg relative">
+                        <div className="absolute left-6 top-8 bottom-8 w-[2px] bg-outline-variant/30"></div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">search</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">1. Temukan Makanan</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Cari mystery bag atau makanan diskon dari toko terdekat.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">shopping_cart_checkout</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">2. Pesan &amp; Bayar</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Lakukan pemesanan langsung melalui aplikasi dengan aman.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">directions_walk</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">3. Ambil Pesanan</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Kunjungi toko pada waktu yang ditentukan untuk mengambil pesananmu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            {/* Footer */}
+            <footer className="bg-surface-container dark:bg-surface-container-highest mt-xxl full-width p-xl pb-32">
+                <div className="flex flex-col items-center text-center gap-lg w-full max-w-7xl mx-auto">
+                    <img src="/assets/asset_6.png" alt="Mertha" className="h-10 object-contain mb-2" />
+                    <p className="text-body-md font-body-md text-on-surface-variant max-w-xs">Menyelamatkan makanan, melestarikan bumi.</p>
+                    <div className="flex gap-md flex-wrap justify-center">
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Tentang</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Bantuan</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Merchant</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Privasi</a>
+                    </div>
+                    <div className="text-label-sm font-label-sm text-on-surface-variant mt-4">
+                        © 2026 Mertha
+                    </div>
+                </div>
+            </footer>
+
+            {/* BottomNavBar */}
+            <nav className="bg-surface dark:bg-surface-container-lowest shadow-lg border-t border-outline-variant docked full-width bottom-0 fixed z-50 rounded-t-xl w-full h-16 flex justify-around items-center px-2 pb-safe md:hidden">
+                <button className="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-secondary-container/30 rounded-full px-4 py-1 hover:text-primary transition-all scale-110 duration-200">
+                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>home</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Beranda</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">explore</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Jelajahi</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">map</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Peta</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">receipt_long</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Pesanan</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">person</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Profil</span>
+                </button>
+            </nav>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+
+
+</body></html>

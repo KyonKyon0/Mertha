@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lupa Kata Sandi - Mertha</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#753400",
+                        "inverse-surface": "#313129",
+                        "tertiary-fixed": "#ffdbc9",
+                        "surface-bright": "#fdf9ee",
+                        "surface-container-high": "#ece8dd",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#964500",
+                        "surface-variant": "#e6e2d8",
+                        "on-error": "#ffffff",
+                        "primary": "#204e2b",
+                        "on-primary-fixed-variant": "#22502d",
+                        "surface-container-highest": "#e6e2d8",
+                        "surface-container": "#f2eee3",
+                        "on-secondary-fixed": "#002111",
+                        "secondary-container": "#bcebcb",
+                        "tertiary": "#723200",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f4f1e6",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#414941",
+                        "on-tertiary-fixed": "#321200",
+                        "on-primary-fixed": "#00210a",
+                        "background": "#fdf9ee",
+                        "surface-container-low": "#f7f3e8",
+                        "secondary-fixed-dim": "#a3d1b3",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#a0d3a5",
+                        "primary-container": "#386641",
+                        "tertiary-fixed-dim": "#ffb68c",
+                        "primary-fixed": "#bcefc0",
+                        "on-secondary-fixed-variant": "#254f38",
+                        "outline-variant": "#c1c9be",
+                        "on-surface": "#1c1c15",
+                        "primary-fixed-dim": "#a0d3a5",
+                        "outline": "#727970",
+                        "on-secondary-container": "#416b52",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#ffcaad",
+                        "secondary": "#3d674e",
+                        "surface-tint": "#3a6843",
+                        "surface-dim": "#dddacf",
+                        "error-container": "#ffdad6",
+                        "surface": "#fdf9ee",
+                        "secondary-fixed": "#bfedce",
+                        "on-background": "#1c1c15",
+                        "on-primary-container": "#afe2b3",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center p-container-margin">
+<main class="w-full max-w-md mx-auto flex flex-col gap-xl">
+<!-- Logo Section -->
+<div class="flex flex-col items-center justify-center gap-md text-center">
+<img alt="Mertha Logo" class="h-24 w-auto object-contain" src="/assets/asset_3.png"/>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Lupa Kata Sandi?</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+                Masukkan email Anda untuk menerima instruksi pemulihan kata sandi.
+            </p>
+</div>
+<!-- Form Section -->
+<form action="#" class="flex flex-col gap-lg bg-surface-container-lowest p-lg rounded-xl shadow-[0px_8px_24px_rgba(32,78,43,0.15)] border border-outline-variant/30 w-full" method="POST">
+<!-- Email Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="email">Email</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-outline" style="font-variation-settings: 'FILL' 0;">mail</span>
+<input class="w-full h-[48px] pl-[48px] pr-md rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all placeholder:text-outline/70" id="email" name="email" placeholder="nama@email.com" required="" type="email"/>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="h-[48px] w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center justify-center gap-sm mt-sm" type="submit">
+<span>Kirim Instruksi</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</form>
+<!-- Back to Login Link -->
+<div class="text-center mt-md">
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors flex items-center justify-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+                Kembali ke Masuk
+            </a>
+</div>
+</main>
+</body></html>

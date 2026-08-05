@@ -1,0 +1,291 @@
+<!DOCTYPE html><html class="light" lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Mystery Bag - Roti &amp; Pastry Enak | Too Good To Be Waste</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#3f6653",
+                      "tertiary-container": "#403b33",
+                      "inverse-primary": "#a5d0b9",
+                      "primary-fixed": "#c1ecd4",
+                      "on-background": "#1a1c1a",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ebe1d6",
+                      "on-primary-fixed-variant": "#274e3d",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#506856",
+                      "inverse-surface": "#2f312f",
+                      "error-container": "#ffdad6",
+                      "on-primary": "#ffffff",
+                      "primary-container": "#1b4332",
+                      "secondary": "#4c6452",
+                      "on-secondary-fixed-variant": "#354c3b",
+                      "secondary-fixed-dim": "#b3cdb7",
+                      "on-primary-fixed": "#002114",
+                      "on-surface-variant": "#414844",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#cee9d3",
+                      "outline": "#717973",
+                      "on-surface": "#1a1c1a",
+                      "background": "#f9faf6",
+                      "on-tertiary-fixed-variant": "#4c463e",
+                      "surface-dim": "#dadad7",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed-dim": "#cec5bb",
+                      "primary-fixed-dim": "#a5d0b9",
+                      "surface-container-highest": "#e2e3e0",
+                      "surface-variant": "#e2e3e0",
+                      "on-tertiary-container": "#ada59b",
+                      "tertiary": "#2a251e",
+                      "surface-container": "#eeeeeb",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#092012",
+                      "surface-container-high": "#e8e8e5",
+                      "surface": "#f9faf6",
+                      "on-primary-container": "#86af99",
+                      "primary": "#012d1d",
+                      "secondary-container": "#cce6d0",
+                      "inverse-on-surface": "#f0f1ee",
+                      "surface-container-low": "#f3f4f1",
+                      "on-tertiary-fixed": "#1f1b14",
+                      "outline-variant": "#c1c8c2",
+                      "surface-bright": "#f9faf6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "xl": "32px",
+                      "xs": "8px",
+                      "base": "4px",
+                      "container-padding": "16px",
+                      "md": "16px",
+                      "gutter": "12px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg antialiased pb-24 md:pb-0">
+<!-- Top Navigation (Mobile App Context) -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center px-container-padding h-14 w-full shadow-[0_4px_12px_0_rgba(1,45,29,0.04)]">
+<button aria-label="Go back" class="p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button aria-label="Profile" class="p-2 -mr-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</header>
+<main class="max-w-3xl mx-auto pb-8">
+<!-- Image Gallery (Hero) -->
+<section class="relative w-full h-[40vh] md:h-[50vh] bg-surface-container-lowest overflow-hidden md:rounded-b-xl md:shadow-lg md:mb-6 group">
+<img alt="Bakery items" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="A high-quality, eye-level photograph of a rustic bakery display counter in a modern, eco-conscious Indonesian bakery. The counter is laden with an assortment of artisan breads, flaky croissants, and golden pastries. Natural sunlight streams in through a large window, creating a warm, inviting, and premium aesthetic. The color palette is earthy and organic, emphasizing the fresh-first ethos of the food rescue platform." src="/assets/asset_18.png">
+<!-- Floating Chips -->
+<div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label-md text-label-md shadow-md backdrop-blur-sm bg-opacity-90 flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
+                    Mystery Bag
+                </span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-md text-label-md shadow-md backdrop-blur-sm bg-opacity-90 w-fit">
+                    Surplus Roti
+                </span>
+</div>
+<!-- Image Pagination Indicators -->
+<div class="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
+<div class="w-6 h-1.5 rounded-full bg-white shadow-sm"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/50 shadow-sm"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/50 shadow-sm"></div>
+</div>
+</section>
+<!-- Content Canvas -->
+<div class="px-container-padding mt-4 md:mt-0 space-y-lg">
+<!-- Header Section -->
+<section class="space-y-sm">
+<div class="flex justify-between items-start gap-4">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-display-lg md:text-display-lg text-primary tracking-tight">
+                            Mystery Bag - Roti &amp; Pastry Enak
+                        </h1>
+<div class="flex items-center gap-xs mt-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined" data-weight="fill" style="font-size: 18px;">storefront</span>
+<span class="">Bakery Lezat</span>
+<span class="mx-1">•</span>
+<span class="flex items-center text-primary font-medium">
+<span class="material-symbols-outlined text-primary mr-0.5" data-weight="fill" style="font-size: 16px;">star</span>
+                                4.8
+                                <span class="text-on-surface-variant font-normal ml-1">/5</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Pricing Bento Box -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_4px_12px_0_rgba(1,45,29,0.04)] border border-surface-variant/50 mb-4"><div class="flex items-center justify-between mb-2"><h3 class="font-label-md text-on-surface-variant uppercase">Ketersediaan</h3><span class="text-error font-bold text-body-md">Hampir Habis</span></div><div class="flex items-baseline gap-1"><span class="text-headline-md font-bold text-on-background">3</span><span class="text-body-md text-on-surface-variant">Paket Tersisa</span></div><div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-3"><div class="h-full bg-error rounded-full" style="width: 15%;"></div></div></div><div class="bg-primary-fixed-dim rounded-xl p-md flex flex-col gap-1 mt-4 relative overflow-hidden"><div class="flex items-baseline gap-2">
+<span class="text-display-lg font-bold text-primary tracking-tight">Rp25.000</span>
+<span class="text-body-lg text-on-surface-variant line-through">Rp75.000</span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-sm font-semibold">
+    Hemat Rp50.000
+  </span>
+<span class="text-body-md text-on-surface-variant">• Terbatas</span>
+</div></div>
+</section>
+<hr class="border-surface-variant">
+<!-- Stock & Quality Status -->
+<section class="bg-surface-container-lowest border border-surface-variant/50 rounded-xl p-4 shadow-[0_4px_12px_0_rgba(1,45,29,0.04)]"><div class="flex items-center justify-between mb-4"><div><div class="flex items-center gap-1"><h3 class="font-headline-sm text-primary">Kualitas Premium</h3><span class="material-symbols-outlined text-primary" style="font-size: 18px;">verified</span></div><p class="text-body-md text-on-surface-variant">AI Quality Score: <span class="font-bold text-primary">94</span></p></div><span class="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider"><span class="material-symbols-outlined" style="font-size: 14px;">auto_awesome</span>AI Verified</span></div><div class="flex items-start gap-3 pt-4 border-t border-surface-variant/30"><div class="bg-secondary-container text-on-secondary-container p-2 rounded-full shrink-0"><span class="material-symbols-outlined">restaurant</span></div><div><h4 class="font-label-md text-on-surface-variant uppercase mb-1">Kondisi Makanan</h4><p class="font-body-md text-on-background">Surplus hari ini, masih segar dan sangat layak konsumsi.</p><p class="text-body-md font-semibold text-primary mt-2">Layak konsumsi hingga pukul 22:00 hari ini</p></div></div></section>
+<!-- Pickup Info Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_0_rgba(1,45,29,0.04)] overflow-hidden border border-surface-variant/50">
+<div class="p-md">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined">schedule</span>
+                        Informasi Pengambilan
+                    </h2>
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-3 mb-4">
+<div class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Waktu Ambil</p>
+<p class="font-body-lg text-body-lg font-semibold text-on-background">Hari ini, 19.00 - 20.00 WIB</p>
+</div>
+</div>
+<div class="mb-2">
+<p class="font-body-md text-body-md text-on-background flex items-start gap-2">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5" style="font-size: 18px;">location_on</span>
+<span class="">Jl. Sudirman No. 45, Jakarta Selatan (Samping Gedung Kaca)</span>
+</p>
+</div>
+</div>
+<!-- Mini Map -->
+<div class="w-full h-32 relative bg-surface-container-highest">
+<img alt="Map location" class="w-full h-full object-cover" data-alt="A clean, minimalist digital map interface showing a pinpoint location in South Jakarta, Indonesia. The map uses a light-mode color scheme with subtle green accents for parks and soft grays for roads, aligning perfectly with a modern eco-conscious food app UI. A prominent primary green marker indicates the bakery's location. The style is flat, vector-based, and highly legible." data-location="Jakarta" src="/assets/asset_19.png">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/20 to-transparent"></div>
+<button class="absolute bottom-2 right-2 bg-surface-container-lowest text-primary font-label-md text-label-md px-3 py-1.5 rounded-full shadow-md flex items-center gap-1 hover:bg-surface transition-colors">
+<span class="material-symbols-outlined" style="font-size: 16px;">directions</span>
+                        Arahkan
+                    </button>
+</div>
+</section>
+<!-- What to expect -->
+<section class="pb-8 space-y-4"><h2 class="font-headline-sm text-headline-sm text-primary">FAQ</h2><div class="space-y-2"><details class="group bg-surface-container-low rounded-xl border border-surface-variant/20 overflow-hidden"><summary class="flex items-center justify-between p-4 cursor-pointer list-none font-medium text-on-background"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">auto_awesome</span>Apa itu Verifikasi AI?</span><span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-4 pt-0 text-body-md text-on-surface-variant">Setiap item dipindai secara visual menggunakan teknologi AI kami untuk memastikan kesegaran dan kualitas premium sebelum dikemas.</div></details><details class="group bg-surface-container-low rounded-xl border border-surface-variant/20 overflow-hidden"><summary class="flex items-center justify-between p-4 cursor-pointer list-none font-medium text-on-background"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">shopping_bag</span>Apa itu Mystery Bag?</span><span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-4 pt-0 text-body-md text-on-surface-variant">Isi tas ini adalah kejutan! Kamu akan mendapatkan berbagai macam roti atau pastry lezat yang belum terjual hari ini dengan harga jauh lebih hemat.</div></details><details class="group bg-surface-container-low rounded-xl border border-surface-variant/20 overflow-hidden"><summary class="flex items-center justify-between p-4 cursor-pointer list-none font-medium text-on-background"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">touch_app</span>Bagaimana cara order?</span><span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-4 pt-0 text-body-md text-on-surface-variant">Pilih paket yang kamu inginkan, lakukan pembayaran, dan ambil pesananmu di toko pada waktu yang telah ditentukan.</div></details><details class="group bg-surface-container-low rounded-xl border border-surface-variant/20 overflow-hidden"><summary class="flex items-center justify-between p-4 cursor-pointer list-none font-medium text-on-background"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">undo</span>Bagaimana cara refund?</span><span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-4 pt-0 text-body-md text-on-surface-variant">Refund dapat diajukan jika produk yang diterima tidak layak konsumsi atau toko tutup saat waktu pengambilan.</div></details></div></section></div>
+</main>
+<!-- Sticky Footer CTA (Mobile) -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest p-container-padding shadow-[0_-8px_20px_0_rgba(1,45,29,0.08)] z-50 border-t border-surface-variant/20 md:hidden">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface-variant">Total</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">Rp25.000</span>
+</div>
+<button class="bg-primary text-on-primary font-body-lg text-body-lg font-semibold px-6 py-3 rounded-full flex-1 h-12 flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-md hover:bg-primary-container hover:text-on-primary-container">
+                Beli Sekarang
+                <span class="material-symbols-outlined" style="font-size: 20px;">shopping_cart_checkout</span>
+</button>
+</div>
+</div>
+<!-- Desktop CTA (Hidden on Mobile) -->
+<div class="hidden md:block max-w-3xl mx-auto px-container-padding pb-xl">
+<button class="w-full bg-primary text-on-primary font-headline-sm text-headline-sm px-6 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md">
+            Beli Sekarang - Rp25.000
+            <span class="material-symbols-outlined">shopping_cart_checkout</span>
+</button>
+</div>
+
+
+</body></html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Order Detail - Too Good To Be Waste</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#274e3d",
+                        "inverse-on-surface": "#f0f1ee",
+                        "outline-variant": "#c1c8c2",
+                        "on-tertiary-fixed-variant": "#4c463e",
+                        "on-tertiary-fixed": "#1f1b14",
+                        "secondary": "#4c6452",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeeb",
+                        "surface-tint": "#3f6653",
+                        "surface-dim": "#dadad7",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1a1c1a",
+                        "secondary-fixed": "#cee9d3",
+                        "surface-bright": "#f9faf6",
+                        "on-secondary-container": "#506856",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#c1ecd4",
+                        "surface-container-highest": "#e2e3e0",
+                        "tertiary": "#2a251e",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ebe1d6",
+                        "primary-container": "#1b4332",
+                        "outline": "#717973",
+                        "surface": "#f9faf6",
+                        "secondary-container": "#cce6d0",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "background": "#f9faf6",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#cec5bb",
+                        "on-primary-fixed": "#002114",
+                        "on-background": "#1a1c1a",
+                        "on-secondary-fixed-variant": "#354c3b",
+                        "on-primary-container": "#86af99",
+                        "primary": "#012d1d",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#a5d0b9",
+                        "inverse-surface": "#2f312f",
+                        "tertiary-container": "#403b33",
+                        "primary-fixed-dim": "#a5d0b9",
+                        "secondary-fixed-dim": "#b3cdb7",
+                        "on-surface-variant": "#414844",
+                        "surface-variant": "#e2e3e0",
+                        "on-tertiary-container": "#ada59b",
+                        "surface-container-high": "#e8e8e5",
+                        "on-secondary-fixed": "#092012",
+                        "surface-container-low": "#f3f4f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "lg": "24px",
+                        "container-padding": "16px",
+                        "xs": "8px",
+                        "xl": "32px",
+                        "gutter": "12px",
+                        "base": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .bottom-sheet {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bottom-sheet.open {
+            transform: translateY(0);
+        }
+        .overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen relative pb-32">
+<!-- Top App Bar (Modified for transactional sub-page) -->
+<header class="bg-surface flex justify-between items-center px-container-padding h-14 w-full sticky top-0 z-50">
+<button aria-label="Go back" class="text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-transform p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Detail Pesanan</h1>
+<a href="#" class="text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-transform p-2 rounded-full flex items-center justify-center" aria-label="Profile">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</a> <!-- Spacer for centering -->
+</header>
+<main class="px-container-padding py-md max-w-2xl mx-auto space-y-lg">
+<!-- Product Summary Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(1,45,29,0.04)] overflow-hidden flex flex-col md:flex-row border border-surface-container-low">
+<div class="w-full md:w-1/3 h-48 md:h-auto relative">
+<img alt="Mystery Bag - Pastry Mix" class="w-full h-full object-cover" data-alt="Close up high-quality food photography of an assorted pastry mix in a brown paper bag, rustic lighting, soft shadows, warm tones, highlighting texture and freshness, elegant composition, high definition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgVYhVLw7ap5h908BO0j5YnCieHm7wj94TqELyULwFXvBRMP8dsEGJ7L-BJOU_uyoHv2r8pLgTa_H7WZtObK-owEhV5RNoI2XRGvVORqfAxc2EkGzlV2XeWHW2GwGzNyUQO9XaTmqqkBYIyzDooDR-YBmlbE_fBxzYKJquKfQrxZRiRTWUgQYOG-4fafxnghTUpS0QD9_uSuAyX8l_t5SXcMAP4X7BlGG4qPc-DycSCoU2Tl7wZjfi6g">
+<div class="absolute top-sm left-sm bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md px-3 py-1 rounded-full shadow-sm">
+                    Mystery Bag
+                </div>
+</div>
+<div class="p-md flex flex-col justify-between w-full">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Mystery Bag - Pastry Mix</h2>
+<div class="flex items-center space-x-2 text-on-surface-variant mb-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<span class="font-body-md text-body-md">Artisan Bakery</span>
+</div>
+<div class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-yellow-500" style="font-variation-settings: 'FILL' 1; font-size: 18px;">star</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">4.8</span>
+</div>
+</div>
+<div class="mt-md flex justify-between items-end border-t border-surface-container pt-xs">
+<span class="font-body-md text-body-md text-on-surface-variant">Order ID: #TGTBW-8921</span>
+<span class="font-headline-sm text-headline-sm text-primary">Rp 45.000</span>
+</div>
+</div>
+</section>
+<!-- Order Status Flow -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(1,45,29,0.04)] p-md border border-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">Status Pesanan</h3>
+<div class="relative pl-6 space-y-lg border-l-2 border-surface-variant ml-2">
+<div class="relative">
+<div class="absolute -left-[35px] top-0 w-4 h-4 rounded-full bg-primary flex items-center justify-center ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-on-primary text-[10px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Pesanan Dibuat</h4>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">10:30 AM, Hari Ini</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[35px] top-0 w-4 h-4 rounded-full bg-primary flex items-center justify-center ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-on-primary text-[10px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Pembayaran Berhasil</h4>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">10:32 AM, Hari Ini</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-[35px] top-0 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-primary ring-4 ring-primary/20 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-bold text-primary">Siap Diambil</h4>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Harap ambil sebelum 18:00 PM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Pickup Information Card -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(1,45,29,0.04)] overflow-hidden border border-surface-container-low">
+<div class="p-md border-b border-surface-container">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Informasi Penjemputan</h3>
+</div>
+<div class="p-md">
+<div class="flex items-start space-x-sm mb-md">
+<span class="material-symbols-outlined text-on-surface-variant mt-1" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Artisan Bakery</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Jl. Senopati No. 12, Jakarta Selatan</p>
+</div>
+</div>
+<!-- Map Preview -->
+<div class="w-full h-32 bg-surface-container rounded-lg overflow-hidden relative mb-md">
+<img alt="Map Location" class="w-full h-full object-cover opacity-80" data-alt="A clean, minimalist vector map illustration showing a street location in South Jakarta. Soft muted greens and beige tones, focusing on a specific pin marker. Professional UI asset style." data-location="Jakarta" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYwj63tI7m8T6_PZqcGCUogijgWSTXxAQ4bIcLmPur1Cy1GA13T7DPudHZKig_Z4ihRVZZBIMzLnIauFLc6ccXoitryNtFovE-2wFDNyzmz8sRyo0fIZH2dSk3RrXGmq9pSAn4mLQv_mpvEz_s7W8jiCxhNlkrnDjIjOKdgjVkLIyduxLDJ07Gluk1nIyfjOowD9JlN1uBWXavfl0m-lsj5KaRxsvxfykFSaH0F3s_4yk2-_VFFA_KnyFKqAApe4hw6-U">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-primary text-4xl drop-shadow-md" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center space-x-2 py-3 bg-secondary-container text-on-secondary-container font-body-md text-body-md font-semibold rounded-full hover:bg-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">directions</span>
+<span class="">Dapatkan Arah</span>
+</button>
+</div>
+</section>
+<!-- Refund Section Trigger -->
+<div class="pt-lg flex justify-center">
+<button class="text-error font-body-md text-body-md font-medium underline underline-offset-4 hover:text-on-error-container transition-colors" id="openRefundBtn">
+                 Ada masalah? Ajukan Refund
+             </button>
+</div>
+</main>
+<!-- Overlay -->
+<div class="overlay fixed inset-0 bg-on-surface/40 z-40 backdrop-blur-sm" id="overlay"></div>
+<!-- Refund Bottom Sheet -->
+<div class="bottom-sheet fixed bottom-0 left-0 right-0 bg-surface-container-lowest rounded-t-[24px] z-50 shadow-2xl max-w-2xl mx-auto md:max-w-md md:left-auto md:right-4 md:bottom-4 md:rounded-[24px] md:transform-none md:opacity-0 md:pointer-events-none md:transition-opacity" id="refundSheet">
+<!-- Handle for mobile -->
+<div class="md:hidden w-full flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="sheetHandle">
+<div class="w-12 h-1.5 bg-surface-variant rounded-full"></div>
+</div>
+<div class="p-lg">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Ajukan Refund</h2>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-container-low" id="closeRefundBtn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Silakan lengkapi informasi di bawah ini untuk proses pengembalian dana.</p>
+<form class="space-y-md">
+<!-- Upload Photo -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2">Upload Foto Produk</label>
+<div class="border border-dashed border-outline-variant rounded-lg p-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-surface-container-low transition-colors bg-surface">
+<span class="material-symbols-outlined text-outline text-3xl mb-2" style="font-variation-settings: 'FILL' 0;">add_a_photo</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Tap untuk upload foto</p>
+<p class="font-label-md text-label-md text-outline mt-1">Max 5MB (JPG/PNG)</p>
+</div>
+</div>
+<!-- Reason Textarea -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="refundReason">Alasan Refund</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="refundReason" placeholder="Jelaskan alasan pengajuan refund Anda secara detail..." rows="4"></textarea>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-4 bg-primary text-on-primary font-body-lg text-body-lg font-semibold rounded-full hover:bg-on-primary-fixed-variant transition-colors shadow-md mt-lg" type="button">
+                    Kirim Pengajuan
+                </button>
+</form>
+</div>
+</div>
+<script>
+        const openBtn = document.getElementById('openRefundBtn');
+        const closeBtn = document.getElementById('closeRefundBtn');
+        const sheet = document.getElementById('refundSheet');
+        const overlay = document.getElementById('overlay');
+
+        function openSheet() {
+            sheet.classList.add('open');
+            overlay.classList.add('open');
+            // For desktop variant handling
+            if(window.innerWidth >= 768) {
+                sheet.style.opacity = '1';
+                sheet.style.pointerEvents = 'auto';
+            }
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeSheet() {
+            sheet.classList.remove('open');
+            overlay.classList.remove('open');
+            if(window.innerWidth >= 768) {
+                sheet.style.opacity = '0';
+                sheet.style.pointerEvents = 'none';
+            }
+            document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', openSheet);
+        closeBtn.addEventListener('click', closeSheet);
+        overlay.addEventListener('click', closeSheet);
+
+        // Simple touch swipe down to close for mobile
+        let touchStartY = 0;
+        const handle = document.getElementById('sheetHandle');
+        
+        if(handle) {
+            handle.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            }, {passive: true});
+
+            handle.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                if (touchY > touchStartY + 50) { // threshold
+                    closeSheet();
+                }
+            }, {passive: true});
+        }
+    </script>
+
+
+<nav class="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-container px-container-padding py-3 flex justify-between items-center z-50">
+    <a href="#" class="flex flex-col items-center space-y-1 text-on-surface-variant">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+        <span class="text-[10px] font-medium">Beranda</span>
+    </a>
+    <a href="#" class="flex flex-col items-center space-y-1 text-on-surface-variant">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+        <span class="text-[10px] font-medium">Jelajahi</span>
+    </a>
+    <a href="#" class="flex flex-col items-center space-y-1 text-on-surface-variant">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">map</span>
+        <span class="text-[10px] font-medium">Peta</span>
+    </a>
+    <a href="#" class="flex flex-col items-center space-y-1 text-primary">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+        <span class="text-[10px] font-bold">Pesanan</span>
+    </a>
+    <a href="#" class="flex flex-col items-center space-y-1 text-on-surface-variant">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+        <span class="text-[10px] font-medium">Profil</span>
+    </a>
+</nav>
+
+</body></html>

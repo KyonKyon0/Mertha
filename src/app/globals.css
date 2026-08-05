@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-mertha-primary: #012D1D;
+  --color-mertha-secondary: #E6EFEC;
+  --color-mertha-accent: #FDB022;
+  --color-mertha-success: #12B76A;
+  --color-mertha-error: #F04438;
+  --color-mertha-bg: #F2F4F7;
+  --color-mertha-text: #1D2939;
+  --color-mertha-subtext: #475467;
+  --color-mertha-muted: #98A2B3;
+  --color-mertha-border: #E4E7EC;
+
+  /* Stitch Design Tokens */
+  --color-surface: #fdf9ee;
+  --color-on-surface: #1c1c15;
+  --color-primary-container: #386641;
+  --color-on-primary-container: #afe2b3;
+  --color-primary: #204e2b;
+  --color-on-primary: #ffffff;
+  --color-surface-container-highest: #e6e2d8;
+  --color-surface-variant: #e6e2d8;
+  --color-on-surface-variant: #414941;
+  --color-surface-container-lowest: #ffffff;
+  --color-outline-variant: #c1c9be;
+  --color-primary-fixed: #bcefc0;
+  --color-primary-fixed-dim: #a0d3a5;
+  --color-secondary-container: #bcebcb;
+  --color-tertiary-fixed: #ffdbc9;
+  --color-tertiary-container: #964500;
+  --color-on-tertiary: #ffffff;
+  --color-surface-container-low: #f7f3e8;
+  --color-surface-container: #f2eee3;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-mertha-bg);
+    color: var(--color-mertha-text);
+  }
+}

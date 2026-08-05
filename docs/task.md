@@ -1,0 +1,11 @@
+- [x] Phase 1: Workspace Audit
+- [x] Phase 2: Retrieve and Audit Stitch Screens
+- [x] Phase 6: Supabase Audit and Schema (Applied remote migrations)
+- [x] Mandatory Local Starter Admin (Seeded Admin account)
+- [/] Phase 4 & 5: Architecture, Dependencies & Design System
+- [ ] Phase 7: Authentication (Setup Supabase SSR + Login/Register)
+- [ ] Phase 8: Feature Implementation (Index, Jelajahi, Detail Produk, Maps, Checkout, Pesanan, Profil)
+- [ ] Phase 9: Checkout and Order Safety
+- [ ] Phase 10: Maps
+- [ ] Phase 11: Quality Checks (Lint, Typecheck, Build, Puppeteer Test)
+- [ ] Phase 12: Vercel Readiness

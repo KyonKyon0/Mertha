@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mertha - Selamatkan Makanan Layak</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- React and Babel for Client Component -->
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#22502d",
+                      "secondary-container": "#bcebcb",
+                      "on-tertiary-container": "#ffcaad",
+                      "secondary": "#3d674e",
+                      "surface": "#fdf9ee",
+                      "tertiary": "#723200",
+                      "tertiary-container": "#964500",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed": "#321200",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#313129",
+                      "surface-tint": "#3a6843",
+                      "on-surface": "#1c1c15",
+                      "on-primary-container": "#afe2b3",
+                      "tertiary-fixed": "#ffdbc9",
+                      "on-secondary-fixed-variant": "#254f38",
+                      "surface-container-high": "#ece8dd",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-background": "#1c1c15",
+                      "secondary-fixed-dim": "#a3d1b3",
+                      "background": "#fdf9ee",
+                      "surface-container": "#f2eee3",
+                      "surface-bright": "#fdf9ee",
+                      "outline-variant": "#c1c9be",
+                      "on-surface-variant": "#414941",
+                      "inverse-primary": "#a0d3a5",
+                      "surface-variant": "#e6e2d8",
+                      "error": "#ba1a1a",
+                      "primary": "#204e2b",
+                      "inverse-on-surface": "#f4f1e6",
+                      "on-tertiary-fixed-variant": "#753400",
+                      "primary-fixed": "#bcefc0",
+                      "on-secondary-container": "#416b52",
+                      "surface-container-highest": "#e6e2d8",
+                      "primary-fixed-dim": "#a0d3a5",
+                      "surface-container-low": "#f7f3e8",
+                      "tertiary-fixed-dim": "#ffb68c",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#00210a",
+                      "primary-container": "#386641",
+                      "surface-dim": "#dddacf",
+                      "on-secondary-fixed": "#002111",
+                      "outline": "#727970",
+                      "secondary-fixed": "#bfedce"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "xl": "32px",
+                      "xs": "4px",
+                      "gutter": "16px",
+                      "container-margin": "20px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "8px",
+                      "xxl": "48px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "display": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdf9ee; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        /* Hide scrollbar for horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { min-height: max(884px, 100dvh); }
+        @media (prefers-reduced-motion: reduce) {
+            .transition-transform {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function App() {
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    const slides = [
+        {
+            title: "Makanan Baik Tidak Seharusnya Terbuang",
+            desc: "Selamatkan makanan layak dengan harga lebih hemat.",
+            bg: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCRHiilUVxmxOT7TgQ9mDKcefZPLCHOdFoUay8J3Pga9DKBzCOsJxBlmCx4dPm1U_78ZG2J_aRV2DGuvE4AGk-qrBCDQqYMkF0BNyOOJm7vy4jwoRM_0nBEBGPUsB3GNt_bPqJWOesMO8G5Chtp8eactEBOiidJs7PXZzbr_6pA0oTtvK5NIxhZ-nWb4_Y_h1HfFx-dbvIMcmjuuAWjLBv1oV64JLmo6j8vXiv09xUQTAlZHd85IDjmrA')"
+        },
+        {
+            title: "Hemat Lebih Banyak Hari Ini",
+            desc: "Temukan promo makanan dari toko di dekatmu.",
+            bg: "url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800')"
+        },
+        {
+            title: "Baik Untukmu, Baik Untuk Bumi",
+            desc: "Setiap pesanan membantu mengurangi sampah pangan.",
+            bg: "url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&q=80&w=800')"
+        }
+    ];
+
+    useEffect(() => {
+        let interval;
+        if (isPlaying) {
+            interval = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % slides.length);
+            }, 5000);
+        }
+        return () => clearInterval(interval);
+    }, [isPlaying, slides.length]);
+
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+        setIsPlaying(false);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+        if (isLeftSwipe) {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }
+        if (isRightSwipe) {
+            setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+        }
+    };
+
+    const togglePlay = () => setIsPlaying(!isPlaying);
+
+    return (
+        <div className="bg-surface text-on-surface pb-[80px]">
+            {/* TopAppBar */}
+            <header className="bg-surface shadow-sm docked full-width top-0 sticky z-50">
+                <div className="flex justify-between items-center w-full px-container-margin py-md">
+                    <div className="flex items-center gap-1">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSdelZDCENNelBLTzKUKWktaJousE6rYvf4OOuguOYynlSADBBDXnDUiuOYv6hvhZxa6kEVSZG9w8Q-gxUjWtpDI0BqIveRF0ooCiL3l2g-aLjHMYVd7cnmJ3rQbbdiyJOEUZqPyXRDYkqLuQAYYPZ8TDDH7RAfvZVHytgW8sKtKmn-_z5i2DJaF58H19-76I6wmM1r1xP_R-MLOkW7RCODX48Tda7BmjrOuxc8yTHvWAQaKfMuwz2QOU3Ak4_qtkFP38" alt="Mertha" className="h-8 object-contain" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <a href="#" className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors">
+                            <span className="material-symbols-outlined text-[20px]">person</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <main className="flex flex-col gap-xl">
+                {/* Hero Section & Search Overlap */}
+                <section className="relative">
+                    {/* Carousel Container */}
+                    <div 
+                        className="w-full h-[320px] bg-surface-container-highest relative overflow-hidden"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                    >
+                        {/* Slides */}
+                        <div 
+                            className="flex w-full h-full transition-transform duration-500 ease-out"
+                            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                        >
+                            {slides.map((slide, index) => (
+                                <div 
+                                    key={index}
+                                    className="w-full h-full shrink-0 relative bg-cover bg-center"
+                                    style={{ backgroundImage: slide.bg }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                                    <div className="absolute bottom-16 left-0 right-0 px-container-margin">
+                                        <h1 className="text-headline-lg-mobile font-headline-lg-mobile text-on-primary mb-2">{slide.title}</h1>
+                                        <p className="text-body-md font-body-md text-surface-variant">{slide.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Controls */}
+                        <div className="absolute bottom-6 left-0 right-0 flex px-container-margin items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={togglePlay}
+                                    aria-label={isPlaying ? "Pause carousel" : "Play carousel"} 
+                                    className="w-11 h-11 rounded-full bg-surface/30 backdrop-blur-sm flex items-center justify-center text-on-primary hover:bg-surface/40 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-[24px]">
+                                        {isPlaying ? 'pause' : 'play_arrow'}
+                                    </span>
+                                </button>
+                                <div className="flex gap-1.5 ml-2">
+                                    {slides.map((_, index) => (
+                                        <span 
+                                            key={index}
+                                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                                                currentSlide === index ? 'w-6 bg-primary-fixed' : 'w-1.5 bg-surface/50'
+                                            }`}
+                                        ></span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Search Card Overlapping */}
+                    <div className="px-container-margin -mt-6 relative z-10">
+                        <div className="bg-surface-container-lowest rounded-xl shadow-lg p-md border border-outline-variant/30 flex flex-col gap-md">
+                            <div className="relative">
+                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                                <input className="w-full h-12 pl-10 pr-4 rounded-lg bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md outline-none" placeholder="Cari makanan atau toko" type="text" />
+                            </div>
+                            <div className="flex gap-sm">
+                                <button className="flex-1 bg-primary text-on-primary h-12 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 shadow-sm hover:bg-primary-container transition-colors">
+                                    Cari di Sekitarku
+                                </button>
+                                <button aria-label="Gunakan Lokasiku" className="w-12 h-12 rounded-lg border border-primary text-primary flex justify-center items-center hover:bg-primary-fixed-dim transition-colors">
+                                    <span className="material-symbols-outlined">my_location</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Categories */}
+                <section className="px-container-margin">
+                    <h2 className="text-headline-md font-headline-md mb-md">Kategori</h2>
+                    <div className="grid grid-cols-3 gap-sm">
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">near_me</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Terdekat</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">redeem</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Mystery Bag</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">nutrition</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Buah</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">grass</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Sayur</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">bakery_dining</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Bakery</span>
+                        </div>
+                        <div className="bg-surface-container-lowest rounded-lg p-sm shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 aspect-square">
+                            <div className="w-10 h-10 rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
+                                <span className="material-symbols-outlined">restaurant</span>
+                            </div>
+                            <span className="text-label-sm font-label-sm text-center">Siap Saji</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Products */}
+                <section className="pl-container-margin">
+                    <h2 className="text-headline-md font-headline-md mb-md pr-container-margin">Pilihan Hemat di Dekatmu</h2>
+                    <div className="flex gap-md overflow-x-auto no-scrollbar pb-lg pr-container-margin snap-x">
+                        <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
+                            <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqti1w08hQ8WDR091RfhfEoToWg7cjNBuCCfSJBg67b1JriVOHO5aZKT3RPyaFNhkGtnFsoUQFlgLptFcMu_l92gwrQOiGzjRtnKMHnZ_fJ66QXJJAGSeHh8r91vEdTd1H08AP29GR_DOY1dHXiCFpaS2X5tPM0XcHwarC4GfSGI4rY2ipstTozRh2ib_7pnB7q2IyRJ442l73IM7FAf3zHkXiTS6S5dRRlYLtNsMuZ-2DzHrwPhx76g')"}}>
+                                <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
+                                    TERSEDIA
+                                </div>
+                                <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[14px]">schedule</span> 19:00 - 21:00
+                                </div>
+                            </div>
+                            <div className="p-md flex flex-col flex-1 gap-2">
+                                <div>
+                                    <p className="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-[14px]">storefront</span> Bakery Makmur
+                                    </p>
+                                    <h3 className="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Mystery Bag Bakery</h3>
+                                </div>
+                                <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
+                                    <div>
+                                        <p className="text-on-surface-variant text-[12px] line-through">Rp 50.000</p>
+                                        <p className="text-body-lg font-body-lg font-bold text-primary">Rp 20.000</p>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 3</span>
+                                        <span className="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span className="material-symbols-outlined text-[14px] mr-1">location_on</span>1.2 km</span>
+                                    </div>
+                                </div>
+                                <button className="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
+                            <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBGdIkjrTHPnPQZQwJ70Y532VA9Um01vBp85KKE7nti6t57FAiGuQ8cf4Icixr5C1ASVnUhYLgdTZ1ardxe8R7MoW04o1fJoOSx9W8NIVBIA-xYcZ_pnA7tr90BdVWlwW6576epZDxh3wFa6aTEKuTFLfCadb1WcKRUohSkJbHXZY8Z2loizwFvLaAHLwi50RdaTGTvqfBEabBTQAXevV0bFytWBeo2P-H2XeURnfsYh6LdsWPEZrdDQw')"}}>
+                                <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
+                                    TERSEDIA
+                                </div>
+                                <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-label-sm flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[14px]">schedule</span> 18:00 - 20:00
+                                </div>
+                            </div>
+                            <div className="p-md flex flex-col flex-1 gap-2">
+                                <div>
+                                    <p className="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-[14px]">storefront</span> Sayur Segar Jaya
+                                    </p>
+                                    <h3 className="text-body-lg font-body-lg font-semibold mt-1 line-clamp-1">Paket Sayur Mix</h3>
+                                </div>
+                                <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
+                                    <div>
+                                        <p className="text-on-surface-variant text-[12px] line-through">Rp 45.000</p>
+                                        <p className="text-body-lg font-body-lg font-bold text-primary">Rp 15.000</p>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-label-sm font-label-sm text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 5</span>
+                                        <span className="text-label-sm font-label-sm text-on-surface-variant flex items-center"><span className="material-symbols-outlined text-[14px] mr-1">location_on</span>2.5 km</span>
+                                    </div>
+                                </div>
+                                <button className="w-full mt-2 py-2 border border-primary text-primary rounded-lg font-label-md text-label-md hover:bg-primary/5 transition-colors">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Impact Section */}
+                <section className="px-container-margin py-xl bg-surface-container-low">
+                    <h2 className="text-headline-md font-headline-md mb-lg text-center">Belanja Hemat, Dampak Baik</h2>
+                    <div className="flex flex-col gap-sm">
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">shopping_bag</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-primary">Makanan terselamatkan</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">2.540 kg bulan ini</p>
+                            </div>
+                        </div>
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary-container shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">savings</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-tertiary-container">Pengeluaran hemat</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">Rp 150+ Juta oleh pengguna</p>
+                            </div>
+                        </div>
+                        <div className="bg-surface-container-lowest p-md rounded-xl flex items-center gap-md shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+                                <span className="material-symbols-outlined text-[24px]">recycling</span>
+                            </div>
+                            <div>
+                                <h4 className="text-body-lg font-body-lg font-semibold text-primary">Sampah pangan berkurang</h4>
+                                <p className="text-body-md font-body-md text-on-surface-variant">Berkontribusi ke bumi bersih</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* How it Works */}
+                <section className="px-container-margin pb-xl">
+                    <h2 className="text-headline-md font-headline-md mb-lg text-center">Cara Kerja</h2>
+                    <div className="flex flex-col gap-lg relative">
+                        <div className="absolute left-6 top-8 bottom-8 w-[2px] bg-outline-variant/30"></div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">search</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">1. Temukan Makanan</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Cari mystery bag atau makanan diskon dari toko terdekat.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">shopping_cart_checkout</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">2. Pesan &amp; Bayar</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Lakukan pemesanan langsung melalui aplikasi dengan aman.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-md relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                                <span className="material-symbols-outlined">directions_walk</span>
+                            </div>
+                            <div className="pt-2">
+                                <h3 className="text-body-lg font-body-lg font-semibold">3. Ambil Pesanan</h3>
+                                <p className="text-body-md font-body-md text-on-surface-variant mt-1">Kunjungi toko pada waktu yang ditentukan untuk mengambil pesananmu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            {/* Footer */}
+            <footer className="bg-surface-container dark:bg-surface-container-highest mt-xxl full-width p-xl pb-32">
+                <div className="flex flex-col items-center text-center gap-lg w-full max-w-7xl mx-auto">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYEV7KY68p7t3kHaL2_0cO1RMwzQ7GHk8FdUJT6l-TUbuknB6KvKW2vgJIgaN-ssA_BLTJA_e9oDX-1szplMGBlEGQTUJqvqXuDNnHSGzSil_ivfGL5q32OTHjO9K-XggZzS60muRt4cdaNkF2J33klgZjM7XjU6RJ90-kLX0PjO6eQ4I2_Kj8Vvv5F80XyTD-5zN2uPJI0OR7Rk0WdWm-dI9mB7fH-mH1U0jGsPYIdNxxr7PJskRLMqcJz708SUks69s" alt="Mertha" className="h-10 object-contain mb-2" />
+                    <p className="text-body-md font-body-md text-on-surface-variant max-w-xs">Menyelamatkan makanan, melestarikan bumi.</p>
+                    <div className="flex gap-md flex-wrap justify-center">
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Tentang</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Bantuan</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Merchant</a>
+                        <a className="text-label-sm font-label-sm text-on-surface-variant hover:underline hover:text-primary transition-opacity" href="#">Privasi</a>
+                    </div>
+                    <div className="text-label-sm font-label-sm text-on-surface-variant mt-4">
+                        © 2026 Mertha
+                    </div>
+                </div>
+            </footer>
+
+            {/* BottomNavBar */}
+            <nav className="bg-surface dark:bg-surface-container-lowest shadow-lg border-t border-outline-variant docked full-width bottom-0 fixed z-50 rounded-t-xl w-full h-16 flex justify-around items-center px-2 pb-safe md:hidden">
+                <button className="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-secondary-container/30 rounded-full px-4 py-1 hover:text-primary transition-all scale-110 duration-200">
+                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>home</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Beranda</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">explore</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Jelajahi</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">map</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Peta</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">receipt_long</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Pesanan</span>
+                </button>
+                <button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">person</span>
+                    <span className="text-[10px] font-label-sm mt-0.5">Profil</span>
+                </button>
+            </nav>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body></html>

@@ -1,0 +1,25 @@
+import { Plus_Jakarta_Sans } from "next/font/google";
+import "./globals.css";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "Mertha | Too Good To Be Waste",
+  description: "Selamatkan Makanan, Selamatkan Bumi",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html
+      lang="id"
+      className={`${plusJakartaSans.variable} font-sans h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col mx-auto max-w-md bg-white shadow-xl relative overflow-x-hidden">
+        {children}
+      </body>
+    </html>
+  );
+}

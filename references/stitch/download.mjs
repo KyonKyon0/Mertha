@@ -1,0 +1,87 @@
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+
+const screens = [
+  { id: '3b892b47dc634d9f905b469bd30bd486', title: 'Landing Page', url: 'https://lh3.googleusercontent.com/aida/AP1WRLtsNwWPjxG8cNhVW8TO4jdI1_XkLI23t0a8rluJ_PBt0rqRrj574oGFmedcc1O8q3hqaTixqL5JQoQA1kKawKBm4kMS4jjXdpTxvmWGqm9xLFL06EuL-eriTkGi2OBkC-YLUl-Hg264V0IUjD085BthvkgC30MtNUDuknb4Ce0r4Bd4XqqG86CS5fFTWJ1-Ro6KrGW5mLPbY3ak1rOqpFqeUX--KyxN5vN0RKSd74Cbf6mHwEdmDSruIC-C' },
+  { id: '3d060edc14694a33a824a44c95ca3fa5', title: 'Beranda', url: 'https://lh3.googleusercontent.com/aida/AP1WRLvkYdvAmnuKR9FOJRaEczvHppYpiAzuX83vuEaSVtVMGgh-jKQQhDZ1PJNxpL-S56Qjs14frILFi_ZIgRG28e7qZAj7h84HwoRIk3HUdGRvh5k5M8Tki_7lY_qHSGi4vUo4OBIqcWYtw5LSAFTKsmIqHaZy5gaItPASNjUarTFXAv8DzQNxdTD1VlbHkUZJukwrn8JOqH3qVv-DbTdrz6C8tmIUTuxYV9a26dBYXHr-fidvVbftGFf2FnaV' },
+  { id: '48687593ecae45b6a72c6512f5d46d1b', title: 'Detail Produk', url: 'https://lh3.googleusercontent.com/aida/AP1WRLseYj6NDoUua53XOMVxdTO3pDbURx86zl1luP8Fgs5NEjU2wLIRN7SJ2OKNA4NpdKwWfwJ5EDlreO83vtaCJ3WwQmY5ADnQEgCem9a7Wb-LUrfiRFqyd6x4jCQKS06aX3uvnnKYrfglwcvjZXMJNiYHMXgqT1a8dKZyOKVAhQWVpdmUeMCD8GO1Uzn0WBlstE3ylD1Z6sFoARCESZlMWKSbhq8xsLiRUYJGvMMSGCJhOAgLL-TYm4zP7hg' },
+  { id: '60fc9cd4a135466fa2dee5553042e1af', title: 'Jelajahi', url: 'https://lh3.googleusercontent.com/aida/AP1WRLsPX5pJFWwaWFiHEdP4KuYbQdiqecXlasnBP-1PgvGK7Ehpcv7XL8sj21WxlIzuu0GBAG0GE6_ZIwMoFVBDdrCGzcKbyHkXsUX_JYlUkACJqeNkGh8HeqRiNs7gMZpcwdR0V1W4Yl-CQfolXwWRqhqls2kfKkcdoe7Lwr4TxAAGH6LUpdFIrrJWB5NDeQjlIQwC2RrPIb9W-nJfC4K2-nOUKLVfSjGq8VSvtf7dYY-KQjUbPaGWGLz7KT_a' },
+  { id: 'a8df5f1e97784165b90528e7e8109076', title: 'Pesanan Berhasil', url: 'https://lh3.googleusercontent.com/aida/AP1WRLtm3qMcNdhjM61WGon_Fkm0xg1oGKJaUqfGEf95A-MpndH2cq2iLRUBvEPxVWN2Z9OJ4LPDYLZ4rq0naXHs-g0RPMIJd8S3vafQ1eZkRk3Dli6UphbiTIW0029DeEFQd4MBwSWCQ0_DKPOuHbrLY8j5ZXv27a3rENICgwgfJsoSYCXe36weAWRRrFf-QfEFgyVHzZ_RBphdiXLUfx-72ol8Y7ozxBhG5UTkC6OFAMvc8punFTahtpUCwMdm' },
+  { id: 'c0c2e5081faa467e92f60817718edb95', title: 'Checkout', url: null, error: 'Request contains an invalid argument.' },
+  { id: '661ec171f7ff4013809008136da21d60', title: 'Profil', url: 'https://lh3.googleusercontent.com/aida/AP1WRLsYMpah4X5bBGu8Qnes3av925bfYKZwrXn1hZ4W_omOziMIsu0b86BhodkyQtyt3j_yu4VQWqA2c1EWPawN2NvYdSk0M5Hrq1wmsp6UMPWebwaveTtgA-isv-OZcpXWAbUAisH52OL7plBZJgT6pWyp9zvlHFM4ko5L38xfg9XtE2qhHaL22NqLDtq1r18ycLZrxApEpC0eAoBXdXhIv5i8KQb--QmemkjFMbQ_Dg_iEVYBTep-PRmozpWM' },
+  { id: '48d888cc15ac476fab6b6bd720b6ebca', title: 'Detail Pesanan & Refund', url: 'https://lh3.googleusercontent.com/aida/AP1WRLtNhHZ-lolduC2kPTHkVw8l_h1z1jaCtbfX-Il-UEu38s7xRW-pU3fzHyou-_PZWSVWKSrBHTi77XjajR13PddWTOqfSP_vHqxoF1OFJ22TTRjpgP6ol6LLXS7UMqii3ZDROn7UCjzKRgm8LnJA78xGkg93rfMeTYwAaLOo5cFylKvNwzaugEjWVxIehmNEFi1uhvrlod5BjBJUes0BmHQid0gOBnJUZdjzmF5e3BQnk-38si6gjIblRMRp' }
+];
+
+const downloadFile = (url, dest) => {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      // Follow redirects
+      if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+        return downloadFile(response.headers.location, dest).then(resolve).catch(reject);
+      }
+      
+      if (response.statusCode !== 200) {
+        return reject(new Error(`Failed to get '${url}' (${response.statusCode})`));
+      }
+
+      const file = fs.createWriteStream(dest);
+      response.pipe(file);
+      
+      file.on('finish', () => {
+        file.close();
+        resolve();
+      });
+      
+      file.on('error', (err) => {
+        fs.unlink(dest, () => reject(err));
+      });
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+};
+
+async function main() {
+  const screenshotsDir = path.join(process.cwd(), 'references', 'stitch', 'screenshots');
+  if (!fs.existsSync(screenshotsDir)) {
+    fs.mkdirSync(screenshotsDir, { recursive: true });
+  }
+
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    screens: []
+  };
+
+  for (const screen of screens) {
+    const entry = {
+      id: screen.id,
+      title: screen.title,
+      screenshotUrl: screen.url,
+      localScreenshotPath: null,
+      error: screen.error || null
+    };
+
+    if (screen.url) {
+      const destPath = path.join(screenshotsDir, `${screen.id}.png`);
+      try {
+        await downloadFile(screen.url, destPath);
+        entry.localScreenshotPath = `references/stitch/screenshots/${screen.id}.png`;
+        console.log(`Downloaded ${screen.title}`);
+      } catch (err) {
+        console.error(`Failed to download ${screen.title}:`, err.message);
+        entry.error = err.message;
+      }
+    }
+    
+    manifest.screens.push(entry);
+  }
+
+  fs.writeFileSync(
+    path.join(process.cwd(), 'references', 'stitch', 'manifest.json'),
+    JSON.stringify(manifest, null, 2)
+  );
+  console.log('Created manifest.json');
+}
+
+main().catch(console.error);

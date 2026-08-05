@@ -1,0 +1,419 @@
+<!DOCTYPE html><html class="light" lang="id" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Too Good To Be Waste - Beranda</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config from Design System -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary-fixed-variant": "#4c463e",
+                "on-secondary-fixed-variant": "#354c3b",
+                "tertiary-container": "#403b33",
+                "surface-container": "#eeeeeb",
+                "surface-dim": "#dadad7",
+                "surface-variant": "#e2e3e0",
+                "on-tertiary-fixed": "#1f1b14",
+                "on-surface-variant": "#414844",
+                "on-primary-fixed-variant": "#274e3d",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-container": "#86af99",
+                "surface-container-high": "#e8e8e5",
+                "inverse-primary": "#a5d0b9",
+                "on-secondary": "#ffffff",
+                "error": "#ba1a1a",
+                "background": "#f9faf6",
+                "on-tertiary-container": "#ada59b",
+                "surface-container-low": "#f3f4f1",
+                "outline-variant": "#c1c8c2",
+                "on-error-container": "#93000a",
+                "error-container": "#ffdad6",
+                "on-secondary-container": "#506856",
+                "on-primary-fixed": "#002114",
+                "secondary-fixed": "#cee9d3",
+                "surface-tint": "#3f6653",
+                "on-secondary-fixed": "#092012",
+                "tertiary-fixed-dim": "#cec5bb",
+                "outline": "#717973",
+                "secondary": "#4c6452",
+                "inverse-on-surface": "#f0f1ee",
+                "surface": "#f9faf6",
+                "secondary-fixed-dim": "#b3cdb7",
+                "primary-fixed-dim": "#a5d0b9",
+                "surface-container-highest": "#e2e3e0",
+                "on-error": "#ffffff",
+                "surface-bright": "#f9faf6",
+                "primary": "#012d1d",
+                "tertiary-fixed": "#ebe1d6",
+                "primary-container": "#1b4332",
+                "on-surface": "#1a1c1a",
+                "primary-fixed": "#c1ecd4",
+                "inverse-surface": "#2f312f",
+                "on-background": "#1a1c1a",
+                "on-tertiary": "#ffffff",
+                "tertiary": "#2a251e",
+                "on-primary": "#ffffff",
+                "secondary-container": "#cce6d0"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xs": "8px",
+                "lg": "24px",
+                "gutter": "12px",
+                "container-padding": "16px",
+                "base": "4px",
+                "xl": "32px",
+                "md": "16px",
+                "sm": "12px"
+        },
+        "fontFamily": {
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-sm": [
+                        "Plus Jakarta Sans"
+                ],
+                "headline-md": [
+                        "Plus Jakarta Sans"
+                ],
+                "display-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Plus Jakarta Sans"
+                ],
+                "body-lg": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "label-md": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-sm": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        /* Hide scrollbar for horizontal scrolling sections but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md min-h-screen pb-24 font-sans antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar Shared Component -->
+<header class="bg-background/95 backdrop-blur-md flex justify-between items-center px-container-padding h-16 w-full sticky top-0 z-50">
+<button class="active:scale-95 transition-transform flex items-center justify-center w-10 h-10 hover:bg-surface-container rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1, 'wght' 300;">location_on</span>
+</button>
+<h1 class="font-headline-sm text-[18px] text-on-surface">Too Good To Be Waste</h1>
+<a href="#" class="active:scale-95 transition-transform flex items-center justify-center w-10 h-10 hover:bg-surface-container rounded-full text-on-surface-variant" aria-label="Profil Pengguna"><span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">account_circle</span></a>
+</header>
+<main class="w-full max-w-screen-md mx-auto relative pb-8">
+<!-- User Intent Header: Location Dropdown & Search Bar -->
+<section class="px-container-padding py-sm space-y-md relative z-40 bg-background">
+<div class="flex flex-col gap-0.5 cursor-pointer active:opacity-70 transition-opacity origin-left w-max">
+<span class="font-label-md text-[10px] text-on-surface-variant uppercase tracking-[0.1em]">Lokasi saat ini</span>
+<div class="flex items-center text-on-surface font-headline-sm text-[18px]">
+<span class="">Depok, Jawa Barat</span>
+<span class="material-symbols-outlined text-lg text-on-surface-variant ml-1" style="font-variation-settings: 'wght' 300;">expand_more</span>
+</div>
+</div>
+<div class="relative w-full group">
+<div class="absolute inset-y-0 left-0 pl-sm flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors" style="font-variation-settings: 'wght' 300;">search</span>
+</div>
+<input class="w-full bg-surface-container border border-surface-variant text-on-surface font-body-lg text-body-lg rounded-full pl-11 pr-md py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder-on-surface-variant transition-all shadow-sm" placeholder="Cari makanan atau toko..." type="text">
+</div>
+</section>
+<!-- Quick Categories Chips -->
+<section class="pl-container-padding pt-sm pb-md">
+<div class="flex overflow-x-auto gap-sm pb-1 pr-container-padding no-scrollbar">
+<!-- Active Chip -->
+<button class="flex-shrink-0 bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg flex items-center gap-1.5 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">near_me</span>
+                    Terdekat
+                </button>
+<button class="flex-shrink-0 bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors active:scale-95 border border-surface-variant">
+                    Mystery Bag
+                </button>
+<button class="flex-shrink-0 bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors active:scale-95 border border-surface-variant">
+                    Buah
+                </button>
+<button class="flex-shrink-0 bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors active:scale-95 border border-surface-variant">
+                    Sayur
+                </button>
+<button class="flex-shrink-0 bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors active:scale-95 border border-surface-variant">
+                    Bakery
+                </button>
+</div>
+</section>
+<!-- Featured Section 1: Terdekat dari Lokasimu -->
+<section class="mb-xl pl-container-padding">
+<div class="flex justify-between items-center mb-sm pr-container-padding">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Terdekat dari Lokasimu</h2>
+<a class="font-label-md text-[13px] text-primary hover:text-primary/80 transition-colors font-semibold" href="#">Lihat Semua</a>
+</div>
+<div class="flex overflow-x-auto gap-md pb-md pr-container-padding no-scrollbar snap-x">
+<!-- Card 1 -->
+<article class="flex-shrink-0 w-[260px] bg-surface rounded-lg shadow-sm border border-surface-variant overflow-hidden snap-center group hover:shadow-md transition-all cursor-pointer">
+<div class="relative h-40 w-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A high-quality, brightly lit photograph of freshly baked sourdough bread and croissants displayed on a rustic wooden table. The lighting is soft, natural, and inviting, creating a premium organic market aesthetic. The background is slightly blurred to emphasize the texture and golden crust of the bakery items." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO_b71l8WxU426b693HzbEwAyZhyDEJdFvAnFkHNbEN6v4hMHRxuiaoTI3_eJEGXxvLZbYMlB1vNZdMsFPiMs601Hn0s0HWWbP5hn_EIPTxqwu-tG2sfFBuF559pkMNKJNZmHr_3dmFK3OuiIIDW59cPzaaDKXvY-z4U0_hPMbV1MmA1r8v_zddzRqV2yQj2iCRNB7xdos3nl4nHlE3gPoLHLe9tq633s_IKwUTzQQldBTyujz-h203Q">
+<div class="absolute top-sm left-sm bg-error text-on-error font-label-md text-[11px] px-2 py-1 rounded-md shadow-sm">
+                            -50%
+                        </div>
+<div class="absolute bottom-sm right-sm bg-surface/90 backdrop-blur-md text-on-surface font-label-md text-[11px] px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'wght' 300;">directions_run</span>
+                            800m
+                        </div>
+</div>
+<div class="p-sm flex flex-col gap-1 h-[110px]">
+<h3 class="font-headline-sm text-[16px] leading-tight text-on-surface truncate">Artisan Bakery Depok</h3>
+<p class="font-body-md text-[13px] text-on-surface-variant line-clamp-1 mb-2">Roti Sourdough &amp; Croissant</p>
+<div class="flex items-center gap-2 mt-auto pt-1 whitespace-nowrap">
+<span class="font-headline-sm text-[18px] text-primary">Rp 60.000</span>
+<span class="font-body-md text-[13px] text-outline line-through decoration-outline/50">Rp 120.000</span>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="flex-shrink-0 w-[260px] bg-surface rounded-lg shadow-sm border border-surface-variant overflow-hidden snap-center group hover:shadow-md transition-all cursor-pointer">
+<div class="relative h-40 w-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A beautifully styled flat lay photograph of various organic vegetables including bell peppers, tomatoes, and leafy greens in a natural woven basket. The lighting is bright and crisp, highlighting the vibrant colors of the produce against a minimalist, clean white surface, conveying a fresh-first lifestyle." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOC_R_zuBvEoCZvr-hNqO9SeCgEXEwojUXmr9TqQaI0g4Bce-nQY3uL403qYWUvRA0wtgA-d9qms-cyGp3nbQfSfPtlE-laaahkADaRTMI2xBIm5A0g8BUVufBDpyb4gOvq4U4jzUsiYuQ6eth0vh_0pbDpmSHNh3xkEAmM2J8734z-5gzh8GJhY52mlqLndi51k8qKppcNf5Zpv4fzXviOm_YCYraCWHbTeWQJS9984HfgeBmjYqLgA">
+<div class="absolute top-sm left-sm bg-error text-on-error font-label-md text-[11px] px-2 py-1 rounded-md shadow-sm">
+                            -40%
+                        </div>
+<div class="absolute bottom-sm right-sm bg-surface/90 backdrop-blur-md text-on-surface font-label-md text-[11px] px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'wght' 300;">directions_run</span>
+                            1.2km
+                        </div>
+</div>
+<div class="p-sm flex flex-col gap-1 h-[110px]">
+<h3 class="font-headline-sm text-[16px] leading-tight text-on-surface truncate">Sayur Segar Market</h3>
+<p class="font-body-md text-[13px] text-on-surface-variant line-clamp-1 mb-2">Paket Sayur Sop &amp; Tumis</p>
+<div class="flex items-center gap-2 mt-auto pt-1 whitespace-nowrap">
+<span class="font-headline-sm text-[18px] text-primary">Rp 30.000</span>
+<span class="font-body-md text-[13px] text-outline line-through decoration-outline/50">Rp 50.000</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Featured Section 2: Mystery Bag Pilihan -->
+<section class="mb-xl px-container-padding">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Mystery Bag Pilihan</h2>
+<div class="flex flex-col gap-sm">
+<!-- List Item Card -->
+<div class="flex bg-surface rounded-lg shadow-sm border border-surface-variant p-2 gap-sm items-center hover:shadow-md transition-all cursor-pointer group">
+<div class="relative w-[100px] h-[100px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A highly stylized, minimalist photograph showing a premium, unmarked brown paper grocery bag resting on a clean kitchen counter next to a small potted plant. The natural sunlight creates soft, appealing shadows, emphasizing anticipation and eco-conscious shopping without revealing the contents of the bag." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkRsKK6MVyTbUGj_EZTV44qcaqq_KXqw5UZeeGqI1NpBGLIMWI5UjM2AJSqCUvsqovf0hyuoXGbk8hOYZZd5TZM5BDrK85TEs0pHBpeIx6ZxhXe_io-GKh5ARIyrvnR_0pFHNz-aQ-atdxVnIId6aiuIjyB8YgvEx3bF3hTOWhjJf__mpRq7O0Q4X1vErcutL6XQgsLVCpcmhE8eU4ZG3h4V9NUzF3nR8kw25CSlgWeTmrbOrVmtz2wA">
+<div class="absolute top-1.5 left-1.5 bg-secondary/90 backdrop-blur-sm text-on-secondary text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+MYSTERY BAG
+</div>
+</div>
+<div class="flex-grow min-w-0 py-1 pr-1 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-[15px] leading-tight text-on-surface truncate pr-2">Kopi Kenangan - Margonda</h3>
+<span class="flex items-center text-on-surface font-label-md text-[11px] gap-0.5 bg-surface-container px-1.5 py-0.5 rounded-md border border-surface-variant">
+<span class="material-symbols-outlined text-[12px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.8
+                            </span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant line-clamp-2 mb-2 leading-snug">Kejutan pastry dan roti manis yang belum terjual hari ini. Bernilai minimal Rp 80.000.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-baseline gap-2 whitespace-nowrap">
+<span class="font-headline-sm text-[16px] text-primary">Rp 35.000</span>
+<span class="font-body-md text-[11px] text-outline line-through decoration-outline/50">Rp 80.000</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-[12px] px-4 py-1.5 rounded-lg hover:bg-primary/90 active:scale-95 transition-all shadow-sm">
+                                Ambil
+                            </button>
+</div>
+</div>
+</div>
+<!-- List Item Card 2 -->
+<div class="flex bg-surface rounded-lg shadow-sm border border-surface-variant p-2 gap-sm items-center hover:shadow-md transition-all cursor-pointer group">
+<div class="relative w-[100px] h-[100px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A beautifully captured image of a rustic woven basket partially covered by a clean linen cloth, sitting on a sunlit table. The aesthetic is warm, natural, and premium, evoking a sense of mystery and organic freshness typical of a high-end farmers market rescue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAfeohTbKz7YLOD9D6KLJVG5J21zZYMSx369q5XkKMzvlXUw5qIJ6e-jSO7i63P7SjM34vx5mO5wHI-OOEIBRTGvjKfiidCLQXHSj7E5_p1zIinGHZhaIlqHgot79sjNXQYm7uKL-S4GbommAT3VtJx9OCAPw7MWjY4WCUHIayJviZ7gUFywH0O8CQesrztyr9xt-F8_79DfIfFB-NlNn_ySv2u-eF7ymcclAFvqoOXp_GLyTfk0GLtw">
+<div class="absolute top-1.5 left-1.5 bg-secondary/90 backdrop-blur-sm text-on-secondary text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+MYSTERY BAG
+</div>
+</div>
+<div class="flex-grow min-w-0 py-1 pr-1 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-[15px] leading-tight text-on-surface truncate pr-2">Sushi Tei - Margo City</h3>
+<span class="flex items-center text-on-surface font-label-md text-[11px] gap-0.5 bg-surface-container px-1.5 py-0.5 rounded-md border border-surface-variant">
+<span class="material-symbols-outlined text-[12px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.9
+                            </span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant line-clamp-2 mb-2 leading-snug">Aneka sushi roll berkualitas yang aman dikonsumsi. Bernilai minimal Rp 150.000.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-baseline gap-2 whitespace-nowrap">
+<span class="font-headline-sm text-[16px] text-primary">Rp 50.000</span>
+<span class="font-body-md text-[11px] text-outline line-through decoration-outline/50">Rp 150.000</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-[12px] px-4 py-1.5 rounded-lg hover:bg-primary/90 active:scale-95 transition-all shadow-sm">
+                                Ambil
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Section 3: Buah dan Sayur Grade B (Bento Grid Style) -->
+<section class="mb-lg px-container-padding">
+<div class="mb-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Buah dan Sayur Grade B</h2>
+<p class="font-body-md text-[13px] text-on-surface-variant mt-1">Bentuk tak sempurna, kualitas tetap baik dan kaya nutrisi.</p>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<!-- Grid Card 1 -->
+<div class="bg-surface rounded-lg shadow-sm border border-surface-variant overflow-hidden flex flex-col group hover:shadow-md transition-all cursor-pointer">
+<div class="relative h-36 w-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A close-up, macro photography shot of 'imperfect' organic apples with slight blemishes on their skin, arranged aesthetically on a soft cloth. The lighting is diffused and natural, highlighting that despite minor visual imperfections, the fruit looks exceptionally fresh, crisp, and delicious." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeSKxH0aHEdxFMdzoxZSBVkcEYQLsCmI26XVP8LJu6z1Y1Ov_MMyXX6yKXV-Qyf9h1w57Bg9Ff_pCvlwf5lbqkzyDRBZI_4SckOR6XD2MQ2Kn4TqTLYvPwtZIIi9WMyOyuvvJy_I-EpJFTHjzqfv_GT1IuqEeESu1POM0bkiS8g3NXMsHM0xQyeouRnShTp9UD33Z2GbQkO8dQ8qETQlo7MxF_FC1etyizhIgrKrcXYCTGIFAwim1g3A">
+<div class="absolute top-2 left-2 bg-surface/90 backdrop-blur-md text-on-surface font-label-md text-[10px] px-2 py-1 rounded-md shadow-sm border border-surface-variant/50">
+                            Grade B
+                        </div>
+</div>
+<div class="p-sm flex flex-col justify-between flex-grow">
+<div>
+<h3 class="font-headline-sm text-[14px] leading-snug text-on-surface mb-2 line-clamp-2">Apel Fuji (Bercak Sedikit) 1kg</h3>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div class="font-headline-sm text-[16px] text-primary whitespace-nowrap">Rp 15.000</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary flex items-center justify-center text-on-surface-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Grid Card 2 -->
+<div class="bg-surface rounded-lg shadow-sm border border-surface-variant overflow-hidden flex flex-col group hover:shadow-md transition-all cursor-pointer">
+<div class="relative h-36 w-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A beautifully composed flat lay of oddly shaped, twisted carrots and slightly curved cucumbers on a pristine marble surface. The vibrant orange and green colors pop under bright, even lighting, celebrating the unique shapes of organic produce in a high-end, eco-friendly lifestyle context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNWULVBP0WuIjf5h8e49ck7DvkUfCDu1zZbpmfu59SHAaGKIHXrr4Kk-eGUQKsIPAS1F3ur-D_1JADtUmD3ECPgZtU3D2moL_hL0ju8OXn4axU0-uTcwwPwthD2zMJhRe29UWTCuB3ehNMrvgN-WUTRS_50Skc3pl_KMv67F5MOQunJChtGyjaWEjh6fP1sQ54F03g4543sv14N8gR86pJbu_axoP22wkChtq-TYRPMZaX7zBQ6Gq1cw">
+<div class="absolute top-2 left-2 bg-surface/90 backdrop-blur-md text-on-surface font-label-md text-[10px] px-2 py-1 rounded-md shadow-sm border border-surface-variant/50">
+                            Grade B
+                        </div>
+</div>
+<div class="p-sm flex flex-col justify-between flex-grow">
+<div>
+<h3 class="font-headline-sm text-[14px] leading-snug text-on-surface mb-2 line-clamp-2">Wortel &amp; Timun Mix 1.5kg</h3>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div class="font-headline-sm text-[16px] text-primary whitespace-nowrap">Rp 12.000</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary flex items-center justify-center text-on-surface-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="bg-surface/95 backdrop-blur-md border-t border-surface-variant fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-2 pb-safe">
+<!-- Active Tab: Beranda -->
+<a class="flex flex-col items-center justify-center w-16 group" href="#">
+<div class="bg-secondary-container text-on-secondary-container rounded-lg px-4 py-1 mb-1 group-active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">home</span>
+</div>
+<span class="font-label-md text-[11px] text-on-surface font-semibold">Beranda</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex flex-col items-center justify-center w-16 group" href="#">
+<div class="text-on-surface-variant group-hover:text-on-surface group-active:scale-95 transition-all px-4 py-1 mb-1 rounded-lg group-hover:bg-surface-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'wght' 300;">explore</span>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant group-hover:text-on-surface transition-colors">Jelajah</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 group" href="#">
+<div class="text-on-surface-variant group-hover:text-on-surface group-active:scale-95 transition-all px-4 py-1 mb-1 rounded-lg group-hover:bg-surface-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'wght' 300;">map</span>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant group-hover:text-on-surface transition-colors">Peta</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 group" href="#">
+<div class="text-on-surface-variant group-hover:text-on-surface group-active:scale-95 transition-all px-4 py-1 mb-1 rounded-lg group-hover:bg-surface-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'wght' 300;">receipt_long</span>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant group-hover:text-on-surface transition-colors">Pesanan</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 group" href="#">
+<div class="text-on-surface-variant group-hover:text-on-surface group-active:scale-95 transition-all px-4 py-1 mb-1 rounded-lg group-hover:bg-surface-container">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'wght' 300;">person</span>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant group-hover:text-on-surface transition-colors">Profil</span>
+</a>
+</nav>
+
+
+</body></html>

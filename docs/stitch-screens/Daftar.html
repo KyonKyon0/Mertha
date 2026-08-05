@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mertha - Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#753400",
+                        "inverse-surface": "#313129",
+                        "tertiary-fixed": "#ffdbc9",
+                        "surface-bright": "#fdf9ee",
+                        "surface-container-high": "#ece8dd",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#964500",
+                        "surface-variant": "#e6e2d8",
+                        "on-error": "#ffffff",
+                        "primary": "#204e2b",
+                        "on-primary-fixed-variant": "#22502d",
+                        "surface-container-highest": "#e6e2d8",
+                        "surface-container": "#f2eee3",
+                        "on-secondary-fixed": "#002111",
+                        "secondary-container": "#bcebcb",
+                        "tertiary": "#723200",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f4f1e6",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#414941",
+                        "on-tertiary-fixed": "#321200",
+                        "on-primary-fixed": "#00210a",
+                        "background": "#fdf9ee",
+                        "surface-container-low": "#f7f3e8",
+                        "secondary-fixed-dim": "#a3d1b3",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#a0d3a5",
+                        "primary-container": "#386641",
+                        "tertiary-fixed-dim": "#ffb68c",
+                        "primary-fixed": "#bcefc0",
+                        "on-secondary-fixed-variant": "#254f38",
+                        "outline-variant": "#c1c9be",
+                        "on-surface": "#1c1c15",
+                        "primary-fixed-dim": "#a0d3a5",
+                        "outline": "#727970",
+                        "on-secondary-container": "#416b52",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#ffcaad",
+                        "secondary": "#3d674e",
+                        "surface-tint": "#3a6843",
+                        "surface-dim": "#dddacf",
+                        "error-container": "#ffdad6",
+                        "surface": "#fdf9ee",
+                        "secondary-fixed": "#bfedce",
+                        "on-background": "#1c1c15",
+                        "on-primary-container": "#afe2b3",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col justify-center items-center px-container-margin py-xl">
+<div class="w-full max-w-md mx-auto flex flex-col items-center">
+<!-- Logo -->
+<img alt="Mertha Logo" class="h-24 mb-lg object-contain" src="/assets/asset_1.png"/>
+<div class="text-center mb-xl w-full">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary mb-sm">Daftar Akun</h1>
+<p class="text-body-md font-body-md text-on-surface-variant">Bergabunglah untuk mulai menyelamatkan makanan.</p>
+</div>
+<!-- Sign Up Form -->
+<form class="w-full space-y-md">
+<!-- Full Name -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-xs" for="fullName">Nama Lengkap</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm text-outline">
+<span class="material-symbols-outlined">person</span>
+</span>
+<input class="w-full pl-[40px] pr-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md font-body-md transition-shadow h-[48px]" id="fullName" name="fullName" placeholder="Masukkan nama lengkap Anda" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-xs" for="email">Email</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm text-outline">
+<span class="material-symbols-outlined">mail</span>
+</span>
+<input class="w-full pl-[40px] pr-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md font-body-md transition-shadow h-[48px]" id="email" name="email" placeholder="contoh@email.com" type="email"/>
+</div>
+</div>
+<!-- Phone Number -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-xs" for="phone">Nomor Telepon</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm text-outline">
+<span class="material-symbols-outlined">call</span>
+</span>
+<input class="w-full pl-[40px] pr-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md font-body-md transition-shadow h-[48px]" id="phone" name="phone" placeholder="08xxxxxxxxxx" type="tel"/>
+</div>
+</div>
+<!-- Password -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-xs" for="password">Kata Sandi</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm text-outline">
+<span class="material-symbols-outlined">lock</span>
+</span>
+<input class="w-full pl-[40px] pr-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md font-body-md transition-shadow h-[48px]" id="password" name="password" placeholder="Minimal 8 karakter" type="password"/>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-[48px] mt-lg bg-primary text-on-primary rounded-lg text-label-md font-label-md flex justify-center items-center hover:bg-primary-container hover:text-on-primary-container transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background" type="submit">
+                Daftar
+            </button>
+</form>
+<!-- Divider -->
+<div class="w-full flex items-center my-lg">
+<div class="flex-grow border-t border-outline-variant"></div>
+<span class="px-md text-label-sm font-label-sm text-outline">ATAU DAFTAR DENGAN</span>
+<div class="flex-grow border-t border-outline-variant"></div>
+</div>
+<!-- Social Logins -->
+<div class="w-full flex flex-col md:flex-row gap-sm">
+<button class="flex-1 h-[48px] rounded-lg border border-outline-variant bg-surface-container-lowest flex justify-center items-center gap-sm hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface">
+<img alt="Google" class="w-5 h-5" src="/assets/asset_2.png"/>
+                Google
+            </button>
+<button class="flex-1 h-[48px] rounded-lg border border-outline-variant bg-surface-container-lowest flex justify-center items-center gap-sm hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                Apple
+            </button>
+</div>
+<!-- Login Link -->
+<div class="mt-xl text-center">
+<p class="text-body-md font-body-md text-on-surface-variant">
+                Sudah punya akun? 
+                <a class="text-primary font-bold hover:underline" href="#">Masuk</a>
+</p>
+</div>
+</div>
+</body></html>
