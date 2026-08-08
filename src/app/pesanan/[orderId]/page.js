@@ -7,6 +7,91 @@ import { ArrowLeft, MapPin, Clock, Receipt, HelpCircle, Store, Navigation, Check
 import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 import SlideToConfirm from '@/components/ui/SlideToConfirm';
+import { XCircle, Info } from 'lucide-react';
+
+// Animated progress bar score
+function ScoreBar({ label, value, inverted = false }) {
+  const [width, setWidth] = useState(0);
+  const pct = Math.round(value * 100);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setWidth(pct), 100);
+    return () => clearTimeout(timer);
+  }, [pct]);
+
+  // For fraud score: high = bad (red). For quality: high = good (green)
+  let barColor = 'bg-mertha-success';
+  if (inverted) {
+    if (pct > 60) barColor = 'bg-mertha-error';
+    else if (pct > 30) barColor = 'bg-mertha-accent';
+    else barColor = 'bg-mertha-success';
+  } else {
+    if (pct < 40) barColor = 'bg-mertha-error';
+    else if (pct < 70) barColor = 'bg-mertha-accent';
+    else barColor = 'bg-mertha-success';
+  }
+
+  let textColor = barColor.replace('bg-', 'text-');
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-1.5">
+        <span className="text-xs font-semibold text-mertha-text">{label}</span>
+        <span className={`text-sm font-black ${textColor}`}>{pct}%</span>
+      </div>
+      <div className="w-full bg-mertha-bg rounded-full h-3 overflow-hidden">
+        <div
+          className={`h-3 rounded-full ${barColor} transition-all duration-1000 ease-out`}
+          style={{ width: `${width}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function VerdictBadge({ verdict, isProcessing }) {
+  if (isProcessing) {
+    return (
+      <div className="flex items-center gap-2 bg-mertha-primary/10 border border-mertha-primary/30 px-4 py-2 rounded-full">
+        <div className="w-4 h-4 border-2 border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-sm font-black text-mertha-primary tracking-wide">
+          MEMPROSES AI...
+        </span>
+      </div>
+    );
+  }
+
+  const v = verdict || 'MENUNGGU';
+  
+  if (v === 'SANGAT_BAIK' || v === 'BAIK') {
+    return (
+      <div className="flex items-center gap-2 bg-mertha-success/10 border border-mertha-success/30 px-4 py-2 rounded-full">
+        <CheckCircle2 size={18} className="text-mertha-success" />
+        <span className="text-sm font-black text-mertha-success tracking-wide">
+          {v === 'SANGAT_BAIK' ? 'INDIKASI SANGAT BAIK' : 'INDIKASI BAIK'}
+        </span>
+      </div>
+    );
+  }
+  if (v === 'BURUK' || v === 'SANGAT_BURUK') {
+    return (
+      <div className="flex items-center gap-2 bg-mertha-error/10 border border-mertha-error/30 px-4 py-2 rounded-full">
+        <XCircle size={18} className="text-mertha-error" />
+        <span className="text-sm font-black text-mertha-error tracking-wide">
+          {v === 'SANGAT_BURUK' ? 'INDIKASI SANGAT BURUK' : 'INDIKASI BURUK'}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2 bg-mertha-accent/10 border border-mertha-accent/30 px-4 py-2 rounded-full">
+      <HelpCircle size={18} className="text-mertha-accent" />
+      <span className="text-sm font-black text-mertha-accent tracking-wide">
+        {v === 'CUKUP' ? 'INDIKASI CUKUP' : 'MENUNGGU REVIEW'}
+      </span>
+    </div>
+  );
+}
 
 export default function OrderDetail({ params }) {
   const router = useRouter();
@@ -17,6 +102,7 @@ export default function OrderDetail({ params }) {
   const [items, setItems] = useState([]);
   const [refund, setRefund] = useState(null);
   const [aiReview, setAiReview] = useState(null);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulating, setIsSimulating] = useState(false);
 
@@ -53,7 +139,7 @@ export default function OrderDetail({ params }) {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
             .limit(1)
-            .single();
+            .maybeSingle();
 
           if (refundData) {
             setRefund(refundData);
@@ -63,7 +149,7 @@ export default function OrderDetail({ params }) {
               .eq('refund_id', refundData.id)
               .order('created_at', { ascending: false })
               .limit(1)
-              .single();
+              .maybeSingle();
             
             if (aiData) {
               // Try to parse ai_analysis JSON string
@@ -72,6 +158,34 @@ export default function OrderDetail({ params }) {
                 setAiReview({ ...aiData, parsedData: parsed });
               } catch (e) {
                 setAiReview(aiData);
+              }
+            } else {
+              // NO aiData in DB! Check sessionStorage for pending AI task
+              const claimId = refundData.id;
+              const storedImages = sessionStorage.getItem(`mertha_ai_images_${claimId}`);
+              const storedReason = sessionStorage.getItem(`mertha_ai_reason_${claimId}`);
+              
+              if (storedImages && storedReason) {
+                setIsProcessingAI(true);
+                sessionStorage.removeItem(`mertha_ai_images_${claimId}`);
+                sessionStorage.removeItem(`mertha_ai_reason_${claimId}`);
+                
+                // Fire and forget AI fetch
+                fetch('/api/ai/food-review', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    refundId: claimId,
+                    reason: storedReason,
+                    images: JSON.parse(storedImages)
+                  })
+                })
+                .then(res => res.ok ? res.json() : Promise.reject('API Error'))
+                .then(newAiData => {
+                  setAiReview({ ...newAiData, parsedData: newAiData });
+                })
+                .catch(err => console.error("AI Error:", err))
+                .finally(() => setIsProcessingAI(false));
               }
             }
           }
@@ -259,51 +373,94 @@ export default function OrderDetail({ params }) {
         {/* Actions & Refund Section */}
         <div className="space-y-4 pt-2">
           {refund ? (
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
-              <div className="bg-primary/10 px-4 py-3 border-b border-primary/20 flex items-center gap-2">
-                <ShieldCheck className="text-primary" size={20} />
-                <h3 className="font-bold text-primary text-sm">Status Pengembalian Dana</h3>
+            <div className="bg-white border border-mertha-border rounded-2xl overflow-hidden shadow-sm animate-in slide-in-from-bottom-2">
+              <div className="bg-mertha-primary/10 px-4 py-3 border-b border-mertha-primary/20 flex items-center gap-2">
+                <ShieldCheck className="text-mertha-primary" size={20} />
+                <h3 className="font-bold text-mertha-primary text-sm">Status Pengembalian Dana</h3>
               </div>
-              <div className="p-4">
-                <div className="mb-4">
-                  <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Status</span>
-                  <span className="inline-flex px-2 py-1 rounded-md text-xs font-bold bg-secondary-container/50 text-on-secondary-container capitalize">
+              <div className="p-4 space-y-4">
+                
+                {/* Status Refund */}
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-semibold text-mertha-subtext uppercase tracking-wider">Status Komplain</span>
+                  <span className="inline-flex px-2 py-1 rounded-md text-xs font-bold bg-mertha-accent/10 text-mertha-accent capitalize">
                     {refund.status}
                   </span>
                 </div>
-                
-                {aiReview?.parsedData ? (
-                  <div className="space-y-3 border-t border-outline-variant/30 pt-3">
-                    <div>
-                      <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Indikasi AI</span>
-                      <span className={`inline-flex px-2 py-1 rounded-md text-xs font-bold ${
-                        ['BURUK', 'SANGAT_BURUK'].includes(aiReview.parsedData.verdict) ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'
-                      }`}>
-                        {aiReview.parsedData.verdict?.replace('_', ' ')}
-                      </span>
+
+                <div className="border-t border-mertha-border/50 pt-4">
+                  {isProcessingAI ? (
+                    <div className="flex flex-col items-center justify-center py-4 text-center">
+                      <div className="w-8 h-8 border-4 border-mertha-primary border-t-transparent rounded-full animate-spin mb-3"></div>
+                      <p className="text-sm font-bold text-mertha-text">AI Sedang Memeriksa</p>
+                      <p className="text-xs text-mertha-subtext mt-1 max-w-[200px]">Mohon tunggu sebentar...</p>
                     </div>
-                    <div>
-                      <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Analisis AI Lengkap</span>
-                      <p className="text-sm text-on-surface leading-relaxed mb-2">
-                        {aiReview.parsedData.ai_analysis || "Sedang memproses..."}
-                      </p>
-                      {aiReview.parsedData.ai_model_vision && (
-                        <div className="mt-3 pt-3 border-t border-outline-variant/30">
-                          <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-1.5">Model AI yang Digunakan:</span>
-                          <div className="flex flex-wrap gap-2 text-[10px] text-on-surface-variant">
-                            <span className="bg-surface-container-high px-2 py-1 rounded border border-outline-variant/50">👁️ Vision: {aiReview.parsedData.ai_model_vision}</span>
-                            <span className="bg-surface-container-high px-2 py-1 rounded border border-outline-variant/50">🧠 Analyst: {aiReview.parsedData.ai_model_analyst}</span>
+                  ) : aiReview?.parsedData ? (
+                    <div className="space-y-4">
+                      {/* Verdict Badge & Overall Score */}
+                      <div className="flex flex-col items-center justify-center mb-2 space-y-3">
+                        <VerdictBadge verdict={aiReview.parsedData.verdict} isProcessing={false} />
+                        
+                        {aiReview.parsedData.overall_score !== undefined && (
+                          <div className="flex items-center gap-4 bg-mertha-bg px-5 py-3 rounded-2xl border border-mertha-border w-full justify-center">
+                            <div className="text-center">
+                              <p className="text-[10px] font-bold text-mertha-subtext uppercase tracking-widest mb-0.5">Skor Akhir</p>
+                              <p className="text-3xl font-black text-mertha-text leading-none">{aiReview.parsedData.overall_score}<span className="text-sm text-mertha-muted">/100</span></p>
+                            </div>
+                            <div className="w-px h-10 bg-mertha-border"></div>
+                            <div className="text-center">
+                              <p className="text-[10px] font-bold text-mertha-subtext uppercase tracking-widest mb-0.5">Grade</p>
+                              <p className={`text-3xl font-black leading-none ${
+                                ['A+', 'A', 'B'].includes(aiReview.parsedData.grade) ? 'text-mertha-success' : 
+                                ['C', 'D'].includes(aiReview.parsedData.grade) ? 'text-mertha-accent' : 'text-mertha-error'
+                              }`}>{aiReview.parsedData.grade || '-'}</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
+
+                      {/* Data Klaim */}
+                      <div className="bg-mertha-bg p-3 rounded-xl border border-mertha-border">
+                        <h4 className="text-xs font-bold text-mertha-text mb-2 flex items-center gap-1">
+                          <Info size={14} className="text-mertha-primary" />
+                          Detail Klaim
+                        </h4>
+                        
+                        {aiReview.parsedData.submitted_images && aiReview.parsedData.submitted_images.length > 0 && (
+                          <div className="flex gap-2 overflow-x-auto pb-2 snap-x no-scrollbar mb-2">
+                            {aiReview.parsedData.submitted_images.map((img, i) => (
+                              <div key={i} className="relative w-16 h-16 shrink-0 snap-start">
+                                <img src={img} alt="Bukti" className="w-full h-full object-cover rounded-lg border border-mertha-border" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <p className="text-[11px] text-mertha-subtext font-semibold mb-1">Alasan:</p>
+                        <p className="text-xs text-mertha-text leading-relaxed">
+                          "{refund.reason || 'Tidak ada alasan'}"
+                        </p>
+                      </div>
+
+                      {/* Scores */}
+                      <div className="space-y-4 pt-2">
+                        <ScoreBar label="Kelayakan Konsumsi" value={aiReview.parsedData.edibility_score ?? aiReview.parsedData.quality_score ?? 0} inverted={false} />
+                        <ScoreBar label="Tingkat Kesegaran" value={aiReview.parsedData.freshness_score ?? 0} inverted={false} />
+                        <ScoreBar label="Kualitas Visual" value={aiReview.parsedData.visual_score ?? 0} inverted={false} />
+                        <ScoreBar label="Tingkat Kerusakan" value={aiReview.parsedData.defect_score ?? 0} inverted={true} />
+                        <ScoreBar label="Kebersihan & Kontaminasi Visual" value={aiReview.parsedData.hygiene_score ?? 0} inverted={false} />
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-4 text-center">
-                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2"></div>
-                    <p className="text-xs text-on-surface-variant">AI sedang memproses komplain Anda...</p>
-                  </div>
-                )}
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-4 text-center">
+                      <div className="w-12 h-12 bg-mertha-bg rounded-full flex items-center justify-center mb-3">
+                        <AlertTriangle size={24} className="text-mertha-subtext" />
+                      </div>
+                      <p className="text-sm font-bold text-mertha-text">Analisis AI Belum Tersedia</p>
+                      <p className="text-xs text-mertha-subtext mt-1 max-w-[200px]">Hasil akan muncul secara otomatis.</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ) : (

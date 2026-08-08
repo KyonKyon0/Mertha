@@ -5,13 +5,15 @@ import BuyerHeader from '@/components/buyer/BuyerHeader';
 import BottomNavigation from '@/components/buyer/BottomNavigation';
 import GlobalLoading from '@/components/ui/GlobalLoading';
 import Link from 'next/link';
-import { Clock, ChevronRight, Store, AlertCircle } from 'lucide-react';
+import { Clock, ChevronRight, Store, AlertCircle, Trash2 } from 'lucide-react';
 import { createBrowserClient } from '@supabase/ssr';
+import FloatingTools from '@/components/ui/FloatingTools';
 
 export default function PesananPage() {
   const [activeTab, setActiveTab] = useState('aktif');
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [devMode, setDevMode] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -19,6 +21,7 @@ export default function PesananPage() {
   );
 
   useEffect(() => {
+    setDevMode(typeof window !== 'undefined' && localStorage.getItem('developer_mode') === 'true');
     const fetchOrders = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -108,6 +111,30 @@ export default function PesananPage() {
 
   const filteredOrders = orders.filter(o => o.type === activeTab);
 
+  const handleDeleteAllOrders = async () => {
+    if (!confirm("Hapus semua riwayat pesanan (aktif & riwayat)? Aksi ini tidak dapat dibatalkan.")) return;
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      await supabase.from('orders').delete().eq('user_id', user.id);
+      setOrders([]);
+    } catch (err) {
+      alert("Gagal menghapus pesanan.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const floatingItems = [
+    {
+      label: 'Bersihkan Semua Pesanan',
+      icon: <Trash2 size={18} />,
+      danger: true,
+      onClick: handleDeleteAllOrders
+    }
+  ];
+
   return (
     <>
       <BuyerHeader />
@@ -172,6 +199,7 @@ export default function PesananPage() {
         </div>
       </main>
 
+      {devMode && <FloatingTools items={floatingItems} />}
       <BottomNavigation />
     </>
   );

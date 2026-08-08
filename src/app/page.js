@@ -10,16 +10,31 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, MapPin, Navigation, Map, Gift, Apple, Sprout, Croissant, Utensils, Store, Clock, ShoppingBag, PiggyBank, Recycle, ShoppingCart, Footprints, Users, Newspaper, Ticket } from 'lucide-react';
 import Image from 'next/image';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
+import { createBrowserClient } from '@supabase/ssr';
+import FloatingTools from '@/components/ui/FloatingTools';
+import HomeAdminModals from '@/components/admin/HomeAdminModals';
+import { Trash2, Plus, Edit3 } from 'lucide-react';
 export default function Home() {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [topProducts, setTopProducts] = useState([]);
   
+  // Kupon Promo state
+  const [promoCoupon, setPromoCoupon] = useState(null);
+  const [isPromoClaimed, setIsPromoClaimed] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
+  
+  const [impactNews, setImpactNews] = useState([]);
+  const [activeAdminModal, setActiveAdminModal] = useState(null);
+  const [devMode, setDevMode] = useState(false);
+  
   useEffect(() => {
+    setDevMode(typeof window !== 'undefined' && localStorage.getItem('developer_mode') === 'true');
     async function fetchTopProducts() {
       const { data, error } = await supabase
         .from('products')
@@ -35,7 +50,42 @@ export default function Home() {
         setTopProducts(data);
       }
     }
+
+    async function fetchPromoCoupon() {
+      // Fetch the HEMAT50 coupon
+      const { data: couponData } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', 'HEMAT50')
+        .single();
+        
+      if (couponData) {
+        setPromoCoupon(couponData);
+        // Check if current user has claimed it
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: userCoupon } = await supabase
+            .from('user_coupons')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('coupon_id', couponData.id)
+            .maybeSingle();
+            
+          if (userCoupon) {
+            setIsPromoClaimed(true);
+          }
+        }
+      }
+    }
+
+    async function fetchImpactNews() {
+      const { data } = await supabase.from('impact_news').select('*').order('created_at', { ascending: false });
+      if (data) setImpactNews(data);
+    }
+
     fetchTopProducts();
+    fetchPromoCoupon();
+    fetchImpactNews();
   }, []);
 
   const handleSearch = (e) => {
@@ -47,9 +97,54 @@ export default function Home() {
     }
   };
 
+  const handleClaimPromo = async () => {
+    if (!promoCoupon || isPromoClaimed) return;
+    setIsClaiming(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+      
+      const { error } = await supabase
+        .from('user_coupons')
+        .insert({
+          user_id: user.id,
+          coupon_id: promoCoupon.id
+        });
+        
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          setIsPromoClaimed(true);
+        } else {
+          throw error;
+        }
+      } else {
+        setIsPromoClaimed(true);
+      }
+    } catch (err) {
+      console.error("Gagal klaim kupon:", err);
+      alert("Terjadi kesalahan saat mengklaim kupon.");
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
   const handleCategoryClick = (category) => {
     router.push(`/jelajahi?category=${encodeURIComponent(category)}`);
   };
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
+
+  const floatingItems = [
+    { label: 'Tambah Kupon', icon: <Ticket size={18} />, onClick: () => setActiveAdminModal('add_kupon') },
+    { label: 'Tambah Produk', icon: <Store size={18} />, onClick: () => setActiveAdminModal('add_product') },
+    { label: 'Hapus Produk', icon: <Trash2 size={18} />, onClick: () => setActiveAdminModal('delete_product'), danger: true },
+    { label: 'Edit Kabar Impact', icon: <Newspaper size={18} />, onClick: () => setActiveAdminModal('edit_impact') }
+  ];
 
   return (
     <div className="bg-surface text-on-surface font-sans min-h-screen">
@@ -143,7 +238,7 @@ export default function Home() {
                     <div className="w-12 h-12 shrink-0 rounded-full bg-error-container/30 text-error flex items-center justify-center group-hover:bg-error group-hover:text-white transition-colors">
                         <Users size={22} aria-hidden="true" />
                     </div>
-                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-error transition-colors">Upcoming</span>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-error transition-colors">Contributor</span>
                 </a>
             </div>
         </section>
@@ -154,51 +249,65 @@ export default function Home() {
               <Newspaper className="text-primary" size={20} /> Kabar Impact
             </h2>
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x">
-                <div className="min-w-[280px] snap-center bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/20 flex flex-col gap-3">
-                    <div className="w-full h-32 bg-primary/10 rounded-xl flex items-center justify-center text-primary relative overflow-hidden">
-                       <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
-                       <Sprout size={48} className="opacity-80" />
-                    </div>
-                    <div>
-                        <span className="text-[10px] font-bold text-primary tracking-wider uppercase mb-1 block">Climate Action</span>
-                        <h3 className="font-bold text-sm leading-tight text-on-surface">Mengurangi Jejak Karbon dari Piring Kita</h3>
-                        <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">Pelajari bagaimana menyelamatkan makanan dapat menurunkan emisi gas rumah kaca secara drastis.</p>
-                    </div>
+              {impactNews.map(news => {
+                const IconComponent = {
+                  'Sprout': Sprout,
+                  'Recycle': Recycle,
+                  'Apple': Apple
+                }[news.icon_type] || Sprout;
+                
+                return (
+                  <div key={news.id} className="min-w-[280px] snap-center bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/20 flex flex-col gap-3">
+                      <div className="w-full h-32 bg-primary/10 rounded-xl flex items-center justify-center text-primary relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
+                        <IconComponent size={48} className="opacity-80" />
+                      </div>
+                      <div>
+                          <span className="text-[10px] font-bold text-primary tracking-wider uppercase mb-1 block">{news.category}</span>
+                          <h3 className="font-bold text-sm leading-tight text-on-surface">{news.title}</h3>
+                          <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{news.description}</p>
+                      </div>
+                  </div>
+                );
+              })}
+              {impactNews.length === 0 && (
+                <div className="min-w-[280px] text-center p-4 text-mertha-subtext text-sm">
+                  Belum ada kabar impact.
                 </div>
-                <div className="min-w-[280px] snap-center bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/20 flex flex-col gap-3">
-                    <div className="w-full h-32 bg-tertiary-container/20 rounded-xl flex items-center justify-center text-tertiary-container relative overflow-hidden">
-                       <div className="absolute inset-0 bg-gradient-to-tr from-tertiary-container/20 to-transparent"></div>
-                       <Recycle size={48} className="opacity-80" />
-                    </div>
-                    <div>
-                        <span className="text-[10px] font-bold text-tertiary-container tracking-wider uppercase mb-1 block">Zero Waste</span>
-                        <h3 className="font-bold text-sm leading-tight text-on-surface">Ubah Sisa Sayur Menjadi Kaldu Lezat</h3>
-                        <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">Tips dan trik mengolah bahan makanan berlebih di dapur Anda agar tidak terbuang sia-sia.</p>
-                    </div>
-                </div>
+              )}
             </div>
 
             {/* Kupon Promo */}
-            <div className="mt-4 relative bg-primary text-on-primary rounded-2xl p-4 shadow-lg overflow-hidden">
-                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
-                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
-                
-                <div className="absolute inset-0 border-2 border-dashed border-white/30 rounded-2xl m-2 pointer-events-none"></div>
-                
-                <div className="relative z-10 flex items-center justify-between pl-4 pr-2">
-                    <div>
-                        <div className="flex items-center gap-1 mb-1">
-                            <Ticket size={16} className="text-tertiary-container" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-primary-container">Promo Spesial</span>
-                        </div>
-                        <h3 className="font-black text-xl leading-tight">Diskon 50%</h3>
-                        <p className="text-xs text-primary-container mt-1">Untuk transaksi pertamamu!</p>
-                    </div>
-                    <button className="bg-tertiary-container text-on-tertiary px-4 py-2 rounded-xl font-bold text-sm shadow-md hover:scale-105 transition-transform active:scale-95">
-                        Klaim
-                    </button>
-                </div>
-            </div>
+            {promoCoupon && (
+              <div className="mt-4 relative bg-primary text-on-primary rounded-2xl p-4 shadow-lg overflow-hidden transition-all">
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
+                  
+                  <div className="absolute inset-0 border-2 border-dashed border-white/30 rounded-2xl m-2 pointer-events-none"></div>
+                  
+                  <div className="relative z-10 flex items-center justify-between pl-4 pr-2">
+                      <div>
+                          <div className="flex items-center gap-1 mb-1">
+                              <Ticket size={16} className="text-tertiary-container" />
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-primary-container">Promo Spesial</span>
+                          </div>
+                          <h3 className="font-black text-xl leading-tight">{promoCoupon.title}</h3>
+                          <p className="text-xs text-primary-container mt-1">{promoCoupon.description}</p>
+                      </div>
+                      <button 
+                        onClick={handleClaimPromo}
+                        disabled={isPromoClaimed || isClaiming}
+                        className={`px-4 py-2 rounded-xl font-bold text-sm shadow-md transition-all ${
+                          isPromoClaimed 
+                            ? 'bg-white/20 text-white cursor-not-allowed border border-white/30' 
+                            : 'bg-tertiary-container text-on-tertiary hover:scale-105 active:scale-95'
+                        }`}
+                      >
+                          {isClaiming ? 'Mengklaim...' : isPromoClaimed ? 'Sudah di claim' : 'Klaim'}
+                      </button>
+                  </div>
+              </div>
+            )}
         </section>
 
         <section className="pl-5 mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
@@ -335,6 +444,24 @@ export default function Home() {
         </footer>
 
       </main>
+
+      <HomeAdminModals 
+        activeModal={activeAdminModal} 
+        setActiveModal={setActiveAdminModal}
+        onSuccess={async () => {
+          const { data: news } = await supabase.from('impact_news').select('*').order('created_at', { ascending: false });
+          if (news) setImpactNews(news);
+
+          const { data: prods } = await supabase
+            .from('products')
+            .select(`*, merchants (name, logo_url, address), product_images (image_url)`)
+            .eq('is_active', true)
+            .limit(2);
+          if (prods) setTopProducts(prods);
+        }}
+      />
+      
+      {devMode && <FloatingTools items={floatingItems} />}
 
       <BottomNavigation />
     </div>

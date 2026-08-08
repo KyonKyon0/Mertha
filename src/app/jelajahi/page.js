@@ -8,12 +8,16 @@ import BottomNavigation from '@/components/buyer/BottomNavigation';
 import ProductCard from '@/components/buyer/ProductCard';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, Map as MapIcon, SlidersHorizontal, ChevronDown } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+import { Search, Map as MapIcon, SlidersHorizontal, ChevronDown, Store, Trash2 } from 'lucide-react';
+import { createBrowserClient } from '@supabase/ssr';
+import FloatingTools from '@/components/ui/FloatingTools';
+import HomeAdminModals from '@/components/admin/HomeAdminModals';
 
 function JelajahiContent() {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
@@ -23,6 +27,13 @@ function JelajahiContent() {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [devMode, setDevMode] = useState(false);
+  const [activeAdminModal, setActiveAdminModal] = useState(null);
+
+  useEffect(() => {
+    setDevMode(typeof window !== 'undefined' && localStorage.getItem('developer_mode') === 'true');
+  }, []);
 
   const categories = ["Semua", "Mystery Bag", "Roti & Pastry", "Nasi & Lauk", "Sayur & Buah", "Minuman"];
   const filters = ["Terdekat", "Harga Terendah", "Waktu Pengambilan", "Rating Tertinggi"];
@@ -79,7 +90,7 @@ function JelajahiContent() {
       setLoading(false);
     }
     fetchProducts();
-  }, [q, activeCategory]);
+  }, [q, activeCategory, activeAdminModal]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -180,6 +191,21 @@ function JelajahiContent() {
           </Link>
         </div>
       </main>
+
+      <HomeAdminModals 
+        activeModal={activeAdminModal} 
+        setActiveModal={setActiveAdminModal}
+        onSuccess={() => setActiveAdminModal(null)}
+      />
+      
+      {devMode && (
+        <FloatingTools 
+          items={[
+            { label: 'Tambah Produk', icon: <Store size={18} />, onClick: () => setActiveAdminModal('add_product') },
+            { label: 'Hapus Produk', icon: <Trash2 size={18} />, onClick: () => setActiveAdminModal('delete_product'), danger: true },
+          ]} 
+        />
+      )}
 
       <BottomNavigation />
     </>

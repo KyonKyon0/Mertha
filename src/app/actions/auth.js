@@ -12,10 +12,24 @@ export async function login(formData) {
     password: formData.get('password'),
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { error, data: authData } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
     return { error: error.message }
+  }
+  
+  // Track Login
+  try {
+    await supabase.from('login_logs').insert({
+       user_id: authData.user?.id,
+       email: data.email,
+       ip_address: formData.get('ip_address') || 'Unknown',
+       location_lat: formData.get('location_lat') ? parseFloat(formData.get('location_lat')) : null,
+       location_lng: formData.get('location_lng') ? parseFloat(formData.get('location_lng')) : null,
+       device_meta: formData.get('device_meta') || 'Unknown'
+    });
+  } catch (err) {
+    console.error("Failed to log tracking data", err);
   }
 
   revalidatePath('/', 'layout')
@@ -48,6 +62,20 @@ export async function signup(formData) {
       name: formData.get('name'),
       phone: formData.get('phone') || null
     })
+    
+    // Track Signup
+    try {
+      await supabase.from('login_logs').insert({
+         user_id: authData.user.id,
+         email: data.email,
+         ip_address: formData.get('ip_address') || 'Unknown',
+         location_lat: formData.get('location_lat') ? parseFloat(formData.get('location_lat')) : null,
+         location_lng: formData.get('location_lng') ? parseFloat(formData.get('location_lng')) : null,
+         device_meta: formData.get('device_meta') || 'Unknown'
+      });
+    } catch (err) {
+      console.error("Failed to log tracking data", err);
+    }
   }
 
   revalidatePath('/', 'layout')

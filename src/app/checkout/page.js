@@ -4,7 +4,7 @@ import React, { useState, Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
 import GlobalLoading from '@/components/ui/GlobalLoading';
-import { ArrowLeft, MapPin, Receipt, Wallet, ChevronRight, Copy, CheckCircle2, Check, Navigation, Package } from 'lucide-react';
+import { ArrowLeft, MapPin, Receipt, Wallet, ChevronRight, Copy, CheckCircle2, Check, Navigation, Package, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 
@@ -109,6 +109,12 @@ function CheckoutContent() {
   const [copied, setCopied] = useState(false);
   const [payCode, setPayCode] = useState('');
   const [newOrderId, setNewOrderId] = useState(null);
+  
+  // Coupon states
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [userCoupons, setUserCoupons] = useState([]);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -132,7 +138,20 @@ function CheckoutContent() {
         setIsLoading(false);
       }
     };
+    
+    const fetchCoupons = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('user_coupons')
+        .select('*, coupons(*)')
+        .eq('user_id', user.id)
+        .eq('is_used', false);
+      if (data) setUserCoupons(data);
+    };
+
     fetchProduct();
+    fetchCoupons();
   }, [productId, supabase]);
 
   // Scroll to top when step changes
@@ -160,7 +179,41 @@ function CheckoutContent() {
   const price = product.price;
   const adminFee = 1000;
   const deliveryFee = deliveryMethod === 'delivery' ? 12000 : 0;
-  const total = (price * qty) + adminFee + deliveryFee;
+  
+  const subtotal = price * qty;
+  const discountAmount = appliedCoupon ? (subtotal * (appliedCoupon.coupons.discount_percent / 100)) : 0;
+  const total = subtotal - discountAmount + adminFee + deliveryFee;
+
+  const handleApplyCoupon = async (codeToUse) => {
+    const codeStr = (codeToUse || couponCode).trim().toUpperCase();
+    if (!codeStr) return;
+    setIsApplyingCoupon(true);
+    
+    // Check if in user's claimed coupons
+    const matchedUserCoupon = userCoupons.find(uc => uc.coupons?.code.toUpperCase() === codeStr);
+    
+    if (matchedUserCoupon) {
+      setAppliedCoupon(matchedUserCoupon);
+      setIsApplyingCoupon(false);
+      return;
+    }
+
+    // Fallback: Check if it's a valid public code in the DB
+    const { data: couponData } = await supabase
+      .from('coupons')
+      .select('*')
+      .eq('code', codeStr)
+      .eq('is_active', true)
+      .maybeSingle();
+      
+    if (couponData) {
+      // Simulate a user_coupons wrapper so the UI treats it identically
+      setAppliedCoupon({ coupons: couponData, is_new: true });
+    } else {
+      alert("Kode kupon tidak valid atau sudah tidak aktif.");
+    }
+    setIsApplyingCoupon(false);
+  };
 
   const handleCheckout = () => {
     setIsProcessing(true);
@@ -229,6 +282,21 @@ function CheckoutContent() {
 
       if (stockError) {
         console.warn('Stok gagal dikurangi (non-fatal):', JSON.stringify(stockError));
+      }
+
+      // Mark Coupon as used if applied
+      if (appliedCoupon) {
+        if (appliedCoupon.id) {
+          // It's an existing claimed user_coupon
+          await supabase.from('user_coupons').update({ is_used: true }).eq('id', appliedCoupon.id);
+        } else if (appliedCoupon.is_new) {
+          // They typed a valid public code that they hadn't claimed yet. Let's record its usage.
+          await supabase.from('user_coupons').insert({
+            user_id: user.id,
+            coupon_id: appliedCoupon.coupons.id,
+            is_used: true
+          });
+        }
       }
 
       // Redirect to order detail
@@ -357,6 +425,56 @@ function CheckoutContent() {
           </div>
         </section>
 
+        {/* Kupon & Voucher */}
+        <section className="bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-mertha-border transition-colors">
+          <h2 className="text-sm font-bold text-mertha-text mb-3 flex items-center gap-2">
+            <Ticket size={18} className="text-mertha-primary" />
+            Makin Hemat Pakai Promo
+          </h2>
+          
+          <div className="flex gap-2 mb-3">
+            <input 
+              type="text" 
+              placeholder="Masukkan kode promo" 
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+              className="flex-1 bg-mertha-bg border border-mertha-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-mertha-primary/50 uppercase placeholder:normal-case"
+            />
+            <button 
+              onClick={() => handleApplyCoupon()}
+              disabled={isApplyingCoupon || !couponCode}
+              className="bg-mertha-primary text-white font-bold text-sm px-4 py-2 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
+            >
+              Gunakan
+            </button>
+          </div>
+
+          {userCoupons.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-[10px] font-bold text-mertha-subtext uppercase tracking-wider">Kupon Anda</p>
+              <div className="flex gap-2 overflow-x-auto no-scrollbar snap-x">
+                {userCoupons.map(uc => (
+                  <button 
+                    key={uc.id} 
+                    onClick={() => handleApplyCoupon(uc.coupons.code)}
+                    className={`shrink-0 snap-start px-3 py-2 border rounded-xl flex flex-col items-start transition-all ${appliedCoupon?.coupons?.code === uc.coupons.code ? 'border-mertha-primary bg-mertha-primary/10' : 'border-mertha-border bg-mertha-bg hover:border-mertha-primary/50'}`}
+                  >
+                    <span className="text-xs font-black text-mertha-text">{uc.coupons.code}</span>
+                    <span className="text-[10px] text-mertha-subtext">{uc.coupons.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {appliedCoupon && (
+            <div className="mt-3 bg-green-50 border border-green-200 text-green-700 p-2 rounded-xl text-xs flex justify-between items-center animate-in zoom-in">
+              <span>Kupon <b>{appliedCoupon.coupons.code}</b> berhasil dipasang! (-{appliedCoupon.coupons.discount_percent}%)</span>
+              <button onClick={() => setAppliedCoupon(null)} className="text-green-900 font-bold p-1">Batal</button>
+            </div>
+          )}
+        </section>
+
         {/* Order Details */}
         <section className="bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-mertha-border transition-colors">
           <h2 className="text-sm font-bold text-mertha-text mb-3 flex items-center gap-2">
@@ -374,6 +492,13 @@ function CheckoutContent() {
             <span>Biaya Layanan</span>
             <span>Rp {adminFee.toLocaleString('id-ID')}</span>
           </div>
+          
+          {appliedCoupon && (
+            <div className="flex justify-between items-center text-sm text-mertha-success border-b border-mertha-border border-dashed pb-3 mb-2 animate-in slide-in-from-top-1 fade-in">
+              <span>Diskon ({appliedCoupon.coupons.discount_percent}%)</span>
+              <span className="font-bold">-Rp {discountAmount.toLocaleString('id-ID')}</span>
+            </div>
+          )}
           {deliveryMethod === 'delivery' && (
             <div className="flex justify-between items-center text-sm text-mertha-subtext border-b border-mertha-border border-dashed pb-3 animate-in slide-in-from-top-1 fade-in">
               <span>Ongkos Kirim</span>

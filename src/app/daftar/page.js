@@ -23,6 +23,12 @@ export default function Daftar() {
     setError(null);
 
     try {
+      // Get tracking data from DOM
+      const ip_address = document.querySelector('input[name="ip_address"]')?.value || 'Unknown';
+      const location_lat = document.querySelector('input[name="location_lat"]')?.value || null;
+      const location_lng = document.querySelector('input[name="location_lng"]')?.value || null;
+      const device_meta = document.querySelector('input[name="device_meta"]')?.value || 'Unknown';
+
       // 1. Panggil API internal kita yang menggunakan Supabase Admin (Bypass Rate Limit & Auto Confirm)
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -31,7 +37,11 @@ export default function Daftar() {
           email: formData.email,
           password: formData.password,
           name: formData.name,
-          phone: formData.phone
+          phone: formData.phone,
+          ip_address,
+          location_lat,
+          location_lng,
+          device_meta
         })
       });
 

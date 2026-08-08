@@ -8,7 +8,7 @@ const supabaseAdmin = createClient(
 
 export async function POST(request) {
   try {
-    const { email, password, name, phone } = await request.json();
+    const { email, password, name, phone, ip_address, location_lat, location_lng, device_meta } = await request.json();
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
@@ -36,6 +36,20 @@ export async function POST(request) {
 
       if (profileError) {
         console.error("Error creating profile:", profileError);
+      }
+      
+      // 3. Track Signup
+      try {
+        await supabaseAdmin.from('login_logs').insert({
+          user_id: authData.user.id,
+          email: email,
+          ip_address: ip_address || 'Unknown',
+          location_lat: location_lat ? parseFloat(location_lat) : null,
+          location_lng: location_lng ? parseFloat(location_lng) : null,
+          device_meta: device_meta || 'Unknown'
+        });
+      } catch (err) {
+        console.error("Failed to log tracking data", err);
       }
     }
 

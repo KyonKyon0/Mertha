@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
 import BottomNavigation from '@/components/buyer/BottomNavigation';
-import { User, Phone, ChevronRight, LogOut, Camera, Bell, HelpCircle, Info, Shield, ShieldCheck, Mail, Key, Star, X, Lock, Home as HomeIcon, Briefcase, Frown, Loader2 } from 'lucide-react';
+import { User, Phone, ChevronRight, LogOut, Camera, Bell, HelpCircle, Info, Shield, ShieldCheck, Mail, Key, Star, X, Lock, Home as HomeIcon, Briefcase, Frown, Loader2, Ticket, Settings, Store } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import GlobalLoading from '@/components/ui/GlobalLoading';
 import useLocationStore from '@/store/useLocationStore';
+import FloatingTools from '@/components/ui/FloatingTools';
 
 export default function ProfilPage() {
   const router = useRouter();
@@ -38,6 +39,45 @@ export default function ProfilPage() {
   const [editForm, setEditForm] = useState({ phone: '', address: '', office_address: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [showGlow, setShowGlow] = useState(true);
+  const [userCoupons, setUserCoupons] = useState([]);
+  
+  // PIN State
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinLoading, setPinLoading] = useState(false);
+  
+  const handleSavePin = async () => {
+    if (pinInput.length !== 6) {
+      alert("PIN harus 6 digit angka");
+      return;
+    }
+    
+    setPinLoading(true);
+    // Hanya simpan pin_code, tidak perlu has_pin sebagai kolom db
+    const { error } = await supabase.from('profiles').update({ pin_code: pinInput }).eq('id', profile.id);
+    setPinLoading(false);
+    
+    if (error) {
+      alert("Gagal menyimpan PIN. Error: " + error.message);
+    } else {
+      setProfile({...profile, has_pin: true});
+      setShowPinModal(false);
+      setPinInput('');
+      alert("PIN Keamanan berhasil diatur!");
+    }
+  };
+  
+  const [devMode, setDevMode] = useState(false);
+  const [devOpen, setDevOpen] = useState(false);
+
+  useEffect(() => {
+    setDevMode(localStorage.getItem('developer_mode') === 'true');
+    if (typeof window !== 'undefined' && window.location.search.includes('devOpen=true')) {
+      setDevOpen(true);
+      // Clean up URL
+      window.history.replaceState({}, '', '/profil');
+    }
+  }, []);
   
   const { savedLocations, activeLocation } = useLocationStore();
 
@@ -111,6 +151,18 @@ export default function ProfilPage() {
         
         useLocationStore.setState(nextState);
       }
+      
+      // Fetch coupons
+      const { data: couponsData } = await supabase
+        .from('user_coupons')
+        .select('*, coupons(*)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+        
+      if (couponsData) {
+        setUserCoupons(couponsData);
+      }
+      
       setLoading(false);
     }
     loadProfile();
@@ -243,6 +295,29 @@ export default function ProfilPage() {
     }
   };
 
+  const floatingItems = [
+    {
+      label: 'Toggle Email Verified',
+      icon: <Mail size={18} className={profile.is_email_verified ? "text-green-500" : "text-mertha-primary"} />,
+      onClick: () => toggleSafetyState('is_email_verified')
+    },
+    {
+      label: 'Toggle Phone Verified',
+      icon: <Phone size={18} className={profile.is_phone_verified ? "text-green-500" : "text-mertha-primary"} />,
+      onClick: () => toggleSafetyState('is_phone_verified')
+    },
+    {
+      label: 'Toggle Security PIN',
+      icon: <Key size={18} className={profile.has_pin ? "text-green-500" : "text-mertha-primary"} />,
+      onClick: () => toggleSafetyState('has_pin')
+    },
+    {
+      label: 'Toggle Mertha Plus',
+      icon: <Star size={18} className={profile.is_mertha_plus ? "text-green-500" : "text-mertha-primary"} />,
+      onClick: () => toggleSafetyState('is_mertha_plus')
+    }
+  ];
+
   // Calculate Account Safety Score
   const safetyScore = (
     (profile.is_email_verified ? 25 : 0) +
@@ -363,6 +438,34 @@ export default function ProfilPage() {
           </div>
         </section>
 
+        {/* Kupon Anda */}
+        <section className="bg-white border-y border-mertha-border mb-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-mertha-border bg-mertha-primary/5">
+            <h2 className="text-xs font-bold text-mertha-primary uppercase tracking-wider flex items-center gap-2">
+              <Ticket size={16} /> Kupon Saya
+            </h2>
+          </div>
+          <div className="p-4">
+            {userCoupons.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3">
+                {userCoupons.map((uc) => (
+                  <div key={uc.id} className={`flex items-center justify-between p-3 border rounded-xl ${uc.is_used ? 'border-mertha-border bg-mertha-bg opacity-70' : 'border-mertha-primary/30 bg-mertha-primary/5'}`}>
+                    <div>
+                      <h4 className={`font-black text-sm ${uc.is_used ? 'text-mertha-subtext' : 'text-mertha-text'}`}>{uc.coupons.code}</h4>
+                      <p className="text-xs text-mertha-subtext mt-0.5">{uc.coupons.title}</p>
+                    </div>
+                    <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full ${uc.is_used ? 'bg-mertha-border text-mertha-subtext' : 'bg-mertha-primary text-white'}`}>
+                      {uc.is_used ? 'Terpakai' : 'Tersedia'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-mertha-subtext text-center py-2">Belum ada kupon yang diklaim.</p>
+            )}
+          </div>
+        </section>
+
         {/* User Data */}
         <section className="bg-white border-y border-mertha-border mb-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
           <div className="flex items-center justify-between px-4 py-3 border-b border-mertha-border bg-mertha-primary/5">
@@ -405,9 +508,52 @@ export default function ProfilPage() {
           </div>
         </section>
 
-        {/* Preferences */}
         <section className="bg-white border-y border-mertha-border mb-6 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
           <h2 className="text-xs font-bold text-mertha-primary px-4 py-3 border-b border-mertha-border bg-mertha-primary/5 uppercase tracking-wider">Pengaturan Aplikasi</h2>
+          
+          <button onClick={() => setShowPinModal(true)} className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
+            <div className="flex items-center gap-3">
+              <Lock size={18} className="text-mertha-subtext" />
+              <div className="flex flex-col items-start">
+                <span className="text-sm font-semibold text-mertha-text">PIN Keamanan (6 Digit)</span>
+                <span className={`text-[10px] font-bold uppercase ${profile.has_pin ? 'text-mertha-success' : 'text-mertha-error'}`}>
+                  {profile.has_pin ? 'Aktif' : 'Belum Diatur'}
+                </span>
+              </div>
+            </div>
+            <ChevronRight size={18} className="text-mertha-muted" />
+          </button>
+          
+          <button onClick={() => {
+            if (devMode) {
+              setDevMode(false);
+              localStorage.setItem('developer_mode', 'false');
+            } else {
+              router.push('/developer-mode');
+            }
+          }} className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
+            <div className="flex items-center gap-3">
+              <Settings size={18} className={devMode ? "text-mertha-primary" : "text-mertha-subtext"} />
+              <span className={`text-sm font-semibold ${devMode ? 'text-mertha-primary' : 'text-mertha-text'}`}>Developer Mode</span>
+            </div>
+            <div className={`w-11 h-6 rounded-full relative cursor-pointer shadow-inner transition-colors ${devMode ? 'bg-mertha-primary' : 'bg-mertha-border'}`}>
+              <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${devMode ? 'right-0.5' : 'left-0.5'}`}></div>
+            </div>
+          </button>
+          
+          <div className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border bg-mertha-bg opacity-70">
+            <div className="flex items-center gap-3">
+              <Store size={18} className="text-mertha-muted" />
+              <div className="flex flex-col items-start">
+                <span className="text-sm font-semibold text-mertha-muted">Mode Merchant</span>
+                <span className="text-[10px] font-bold text-mertha-subtext uppercase">Up Coming</span>
+              </div>
+            </div>
+            <div className="w-11 h-6 bg-mertha-border/50 rounded-full relative shadow-inner">
+              <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 shadow-sm"></div>
+            </div>
+          </div>
+
           <button className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
             <div className="flex items-center gap-3">
               <Bell size={18} className="text-mertha-subtext" />
@@ -453,43 +599,11 @@ export default function ProfilPage() {
           </button>
         </div>
 
-        {/* DEMO / MAGIC BUTTONS */}
-        <section className="mx-4 bg-gray-900 rounded-2xl p-5 shadow-lg border border-gray-700">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <h2 className="text-xs font-bold text-gray-300 uppercase tracking-widest">Demo / Magic Toggles</h2>
-          </div>
-          <p className="text-[10px] text-gray-400 mb-4">
-            Gunakan *toggle* di bawah ini untuk mensimulasikan status verifikasi akun langsung ke Supabase.
-          </p>
-          <div className="space-y-3">
-            {[
-              { id: 'is_email_verified', label: 'Email Verified', icon: Mail },
-              { id: 'is_phone_verified', label: 'Phone Verified', icon: Phone },
-              { id: 'has_pin', label: 'Security PIN', icon: Key },
-              { id: 'is_mertha_plus', label: 'Mertha Plus', icon: Star }
-            ].map((item) => (
-              <div key={item.id} className="flex items-center justify-between bg-gray-800 p-3 rounded-xl border border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                    <item.icon size={14} className={profile[item.id] ? "text-green-400" : "text-gray-400"} />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-200">{item.label}</span>
-                </div>
-                {/* Magic Toggle */}
-                <button 
-                  onClick={() => toggleSafetyState(item.id)}
-                  className={`w-12 h-6 rounded-full relative transition-colors ${profile[item.id] ? 'bg-green-500' : 'bg-gray-600'}`}
-                >
-                  <div className={`w-4 h-4 bg-white rounded-full absolute top-1 shadow-sm transition-all ${profile[item.id] ? 'left-7' : 'left-1'}`} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-
       </main>
       
+      {/* Floating Magic Demos (Only in Dev Mode) */}
+      {devMode && <FloatingTools items={floatingItems} defaultOpen={devOpen} />}
+
       {/* Safety Modal / Bottom Sheet */}
       {showSafetyModal && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-500 ease-out">
@@ -700,6 +814,55 @@ export default function ProfilPage() {
               >
                 Batal & Kembali
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* PIN Setup Modal */}
+      {showPinModal && (
+        <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300 pb-20 sm:pb-0 px-4">
+          <div className="bg-white w-full sm:w-[400px] sm:rounded-3xl rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom-12 sm:zoom-in-95 duration-300 relative flex flex-col p-8 text-center">
+            <div className="w-16 h-16 bg-mertha-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-mertha-primary">
+              <Lock size={32} />
+            </div>
+            <h3 className="font-bold text-mertha-text text-xl mb-2">
+              {profile.has_pin ? 'Ubah PIN Keamanan' : 'Atur PIN Keamanan'}
+            </h3>
+            <p className="text-sm text-mertha-subtext mb-8">
+              Masukkan 6 digit angka untuk melindungi akses fitur sensitif Anda.
+            </p>
+            
+            <div className="space-y-6">
+              <input 
+                type="password" 
+                maxLength="6"
+                placeholder="••••••"
+                className="w-full text-center text-4xl tracking-[0.5em] border-2 border-mertha-border rounded-2xl px-4 py-4 focus:outline-none focus:border-mertha-primary bg-gray-50 text-mertha-primary font-bold shadow-inner"
+                value={pinInput}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, '');
+                  setPinInput(val);
+                }}
+              />
+              
+              <div className="flex gap-3 pt-2">
+                <button 
+                  onClick={() => {
+                    setShowPinModal(false);
+                    setPinInput('');
+                  }} 
+                  className="flex-1 bg-gray-100 text-mertha-text font-bold py-3.5 rounded-2xl hover:bg-gray-200 transition-colors"
+                >
+                  Batal
+                </button>
+                <button 
+                  disabled={pinLoading || pinInput.length !== 6}
+                  onClick={handleSavePin}
+                  className="flex-1 bg-mertha-primary text-white font-bold py-3.5 rounded-2xl hover:bg-opacity-90 disabled:opacity-50 transition-all shadow-lg"
+                >
+                  {pinLoading ? 'Menyimpan...' : 'Simpan'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

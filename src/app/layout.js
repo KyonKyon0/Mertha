@@ -11,6 +11,8 @@ export const metadata = {
   description: "Selamatkan Makanan, Selamatkan Bumi",
 };
 
+import Script from "next/script";
+
 export default function RootLayout({ children }) {
   return (
     <html
@@ -19,6 +21,8 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col mx-auto max-w-md bg-white shadow-xl relative overflow-x-hidden">
         {children}
+        {/* UI Enhancer for interactions */}
+        <Script src="/assets/js/ui-enhancer.js" strategy="lazyOnload" />
       </body>
     </html>
   );

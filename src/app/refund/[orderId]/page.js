@@ -124,8 +124,8 @@ export default function RefundPage({ params }) {
           .single();
 
         if (data && data.id) {
-          // Refund already submitted, redirect to review page
-          router.replace(`/refund/${orderId}/review`);
+          // Refund already submitted, redirect to order page
+          router.replace(`/pesanan/${orderId}`);
         } else {
           setIsChecking(false);
         }
@@ -194,26 +194,31 @@ export default function RefundPage({ params }) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
-      // Send all data to API — server handles AI call + DB writes with service role
-      const res = await fetch('/api/ai/food-review', {
+      // 1. Create the refund entry in DB quickly
+      const res = await fetch('/api/refund/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId,
           userId: user.id,
-          reason,
-          // Images are now heavily compressed (max ~30-50KB each) so they can safely be sent
-          images: base64Images
+          reason
         })
       });
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "API responded with error");
+        throw new Error(errData.error || "Gagal membuat laporan");
       }
 
-      // Success! Redirect directly to the order details page to see the AI result inline
-      router.replace(`/pesanan/${orderId}`);
+      const { refundId } = await res.json();
+
+      // 2. Pass the base64 compressed images and reason to the review page via sessionStorage
+      // (This avoids waiting for the slow AI process on this screen!)
+      sessionStorage.setItem(`mertha_ai_images_${refundId}`, JSON.stringify(base64Images));
+      sessionStorage.setItem(`mertha_ai_reason_${refundId}`, reason);
+
+      // 3. Navigate immediately to the order details page
+      router.replace(`/pesanan/${orderId}?claimId=${refundId}`);
       
     } catch (err) {
       console.error(err);
@@ -232,22 +237,6 @@ export default function RefundPage({ params }) {
 
   return (
     <div className="bg-white min-h-screen flex flex-col pb-safe">
-      {/* FULL SCREEN AI LOADING ANIMATION */}
-      {isSubmitting && (
-        <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-6 animate-fade-in">
-          <div className="relative w-32 h-32 mb-8">
-            <div className="absolute inset-0 border-4 border-mertha-border rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
-            <div className="absolute inset-4 bg-mertha-primary/10 rounded-full animate-pulse flex items-center justify-center">
-              <ShieldCheck size={40} className="text-mertha-primary" />
-            </div>
-          </div>
-          <h2 className="text-xl font-bold text-mertha-text mb-2 tracking-wide">AI Sedang Memeriksa</h2>
-          <p className="text-sm text-mertha-subtext text-center max-w-[280px]">
-            Sistem kami sedang menganalisis foto dan keluhan Anda. Mohon tunggu...
-          </p>
-        </div>
-      )}
 
       <header className="bg-white px-4 py-3 flex items-center gap-3 border-b border-mertha-border sticky top-0 z-40">
         <button onClick={() => router.back()} className="text-mertha-text">
