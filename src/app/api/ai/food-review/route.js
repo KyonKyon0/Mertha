@@ -15,36 +15,27 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // --- 1. Call OpenRouter AI ---
+    // --- 1. Call OpenRouter AI (Vision) ---
     let aiData = {
       verdict: "MENUNGGU",
       quality_score: 0.2,
       ai_analysis: "Analisis lengkap belum tersedia karena sistem AI sedang sibuk. Sistem akan secara otomatis meneruskan klaim ini ke tim admin untuk peninjauan lebih lanjut.",
       verdict_reason: "Sistem sibuk, diteruskan ke review manual.",
       recommendations: ["Harap bersabar menunggu tim admin memverifikasi keluhan Anda.", "Simpan foto makanan sebagai bukti jika diperlukan oleh tim kami."],
-      warnings: []
+      warnings: [],
+      ai_model_vision: "NVIDIA Nemotron 12B VL",
+      ai_model_analyst: "N/A"
     };
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (apiKey) {
-      const promptText = `Anda adalah Food Quality AI Inspector profesional untuk platform "Mertha", aplikasi penyelamat makanan berlebih di Indonesia.
-Tugas Anda: menganalisis klaim refund dari pembeli dan memberikan penilaian yang adil, jelas, dan mudah dipahami.
+      const visionPromptText = `You are a professional Food Quality Inspector. 
+User's claim: "${reason}"
+Observe the provided image(s). Does the visual evidence support the user's claim, or contradict it? 
+For example, if they claim it is rotten/bad but it looks fresh/good, state that clearly.
+Provide a concise, objective observation in English describing exactly what you see in the images compared to the claim.`;
 
-Keluhan pembeli: "${reason}"
-Jumlah foto bukti diunggah: ${images.length} foto
-
-Berikan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blok). PASTIKAN HANYA MENGGUNAKAN KUTIP GANDA (DOUBLE QUOTES "") UNTUK STRING, JANGAN GUNAKAN KUTIP TUNGGAL ('')!:
-{
-  "verdict": "SANGAT_BAIK" atau "BAIK" atau "CUKUP" atau "BURUK" atau "SANGAT_BURUK",
-  "quality_score": (0.0-1.0, 0=sangat buruk, 1=sangat baik),
-  "ai_analysis": "Narasi panjang 3-4 kalimat. BACA DENGAN TELITI: Anda WAJIB membandingkan keluhan teks pembeli dengan foto yang diunggah! Jika foto menunjukkan makanan yang segar, bagus, dan tidak rusak, TETAPI pembeli menulis keluhan bahwa makanan itu busuk/hancur, maka Anda harus menyatakan klaim ini PALSU/BOHONG. Jangan mudah tertipu oleh teks keluhan!",
-  "verdict_reason": "1 kalimat singkat alasan utama penilaian. Jika bohong, sebutkan ketidaksesuaian foto dan teks.",
-  "recommendations": ["Saran 1 untuk pembeli", "Saran 2"],
-  "warnings": ["Peringatan jika ada ketidaksesuaian antara foto (bagus) dengan klaim (busuk), yang menandakan penipuan/klaim palsu."]
-}`;
-
-      // Vision model — supports image_url
-      const messageContent = [{ type: "text", text: promptText }];
+      const messageContent = [{ type: "text", text: visionPromptText }];
       for (const image of images) {
         if (image && typeof image === 'string' && image.startsWith('data:image')) {
           messageContent.push({ type: "image_url", image_url: { url: image } });
@@ -52,16 +43,16 @@ Berikan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blo
       }
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
+      const timeout = setTimeout(() => controller.abort(), 40000);
 
       try {
-        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        const visionResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           signal: controller.signal,
           headers: {
             "Authorization": `Bearer ${apiKey}`,
             "HTTP-Referer": "https://mertha.app",
-            "X-Title": "Mertha Food Review",
+            "X-Title": "Mertha Food Review (Vision)",
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -70,17 +61,54 @@ Berikan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blo
           })
         });
 
-        const responseData = await openRouterResponse.json();
+        const visionData = await visionResponse.json();
+        const visionObservation = visionData?.choices?.[0]?.message?.content || "No visual observation available.";
+        
+        // --- 2. Call OpenRouter AI (Text/Analyst) ---
+        const textPrompt = `Kamu adalah AI asisten korporat untuk platform "Mertha", aplikasi penyelamat makanan berlebih di Indonesia.
+Tugas kamu adalah menganalisis klaim refund dari pembeli, memberikan penilaian yang adil, elegan, profesional, dan mudah dipahami.
+Kamu harus berpihak pada objektivitas. Jika pembeli terdeteksi berbohong (klaim tidak sesuai foto), tegur dengan bahasa korporat yang sopan namun tegas (misal: "Berdasarkan analisis visual menyeluruh kami, kondisi produk tampak optimal dan tidak menunjukkan kendala seperti yang dilaporkan").
+
+Klaim pembeli: "${reason}"
+Hasil observasi dari AI Vision (dalam bahasa Inggris): "${visionObservation}"
+
+Berdasarkan observasi AI Vision di atas, buatlah keputusan akhir. Keluarkan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blok). PASTIKAN HANYA MENGGUNAKAN KUTIP GANDA (DOUBLE QUOTES "") UNTUK STRING, JANGAN GUNAKAN KUTIP TUNGGAL ('')!:
+{
+  "verdict": "SANGAT_BAIK" / "BAIK" / "CUKUP" / "BURUK" / "SANGAT_BURUK",
+  "quality_score": (0.0-1.0, 0=sangat buruk/penipuan, 1=sangat baik),
+  "ai_analysis": "Penjelasan analisis yang keren, empatik, dan korporat (3-4 kalimat).",
+  "verdict_reason": "1 kalimat alasan utama penilaian secara profesional.",
+  "recommendations": ["Saran 1 untuk pembeli (korporat)", "Saran 2"],
+  "warnings": ["Peringatan elegan jika ada indikasi klaim tidak akurat/palsu."],
+  "ai_model_vision": "NVIDIA Nemotron 12B VL",
+  "ai_model_analyst": "Google Gemma 9B"
+}`;
+
+        const analystResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          signal: controller.signal,
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "HTTP-Referer": "https://mertha.app",
+            "X-Title": "Mertha Food Review (Analyst)",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "google/gemma-2-9b-it:free",
+            messages: [{ role: "user", content: textPrompt }]
+          })
+        });
+
+        const analystData = await analystResponse.json();
         clearTimeout(timeout);
 
-        if (!openRouterResponse.ok) {
-          console.error("OpenRouter error:", openRouterResponse.status, JSON.stringify(responseData));
+        if (!analystResponse.ok) {
+          console.error("OpenRouter Analyst error:", analystResponse.status, JSON.stringify(analystData));
         } else {
-          const resultText = responseData?.choices?.[0]?.message?.content;
+          const resultText = analystData?.choices?.[0]?.message?.content;
           if (resultText) {
             try {
               const cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-              // Try full parse first, then regex extract, then single quote fix
               try {
                 aiData = JSON.parse(cleanJson);
               } catch {
@@ -90,7 +118,6 @@ Berikan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blo
                     aiData = JSON.parse(match[0]);
                   }
                 } catch {
-                  // Fallback: fix single quotes used for arrays/strings
                   const match = cleanJson.match(/\{[\s\S]*\}/);
                   if (match) {
                     const fixedJson = match[0].replace(/'([^']+)'/g, '"$1"');
@@ -101,13 +128,11 @@ Berikan analisis lengkap dalam format JSON murni (TANPA markdown, TANPA kode blo
             } catch (e) {
               console.error("Failed to parse AI response:", resultText, e);
             }
-          } else {
-            console.error("Empty choices:", JSON.stringify(responseData));
           }
         }
       } catch (fetchErr) {
         clearTimeout(timeout);
-        console.error(fetchErr.name === 'AbortError' ? "OpenRouter timeout 90s" : "OpenRouter fetch error: " + fetchErr.message);
+        console.error(fetchErr.name === 'AbortError' ? "OpenRouter timeout" : "OpenRouter fetch error: " + fetchErr.message);
       }
     }
 

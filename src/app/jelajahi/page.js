@@ -152,7 +152,7 @@ function JelajahiContent() {
 
         <div className="flex-1 overflow-y-auto relative bg-mertha-bg pb-12">
           {loading ? (
-             <div className="pt-20"><GlobalLoading fullScreen={false} /></div>
+             <div className="flex flex-col items-center justify-center min-h-[50vh]"><GlobalLoading fullScreen={false} /></div>
           ) : products.length === 0 ? (
              <div className="p-8 text-center text-mertha-subtext">Tidak ada produk ditemukan.</div>
           ) : (

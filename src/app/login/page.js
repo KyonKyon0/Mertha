@@ -1,10 +1,11 @@
-import React from 'react';
 import Link from 'next/link';
 import MerthaLogo from '@/components/ui/MerthaLogo';
 import { login } from '@/app/actions/auth';
 import { SubmitButton } from '@/components/auth/SubmitButton';
 
-export default function Login({ searchParams }) {
+export default async function Login({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+
   return (
     <div className="min-h-screen flex flex-col justify-center px-6 bg-white">
       <div className="mb-8 flex justify-center">
@@ -15,15 +16,15 @@ export default function Login({ searchParams }) {
         Masuk untuk melanjutkan pesanan dan menyelamatkan makanan.
       </p>
 
-      {searchParams?.message && (
+      {resolvedSearchParams?.message && (
         <div className="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg">
-          {searchParams.message}
+          {resolvedSearchParams.message}
         </div>
       )}
 
-      {searchParams?.error && (
+      {resolvedSearchParams?.error && (
         <div className="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
-          {searchParams.error}
+          {resolvedSearchParams.error}
         </div>
       )}
 

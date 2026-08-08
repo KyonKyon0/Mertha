@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function GlobalLoading({ fullScreen = true }) {
   return (
-    <div className={`flex flex-col items-center justify-center bg-surface/80 backdrop-blur-md z-[9999] ${fullScreen ? 'fixed inset-0 h-screen w-screen' : 'w-full h-full min-h-[400px] rounded-2xl'}`}>
+    <div className={`flex flex-col items-center justify-center z-[50] ${fullScreen ? 'fixed inset-0 h-screen w-screen bg-surface/80 backdrop-blur-md z-[9999]' : 'w-full py-12 flex-1'}`}>
       <div className="relative flex items-center justify-center">
         {/* Outer glowing ring */}
         <div className="absolute inset-0 w-32 h-32 -m-8 rounded-full border-2 border-transparent border-t-primary border-r-primary/50 animate-spin" style={{ animationDuration: '2s' }}></div>

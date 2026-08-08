@@ -130,7 +130,7 @@ export default function PesananPage() {
 
         <div className="p-4 space-y-3">
           {isLoading ? (
-            <div className="pt-20">
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
               <GlobalLoading fullScreen={false} />
             </div>
           ) : filteredOrders.length === 0 ? (

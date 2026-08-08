@@ -284,9 +284,18 @@ export default function OrderDetail({ params }) {
                     </div>
                     <div>
                       <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Analisis AI Lengkap</span>
-                      <p className="text-sm text-on-surface leading-relaxed">
+                      <p className="text-sm text-on-surface leading-relaxed mb-2">
                         {aiReview.parsedData.ai_analysis || "Sedang memproses..."}
                       </p>
+                      {aiReview.parsedData.ai_model_vision && (
+                        <div className="mt-3 pt-3 border-t border-outline-variant/30">
+                          <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block mb-1.5">Model AI yang Digunakan:</span>
+                          <div className="flex flex-wrap gap-2 text-[10px] text-on-surface-variant">
+                            <span className="bg-surface-container-high px-2 py-1 rounded border border-outline-variant/50">👁️ Vision: {aiReview.parsedData.ai_model_vision}</span>
+                            <span className="bg-surface-container-high px-2 py-1 rounded border border-outline-variant/50">🧠 Analyst: {aiReview.parsedData.ai_model_analyst}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (

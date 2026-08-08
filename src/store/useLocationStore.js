@@ -11,14 +11,14 @@ const useLocationStore = create(
         {
           id: 'rumah',
           label: 'Rumah',
-          address: 'Jl. Sudirman No. 45, Jakarta',
+          address: '',
           lat: -6.225014,
           lng: 106.802223
         },
         {
           id: 'kantor',
           label: 'Kantor',
-          address: 'Gedung Menara Mulia, Gatot Subroto',
+          address: '',
           lat: -6.230784,
           lng: 106.818464
         }
@@ -28,6 +28,8 @@ const useLocationStore = create(
 
       setActiveLocation: (location) => set({ activeLocation: location }),
       
+      setSavedLocations: (locations) => set({ savedLocations: locations }),
+
       setGpsLocation: (location) => set((state) => {
         const newState = { gpsLocation: location };
         return newState;
