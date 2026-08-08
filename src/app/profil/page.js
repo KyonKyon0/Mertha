@@ -23,7 +23,7 @@ export default function ProfilPage() {
 
   return (
     <>
-      <BuyerHeader showLogo={false} title="Profil" rightAction={<button className="p-2 text-mertha-subtext"><Settings size={20} /></button>} />
+      <BuyerHeader />
       
       <main className="flex-1 bg-mertha-bg pb-24">
         {/* Profile Header */}

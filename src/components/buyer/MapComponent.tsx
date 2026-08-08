@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Navigation, Route } from 'lucide-react';
+import { Navigation, Route, X } from 'lucide-react';
 import { Merchant, LocationError, Coordinates } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -77,6 +77,7 @@ export default function MapComponent({
   const zoom = userLocation ? 16 : 14;
 
   const bounds = routeCoordinates && routeCoordinates.length > 0 ? routeCoordinates : null;
+  const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(null);
 
   return (
     <div className="relative w-full h-full">
@@ -92,6 +93,11 @@ export default function MapComponent({
         />
         
         <MapController center={bounds ? undefined : center} zoom={bounds ? undefined : zoom} bounds={bounds} />
+
+        {/* Map Click Handler to deselect merchant */}
+        <div className="hidden">
+          <Marker position={[0,0]} eventHandlers={{ add: (e) => { e.target._map.on('click', () => setSelectedMerchant(null)); } }} opacity={0} />
+        </div>
 
         {userLocation && (
           <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
@@ -111,107 +117,147 @@ export default function MapComponent({
         )}
 
         {merchants.map(merchant => (
-          <Marker key={merchant.id} position={[merchant.latitude, merchant.longitude]}>
-            <Popup className="merchant-popup custom-popup">
-              <div className="font-sans w-48 p-0 m-0">
-                <div className="relative w-full h-24 rounded-t-lg overflow-hidden -mt-3 -mx-4 mb-2">
-                  <Image 
-                    src={merchant.imageUrl} 
-                    alt={merchant.name}
-                    fill
-                    className="object-cover"
-                    sizes="200px"
-                  />
-                </div>
-                <strong className="block text-mertha-text text-sm mb-0.5 leading-tight">{merchant.name}</strong>
-                <span className="text-xs text-mertha-subtext line-clamp-1 block mb-1">{merchant.address}</span>
-                {merchant.distance !== undefined && (
-                  <div className="text-xs text-mertha-primary font-bold mb-2">
-                    {formatDistance(merchant.distance)} dari Anda
-                  </div>
-                )}
-                
-                <div className="flex gap-2 w-full mt-2">
-                  <button 
-                    onClick={() => onGetRoute(merchant)}
-                    className="flex-1 text-center bg-blue-50 text-blue-600 border border-blue-200 text-xs py-1.5 rounded-md font-bold transition-colors hover:bg-blue-100 flex items-center justify-center gap-1"
-                  >
-                    <Route size={12} /> Rute
-                  </button>
-                  <Link 
-                    href={`/produk/${merchant.slug}`} // In a real app we might link to product, here we link to merchant or product
-                    className="flex-1 text-center bg-mertha-primary text-white text-xs py-1.5 rounded-md font-bold transition-colors hover:bg-mertha-primary/90"
-                  >
-                    Detail
-                  </Link>
-                </div>
-              </div>
-            </Popup>
+          <Marker 
+            key={merchant.id} 
+            position={[merchant.latitude, merchant.longitude]}
+            eventHandlers={{
+              click: () => setSelectedMerchant(merchant),
+            }}
+          >
           </Marker>
         ))}
       </MapContainer>
+
+      {/* Modern Bottom Sheet for Selected Merchant */}
+      {selectedMerchant && (
+        <>
+          {/* Dim Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/20 z-[900] animate-fade-in"
+            onClick={() => setSelectedMerchant(null)}
+          ></div>
+          
+          <div className="absolute bottom-4 left-4 right-4 z-[1000] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-slide-up overflow-hidden border border-mertha-border/50">
+            <div className="relative w-full h-[160px]">
+              <Image 
+                src={selectedMerchant.imageUrl} 
+                alt={selectedMerchant.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+              <button 
+                onClick={() => setSelectedMerchant(null)}
+                className="absolute top-3 right-3 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-5">
+              <div className="flex justify-between items-start gap-2 mb-2">
+                <h3 className="text-lg font-bold text-mertha-text leading-tight">{selectedMerchant.name}</h3>
+                {selectedMerchant.distance !== undefined && (
+                  <div className="inline-flex shrink-0 items-center gap-1 bg-mertha-primary/10 text-mertha-primary px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                    <Navigation size={12} />
+                    {formatDistance(selectedMerchant.distance)}
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-sm text-mertha-subtext line-clamp-2 leading-relaxed mb-5">
+                {selectedMerchant.address}
+              </p>
+              
+              <div className="flex gap-3 w-full">
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedMerchant.latitude},${selectedMerchant.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center bg-blue-50 text-blue-600 border border-blue-100 text-sm py-3 rounded-xl font-bold transition-all duration-300 hover:bg-blue-100 hover:shadow-sm active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Route size={18} /> Rute Jalan
+                </a>
+                <Link 
+                  href={`/jelajahi?q=${encodeURIComponent(selectedMerchant.name)}`} 
+                  className="flex-1 text-center bg-mertha-primary text-white text-sm py-3 rounded-xl font-bold transition-all duration-300 hover:bg-mertha-primary/90 hover:shadow-lg hover:shadow-mertha-primary/30 active:scale-95"
+                >
+                  Lihat Menu
+                </Link>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Floating UI Elements */}
       <div className="absolute bottom-6 right-4 z-[400] flex flex-col gap-2">
         <button 
           onClick={onLocateClick}
           disabled={isLocating}
-          className={`w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center border border-mertha-border/50 text-mertha-primary transition-all active:scale-95 ${isLocating ? 'opacity-70' : ''}`}
+          className={`w-[52px] h-[52px] bg-white/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-mertha-border/50 text-mertha-primary transition-all duration-300 active:scale-90 hover:bg-mertha-bg flex items-center justify-center ${isLocating ? 'opacity-50 scale-90 pointer-events-none' : 'hover:-translate-y-1'}`}
           aria-label="Gunakan Lokasi Saya"
         >
-          <Navigation size={20} className={isLocating ? "animate-pulse text-mertha-muted" : ""} />
+          <Navigation size={22} className={isLocating ? "animate-pulse" : ""} />
         </button>
       </div>
 
       {routeCoordinates && (
-        <div className="absolute top-20 left-4 right-4 z-[400]">
-          <div className="bg-white p-3 rounded-lg shadow-lg border border-mertha-border flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-mertha-text">Petunjuk Arah</p>
+        <div className="absolute top-[140px] left-4 right-4 z-[400] animate-slide-down">
+          <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-mertha-border flex items-center justify-between">
+            <div className="flex flex-col">
+              <p className="text-sm font-bold text-mertha-text flex items-center gap-1.5">
+                <Route size={16} className="text-blue-600" />
+                Petunjuk Arah
+              </p>
               {routeDistance && routeDuration && (
-                <p className="text-xs text-mertha-subtext">{routeDistance} • {routeDuration}</p>
+                <p className="text-xs text-mertha-subtext font-medium mt-0.5 ml-5">{routeDistance} • {routeDuration}</p>
               )}
             </div>
             <button 
               onClick={clearRoute}
-              className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-md font-bold hover:bg-gray-200 transition-colors"
+              className="text-xs bg-gray-100 text-gray-700 px-3.5 py-2 rounded-xl font-bold hover:bg-gray-200 active:scale-95 transition-all duration-300"
             >
-              Hapus Rute
+              Tutup
             </button>
           </div>
         </div>
       )}
 
       {locationError && (
-        <div className="absolute top-20 left-4 right-4 z-[400]">
-          <div className="bg-white p-3 rounded-lg shadow-lg border border-red-200 flex flex-col gap-2" role="alert">
-            <p className="text-sm text-red-600 font-medium">{locationError.message}</p>
-            {['timeout', 'denied'].includes(locationError.type) && (
-              <button onClick={onLocateClick} className="text-xs bg-red-50 text-red-700 px-3 py-1.5 rounded-md font-bold self-start">
-                Coba Lagi
-              </button>
-            )}
+        <div className="absolute top-[140px] left-4 right-4 z-[400] animate-slide-down">
+          <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-red-200/50 flex flex-col gap-3" role="alert">
+            <p className="text-sm text-red-600 font-bold leading-snug">{locationError.message}</p>
             {locationError.type === 'denied' && (
-              <p className="text-xs text-mertha-subtext">
-                Izin lokasi ditolak. Aktifkan GPS perangkat, buka pengaturan izin situs pada browser, izinkan akses lokasi, lalu tekan Coba Lagi.
+              <p className="text-[11px] text-mertha-subtext leading-relaxed">
+                Izin lokasi ditolak. Aktifkan GPS perangkat, izinkan akses lokasi pada browser, lalu coba lagi.
               </p>
             )}
-            <div className="flex gap-2 mt-1">
-              <button onClick={() => {}} className="text-xs bg-gray-100 px-3 py-1.5 rounded-md font-medium text-gray-700">Cari Alamat Manual</button>
-              <button onClick={resetLocation} className="text-xs bg-gray-100 px-3 py-1.5 rounded-md font-medium text-gray-700">Tampilkan Semua Merchant</button>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {['timeout', 'denied'].includes(locationError.type) && (
+                <button onClick={onLocateClick} className="flex-1 min-w-[100px] text-xs bg-red-50 text-red-700 px-3 py-2 rounded-xl font-bold hover:bg-red-100 active:scale-95 transition-all duration-300 text-center">
+                  Coba Lagi
+                </button>
+              )}
+              <button onClick={() => {}} className="flex-1 min-w-[120px] text-xs bg-gray-50 border border-gray-200 px-3 py-2 rounded-xl font-bold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-300 text-center">Cari Manual</button>
+              <button onClick={resetLocation} className="w-full text-xs bg-gray-800 text-white px-3 py-2.5 rounded-xl font-bold hover:bg-gray-700 active:scale-95 transition-all duration-300 text-center">Tampilkan Semua Area</button>
             </div>
           </div>
         </div>
       )}
 
-      {isLocating && !locationError && (
-        <div className="absolute top-20 left-4 right-4 z-[400]" aria-live="polite">
-          <div className="bg-white p-3 rounded-lg shadow-lg border border-mertha-border text-sm text-mertha-text font-medium flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
-            Mencari lokasi Anda...
-          </div>
+      <div 
+        className={`absolute left-1/2 -translate-x-1/2 z-[400] transition-all duration-500 ease-out flex justify-center w-full max-w-[280px] ${
+          isLocating && !locationError ? 'bottom-28 opacity-100 scale-100' : 'bottom-10 opacity-0 scale-95 pointer-events-none'
+        }`} 
+        aria-live="polite"
+      >
+        <div className="bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-mertha-border text-sm text-mertha-text font-bold flex items-center gap-3">
+          <div className="w-5 h-5 border-[2.5px] border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
+          Mencari lokasi Anda...
         </div>
-      )}
+      </div>
     </div>
   );
 }

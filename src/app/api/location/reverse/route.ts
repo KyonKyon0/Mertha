@@ -28,6 +28,8 @@ export async function GET(request: Request) {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const onAbort = () => controller.abort();
+    request.signal.addEventListener('abort', onAbort);
 
     let response;
     try {
@@ -37,6 +39,11 @@ export async function GET(request: Request) {
       });
     } catch (fetchError: any) {
       clearTimeout(timeoutId);
+      request.signal.removeEventListener('abort', onAbort);
+      
+      if (request.signal.aborted) {
+        return new Response(null, { status: 204 });
+      }
       if (fetchError.name === 'AbortError') {
         return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
       }
@@ -44,6 +51,11 @@ export async function GET(request: Request) {
     }
 
     clearTimeout(timeoutId);
+    request.signal.removeEventListener('abort', onAbort);
+
+    if (request.signal.aborted) {
+      return new Response(null, { status: 204 });
+    }
 
     if (response.status === 429) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });

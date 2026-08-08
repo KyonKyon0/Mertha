@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+certificates
+
+# AI Testing and Temp files
+test-*.js
+test-*.mjs
+migrate_images.js
+tunnel.log
+temp.html

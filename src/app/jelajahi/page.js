@@ -3,34 +3,99 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
 import LocationStatus from '@/components/buyer/LocationStatus';
+import GlobalLoading from '@/components/ui/GlobalLoading';
 import BottomNavigation from '@/components/buyer/BottomNavigation';
 import ProductCard from '@/components/buyer/ProductCard';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, Map as MapIcon, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 function JelajahiContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
+  const initialCategory = searchParams.get('category') || 'Semua';
+  
   const [searchQuery, setSearchQuery] = useState(q);
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const categories = ["Semua", "Mystery Bag", "Roti & Pastry", "Nasi & Lauk", "Sayur & Buah", "Minuman"];
+  const filters = ["Terdekat", "Harga Terendah", "Waktu Pengambilan", "Rating Tertinggi"];
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSearchQuery(q);
+    setTimeout(() => setSearchQuery(q), 0);
   }, [q]);
 
-  const categories = ["Semua", "Roti & Pastry", "Nasi & Lauk", "Minuman", "Sayur & Buah"];
+  useEffect(() => {
+    setTimeout(() => setActiveCategory(searchParams.get('category') || 'Semua'), 0);
+  }, [searchParams]);
 
-  const dummyProducts = [
-    { id: "1", product: "Surprise Bag - Pastry Sisa Hari Hari", merchant: "Toko Roti Makmur", price: 25000, originalPrice: 75000, stock: 2, distance: 1.2, pickupTime: "19:00 - 21:00", imageUrl: "/images/carousel/hero2.jpg" },
-    { id: "2", product: "Nasi Campur Ayam (Porsi Besar)", merchant: "Warung Bu Nani", price: 15000, originalPrice: 35000, stock: 5, distance: 2.5, pickupTime: "20:00 - 22:00", imageUrl: "/images/carousel/hero3.jpg" },
-    { id: "3", product: "Aneka Buah Potong Segar", merchant: "Supermarket Segar", price: 20000, originalPrice: 40000, stock: 1, distance: 3.1, pickupTime: "18:00 - 20:00", imageUrl: "/images/carousel/hero1.jpg" },
-    { id: "4", product: "Paket Sayur Organik", merchant: "Tani Lokal", price: 30000, originalPrice: 60000, stock: 4, distance: 4.0, pickupTime: "17:00 - 19:00", imageUrl: "/images/carousel/hero1.jpg" },
-    { id: "5", product: "Donat Sisa (1 Kotak isi 6)", merchant: "Donat Lezat", price: 20000, originalPrice: 50000, stock: 3, distance: 4.5, pickupTime: "21:00 - 22:30", imageUrl: "/images/carousel/hero2.jpg" },
-    { id: "6", product: "Sushi Platter", merchant: "Sushi Enak", price: 40000, originalPrice: 100000, stock: 2, distance: 5.2, pickupTime: "20:30 - 22:00", imageUrl: "/images/carousel/hero3.jpg" },
-  ];
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      
+      let query = supabase
+        .from('products')
+        .select(`
+          *,
+          merchants (name, logo_url, address),
+          categories (name),
+          product_images (image_url)
+        `)
+        .eq('is_active', true);
 
-  const filters = ["Terdekat", "Harga Terendah", "Waktu Pengambilan", "Rating Tertinggi"];
+      if (q) {
+        query = query.ilike('name', `%${q}%`);
+      }
+
+      const { data, error } = await query;
+      
+      if (data) {
+        let filtered = data;
+        if (activeCategory !== 'Semua') {
+           filtered = data.filter(p => p.categories?.name === activeCategory);
+        }
+        
+        // Map to expected ProductCard format
+        const formattedProducts = filtered.map(p => ({
+           id: p.id,
+           slug: p.slug, // Use slug for routing
+           product: p.name,
+           merchant: p.merchants?.name,
+           price: p.price,
+           originalPrice: p.original_price,
+           stock: p.stock,
+           distance: 1.2, // Dummy distance for now
+           pickupTime: `${p.pickup_time_start?.substring(0,5)} - ${p.pickup_time_end?.substring(0,5)}`,
+           imageUrl: p.product_images?.[0]?.image_url || "/images/placeholder.jpg"
+        }));
+        setProducts(formattedProducts);
+      }
+      setLoading(false);
+    }
+    fetchProducts();
+  }, [q, activeCategory]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    updateUrl(searchQuery, activeCategory);
+  };
+
+  const handleCategoryClick = (cat) => {
+    updateUrl(searchQuery, cat);
+  };
+
+  const updateUrl = (query, cat) => {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (cat && cat !== 'Semua') params.set('category', cat);
+    router.push(`/jelajahi?${params.toString()}`);
+  };
 
   const createMapUrl = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,12 +104,12 @@ function JelajahiContent() {
 
   return (
     <>
-      <BuyerHeader showLogo={false} title="Jelajahi" />
+      <BuyerHeader />
       <LocationStatus />
       
       <main className="flex-1 pb-24 flex flex-col min-h-screen">
         <div className="bg-white px-4 py-3 border-b border-mertha-border/50 space-y-3 z-10 relative">
-          <div className="relative">
+          <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-mertha-muted" size={20} />
             <input 
               type="text" 
@@ -53,16 +118,17 @@ function JelajahiContent() {
               placeholder="Cari makanan, tempat, atau kategori..." 
               className="w-full bg-mertha-bg rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-mertha-primary/50"
             />
-          </div>
+          </form>
           
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {categories.map((cat, idx) => (
               <button 
                 key={idx}
+                onClick={() => handleCategoryClick(cat)}
                 className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  idx === 0 
-                    ? "bg-mertha-primary text-white" 
-                    : "bg-white border border-mertha-border text-mertha-subtext hover:bg-mertha-bg"
+                  activeCategory === cat
+                    ? "bg-mertha-primary text-white shadow-sm" 
+                    : "bg-white border border-mertha-border text-mertha-subtext hover:bg-mertha-primary/5 hover:text-mertha-primary"
                 }`}
               >
                 {cat}
@@ -85,18 +151,29 @@ function JelajahiContent() {
         </div>
 
         <div className="flex-1 overflow-y-auto relative bg-mertha-bg pb-12">
-          <div className="p-4 grid grid-cols-2 gap-3">
-            {dummyProducts.map((product) => (
-              <Link href={`/produk/${product.id}`} key={product.id}>
-                <ProductCard {...product} />
-              </Link>
-            ))}
-          </div>
+          {loading ? (
+             <div className="pt-20"><GlobalLoading fullScreen={false} /></div>
+          ) : products.length === 0 ? (
+             <div className="p-8 text-center text-mertha-subtext">Tidak ada produk ditemukan.</div>
+          ) : (
+            <div className="p-4 grid grid-cols-2 gap-3">
+              {products.map((product, index) => (
+                <Link 
+                  href={`/produk/${product.slug}`} 
+                  key={product.id}
+                  className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both hover:-translate-y-1 transition-transform"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <ProductCard {...product} />
+                </Link>
+              ))}
+            </div>
+          )}
           
           {/* Map FAB */}
           <Link 
             href={createMapUrl()}
-            className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-mertha-text text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm z-30 transition-transform active:scale-95"
+            className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-mertha-text text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm z-30 transition-all hover:scale-105 active:scale-95 animate-in slide-in-from-bottom-8 fade-in duration-500 delay-300 fill-mode-both hover:bg-mertha-primary"
           >
             <MapIcon size={18} />
             Peta
@@ -111,7 +188,7 @@ function JelajahiContent() {
 
 export default function Jelajahi() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen">Memuat daftar...</div>}>
+    <Suspense fallback={<GlobalLoading fullScreen={true} />}>
       <JelajahiContent />
     </Suspense>
   );

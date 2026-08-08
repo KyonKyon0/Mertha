@@ -6,13 +6,22 @@ import ProductClientComponent from '@/components/buyer/ProductClientComponent';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+export const dynamic = 'force-dynamic';
+
+type ProductPageProps = {
+  params: Promise<{
+    productId: string;
+  }>;
+};
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { productId } = await params;
   const supabase = createClient(supabaseUrl, supabaseKey);
-  const { data: product } = await supabase
+  const { data: product, error } = await supabase
     .from('products')
-    .select('*, merchants(*)')
-    .eq('slug', params.productId)
-    .single();
+    .select('*, merchants(*), product_images(image_url)')
+    .eq('slug', productId)
+    .maybeSingle();
 
   if (!product) {
     return {
@@ -21,61 +30,64 @@ export async function generateMetadata({ params }: { params: { productId: string
     };
   }
 
+  const imageUrl = product.product_images?.[0]?.image_url || '/images/placeholder.jpg';
+
   return {
-    title: `${product.name} - ${product.merchants.name} | Too Good To Be Waste`,
+    title: `${product.name} - ${product.merchants?.name} | Too Good To Be Waste`,
     description: product.description,
     openGraph: {
-      images: [product.image_url],
-      title: `${product.name} - ${product.merchants.name}`,
+      images: [imageUrl],
+      title: `${product.name} - ${product.merchants?.name}`,
       description: product.description
     }
   };
 }
 
-export default async function ProductDetail({ params }: { params: { productId: string } }) {
+export default async function ProductDetail({ params }: ProductPageProps) {
+  const { productId } = await params;
   const supabase = createClient(supabaseUrl, supabaseKey);
   const { data: product, error } = await supabase
     .from('products')
-    .select('*, merchants(*)')
-    .eq('slug', params.productId)
-    .single();
+    .select('*, merchants(*), product_images(image_url)')
+    .eq('slug', productId)
+    .maybeSingle();
 
-  if (error || !product) {
+  if (error) {
+    console.error("Error fetching product detail:", error);
+    throw new Error("Terjadi kesalahan saat memuat data produk.");
+  }
+  
+  console.log("Querying slug:", productId, "Result:", product ? "FOUND" : "NOT FOUND");
+
+  if (!product) {
     notFound();
   }
 
-  // Format dates to WIB (UTC+7)
-  const formatWIB = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('id-ID', {
-      timeZone: 'Asia/Jakarta',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const pickupTime = `${formatWIB(product.pickup_start)} - ${formatWIB(product.pickup_end)}`;
+  const pickupTime = `${product.pickup_time_start?.substring(0,5)} - ${product.pickup_time_end?.substring(0,5)}`;
+  const imageUrls = product.product_images?.map((img: any) => img.image_url) || [];
+  const primaryImage = imageUrls.length > 0 ? imageUrls[0] : '/images/placeholder.jpg';
 
   return (
     <ProductClientComponent 
       product={{
         id: product.id,
         name: product.name,
-        merchantId: product.merchants.id,
-        merchantName: product.merchants.name,
-        merchantSlug: product.merchants.slug,
-        rating: product.merchants.rating,
-        reviews: product.merchants.reviews_count || 124,
-        address: product.merchants.address,
-        latitude: product.merchants.latitude,
-        longitude: product.merchants.longitude,
+        merchantId: product.merchants?.id || '',
+        merchantName: product.merchants?.name || 'Unknown',
+        merchantSlug: product.merchants?.slug || '',
+        rating: product.merchants?.rating || 4.8,
+        reviews: product.merchants?.reviews_count || 124,
+        address: product.merchants?.address || '',
+        latitude: product.merchants?.latitude || 0,
+        longitude: product.merchants?.longitude || 0,
         pickupTime: pickupTime,
-        price: product.sale_price,
-        originalPrice: product.original_price,
-        stock: product.stock,
-        description: product.description,
+        price: product.price || 0,
+        originalPrice: product.original_price || 0,
+        stock: product.stock || 0,
+        description: product.description || '',
         allergens: product.allergens || [],
-        imageUrl: product.image_url,
-        galleryUrls: product.gallery_urls || []
+        imageUrl: primaryImage,
+        galleryUrls: imageUrls
       }}
     />
   );

@@ -2,13 +2,19 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-// Using service role for seeding if available, otherwise fallback to anon key with RLS bypassed (if possible) or just anon key. Wait, the instructions say "Frontend tidak boleh menggunakan service-role key", but for seeding it's okay if we have it in `.env.local`. I'll just use anon if service role isn't provided, but actually I need to bypass RLS to insert. 
-// Let's see if Supabase provides the service role key in .env.local.
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
+
+const DEMO_CATEGORIES = [
+  { name: 'Mystery Bag', icon_name: 'gift' },
+  { name: 'Roti & Pastry', icon_name: 'croissant' },
+  { name: 'Nasi & Lauk', icon_name: 'utensils' },
+  { name: 'Sayur & Buah', icon_name: 'apple' },
+  { name: 'Minuman', icon_name: 'coffee' }
+];
 
 const DEMO_MERCHANTS = [
   {
@@ -19,9 +25,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12640',
     latitude: -6.3450,
     longitude: 106.8210,
-    image_url: '/assets/merchants/asset_1.png',
+    logo_url: '/assets/merchants/asset_1.png',
     rating: 4.5,
-    active: true
+    is_active: true
   },
   {
     name: 'Toko Roti Makmur 12640',
@@ -31,9 +37,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12640',
     latitude: -6.3475,
     longitude: 106.8230,
-    image_url: '/assets/merchants/asset_2.png',
+    logo_url: '/assets/merchants/asset_2.png',
     rating: 4.8,
-    active: true
+    is_active: true
   },
   {
     name: 'Roti Senja Jagakarsa',
@@ -43,9 +49,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12620',
     latitude: -6.3315,
     longitude: 106.8180,
-    image_url: '/assets/merchants/asset_3.png',
+    logo_url: '/assets/merchants/asset_3.png',
     rating: 4.2,
-    active: true
+    is_active: true
   },
   {
     name: 'Pastry Hijau Lenteng Agung',
@@ -55,9 +61,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12610',
     latitude: -6.3245,
     longitude: 106.8350,
-    image_url: '/assets/merchants/asset_4.png',
+    logo_url: '/assets/merchants/asset_4.png',
     rating: 4.9,
-    active: true
+    is_active: true
   },
   {
     name: 'Kedai Surplus Cipedak',
@@ -67,9 +73,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12630',
     latitude: -6.3510,
     longitude: 106.8105,
-    image_url: '/assets/merchants/asset_5.png',
+    logo_url: '/assets/merchants/asset_5.png',
     rating: 4.4,
-    active: true
+    is_active: true
   },
   {
     name: 'Rumah Roti Setu Babakan',
@@ -79,9 +85,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12640',
     latitude: -6.3420,
     longitude: 106.8255,
-    image_url: '/assets/merchants/asset_6.png',
+    logo_url: '/assets/merchants/asset_6.png',
     rating: 4.7,
-    active: true
+    is_active: true
   },
   {
     name: 'Dapur Hemat Universitas',
@@ -91,9 +97,9 @@ const DEMO_MERCHANTS = [
     postal_code: '12640',
     latitude: -6.3565,
     longitude: 106.8280,
-    image_url: '/assets/merchants/asset_7.png',
+    logo_url: '/assets/merchants/asset_7.png',
     rating: 4.6,
-    active: true
+    is_active: true
   },
   {
     name: 'Pangan Baik Tanjung Barat',
@@ -103,13 +109,13 @@ const DEMO_MERCHANTS = [
     postal_code: '12530',
     latitude: -6.3050,
     longitude: 106.8400,
-    image_url: '/assets/merchants/asset_8.png',
+    logo_url: '/assets/merchants/asset_8.png',
     rating: 4.3,
-    active: true
+    is_active: true
   }
 ];
 
-function generateProductsForMerchant(merchant) {
+function generateProductsForMerchant(merchant, categoryMap) {
   const products = [];
   
   if (merchant.slug === 'toko-roti-makmur-12640') {
@@ -117,26 +123,14 @@ function generateProductsForMerchant(merchant) {
       name: 'Surprise Bag - Pastry Sisa Hari Ini',
       slug: `${merchant.slug}-surprise-bag`,
       description: 'Surprise bag berisi aneka pastry manis dan gurih yang belum terjual hari ini. Produk masih dalam kondisi baik dan layak konsumsi. Isi paket dapat berbeda setiap hari.',
-      category: 'Pastry',
+      category_id: categoryMap['Roti & Pastry'] || categoryMap['Mystery Bag'],
       original_price: 75000,
-      sale_price: 25000,
-      price: 25000, // For old constraint
+      price: 25000,
       stock: 2,
-      initial_stock: 12,
-      // Date relative to today, fixed hours in WIB (UTC+7) -> UTC = WIB - 7
-      pickup_start: new Date(new Date().setUTCHours(12, 0, 0, 0)).toISOString(), // 19:00 WIB
-      pickup_end: new Date(new Date().setUTCHours(14, 0, 0, 0)).toISOString(), // 21:00 WIB
-      consume_before: new Date(new Date(Date.now() + 86400000).setUTCHours(17, 0, 0, 0)).toISOString(),
-      image_url: '/assets/products/asset_9.png',
-      gallery_urls: [
-        '/assets/products/asset_9.png',
-        '/assets/products/asset_10.png',
-        '/assets/products/asset_11.png'
-      ],
+      pickup_time_start: '19:00:00',
+      pickup_time_end: '21:00:00',
       allergens: ['Gandum', 'Susu', 'Telur'],
-      quality_score: 94,
-      quality_status: 'Skor kualitas demo',
-      active: true
+      is_active: true
     });
   }
 
@@ -144,29 +138,23 @@ function generateProductsForMerchant(merchant) {
   for (let i = 1; i <= 3; i++) {
     if (merchant.slug === 'toko-roti-makmur-12640' && i === 1) continue; // Already added main product
 
+    let catName = 'Nasi & Lauk';
+    if (i === 1) catName = 'Sayur & Buah';
+    if (i === 2) catName = 'Roti & Pastry';
+    if (i === 3) catName = 'Mystery Bag';
+
     products.push({
       name: `Paket Hemat ${i} - ${merchant.name}`,
       slug: `${merchant.slug}-paket-hemat-${i}`,
       description: `Paket sisa harian spesial dari ${merchant.name}. Sangat menguntungkan!`,
-      category: 'Campuran',
+      category_id: categoryMap[catName],
       original_price: 50000 + (i * 10000),
-      sale_price: 15000 + (i * 5000),
-      price: 15000 + (i * 5000), // For old constraint
+      price: 15000 + (i * 5000),
       stock: Math.floor(Math.random() * 5) + 1,
-      initial_stock: 10,
-      pickup_start: new Date(new Date().setUTCHours(12, 0, 0, 0)).toISOString(),
-      pickup_end: new Date(new Date().setUTCHours(14, 0, 0, 0)).toISOString(),
-      consume_before: new Date(new Date(Date.now() + 86400000).setUTCHours(17, 0, 0, 0)).toISOString(),
-      image_url: `/assets/products/asset_${(i % 10) + 10}.png`,
-      gallery_urls: [
-        `/assets/products/asset_${(i % 10) + 10}.png`,
-        `/assets/products/asset_${(i % 10) + 11}.png`,
-        `/assets/products/asset_${(i % 10) + 12}.png`
-      ],
+      pickup_time_start: '12:00:00',
+      pickup_time_end: '14:00:00',
       allergens: ['Gandum'],
-      quality_score: 85 + i,
-      quality_status: 'Skor kualitas demo',
-      active: true
+      is_active: true
     });
   }
   
@@ -177,6 +165,29 @@ async function seed() {
   console.log('Seeding demo data...');
 
   try {
+    // 1. Seed Categories
+    console.log('Seeding categories...');
+    const categoryMap = {};
+    for (const cat of DEMO_CATEGORIES) {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('name', cat.name)
+        .single();
+      
+      if (!data) {
+        const { data: newCat, error: insertError } = await supabase
+          .from('categories')
+          .insert(cat)
+          .select()
+          .single();
+        if (newCat) categoryMap[newCat.name] = newCat.id;
+      } else {
+        categoryMap[data.name] = data.id;
+      }
+    }
+
+    // 2. Seed Merchants
     for (const merchant of DEMO_MERCHANTS) {
       console.log(`Upserting merchant: ${merchant.name}`);
       const { data: merchantData, error: merchantError } = await supabase
@@ -190,17 +201,28 @@ async function seed() {
         continue;
       }
 
-      const products = generateProductsForMerchant(merchant);
+      // 3. Seed Products
+      const products = generateProductsForMerchant(merchant, categoryMap);
       const productsWithMerchantId = products.map(p => ({ ...p, merchant_id: merchantData.id }));
 
       for (const product of productsWithMerchantId) {
         console.log(`  Upserting product: ${product.name}`);
-        const { error: productError } = await supabase
+        const { data: productData, error: productError } = await supabase
           .from('products')
-          .upsert(product, { onConflict: 'slug' });
+          .upsert(product, { onConflict: 'slug' })
+          .select()
+          .single();
           
         if (productError) {
           console.error('  Product Error:', productError);
+        } else {
+          // 4. Seed Product Image
+          const imgUrl = `/assets/products/asset_${Math.floor(Math.random() * 5) + 9}.png`;
+          await supabase.from('product_images').insert({
+            product_id: productData.id,
+            image_url: imgUrl,
+            is_primary: true
+          });
         }
       }
     }

@@ -1,0 +1,40 @@
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const orderId = searchParams.get('orderId');
+  const userId = searchParams.get('userId');
+
+  if (!orderId || !userId) {
+    return NextResponse.json({ error: 'Missing params' }, { status: 400 });
+  }
+
+  const { data: refund, error: refundError } = await supabaseAdmin
+    .from('refunds')
+    .select('*')
+    .eq('order_id', orderId)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (refundError || !refund) {
+    return NextResponse.json({ error: 'Refund not found' }, { status: 404 });
+  }
+
+  const { data: aiReview } = await supabaseAdmin
+    .from('ai_food_reviews')
+    .select('*')
+    .eq('refund_id', refund.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  return NextResponse.json({ refund, aiReview: aiReview || null });
+}

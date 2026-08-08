@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense, useMemo, useRef } from 'react';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
+import GlobalLoading from '@/components/ui/GlobalLoading';
 import BottomNavigation from '@/components/buyer/BottomNavigation';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -23,6 +24,12 @@ const MapComponent = dynamic(() => import('@/components/buyer/MapComponent'), {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  global: {
+    fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+  }
+});
+
 type RadiusFilter = '1km' | '3km' | '5km' | '10km' | 'Semua';
 type SortFilter = 'Terdekat' | 'Tersedia' | 'Rating Tertinggi';
 
@@ -30,12 +37,6 @@ function JelajahiPetaContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get('q') || '';
   const merchantQuery = searchParams.get('merchant'); // used from mini map
-
-  const [supabase] = useState(() => createClient(supabaseUrl, supabaseKey, {
-    global: {
-      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
-    }
-  }));
   const [merchants, setMerchants] = useState<Merchant[]>([]);
   const [isLoadingMerchants, setIsLoadingMerchants] = useState(true);
   const [rawDebugData, setRawDebugData] = useState<any>(null);
@@ -64,7 +65,7 @@ function JelajahiPetaContent() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setTimeout(() => setIsMounted(true), 0);
     if (typeof window !== 'undefined') {
       console.log('HOSTNAME', window.location.hostname);
       console.log('origin', window.location.origin);
@@ -187,11 +188,26 @@ function JelajahiPetaContent() {
 
   const handleLocateClick = () => {
     if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== "localhost") {
-      setLocationError({
-        type: 'insecure',
-        message: 'Akses lokasi membutuhkan koneksi HTTPS yang aman di luar localhost.'
-      });
-      console.warn("Geolocation blocked due to insecure context on IP LAN:", window.location.hostname);
+      const manualLocation = window.prompt("GPS otomatis diblokir browser. Masukkan kota atau area Anda (Contoh: Jakarta Selatan):");
+      if (manualLocation && manualLocation.trim().length > 0) {
+        setIsLocating(true);
+        fetch(`/api/location/search?q=${encodeURIComponent(manualLocation.trim())}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              const result = data[0];
+              setUserLocation({ lat: result.latitude, lng: result.longitude });
+              setAccuracy(100);
+              setUserAddress(result.displayName);
+            } else {
+              alert("Lokasi tidak ditemukan. Silakan coba kata kunci lain.");
+            }
+          })
+          .catch(e => {
+            alert("Gagal mencari lokasi.");
+          })
+          .finally(() => setIsLocating(false));
+      }
       return;
     }
 
@@ -244,8 +260,8 @@ function JelajahiPetaContent() {
         setLocationError(errorData);
       },
       {
-        enableHighAccuracy: true,
-        timeout: 10000,
+        enableHighAccuracy: false,
+        timeout: 20000,
         maximumAge: 60000
       }
     );
@@ -291,41 +307,73 @@ function JelajahiPetaContent() {
   };
 
   const displayMerchants = useMemo(() => {
-    // BYPASS ALL FILTERS AS REQUESTED
-    return merchants;
+    let filtered = [...merchants];
+    
+    // Calculate distance for each merchant
+    if (userLocation) {
+      filtered = filtered.map(m => ({
+        ...m,
+        distance: calculateDistance(userLocation.lat, userLocation.lng, m.latitude, m.longitude)
+      }));
+    }
+
+    // Apply Radius Filter if userLocation is known
+    if (userLocation && activeRadius !== 'Semua') {
+      const radiusKm = parseInt(activeRadius.replace('km', ''));
+      filtered = filtered.filter(m => {
+        return m.distance !== undefined && m.distance <= radiusKm;
+      });
+    }
+
+    // Apply Sort
+    if (activeSort === 'Terdekat' && userLocation) {
+      filtered.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+    } else if (activeSort === 'Rating Tertinggi') {
+      filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    }
+
+    return filtered;
   }, [merchants, userLocation, activeRadius, activeSort]);
 
   return (
     <>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossOrigin="" />
-      <BuyerHeader showLogo={false} title="Peta Lokasi" />
+      <BuyerHeader />
 
       <main className="flex-1 pb-24 flex flex-col h-[calc(100vh-64px)] relative">
-        <div className="absolute top-0 left-0 w-full px-4 py-3 space-y-3 z-[500] pointer-events-none">
-          <div className="relative pointer-events-auto">
-            <label htmlFor="search-input" className="sr-only">Cari alamat atau lokasi</label>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-mertha-muted" size={20} aria-hidden="true" />
-            <input
-              id="search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari alamat atau lokasi..."
-              className="w-full bg-white shadow-md rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-mertha-primary/50 border border-mertha-border/50"
-            />
-            {isSearching && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
-            )}
+        {/* Modern Floating UI for Search & Filters */}
+        <div className="absolute top-0 left-0 w-full z-[500] pointer-events-none flex flex-col gap-3 p-4">
+          
+          {/* Search Bar Container */}
+          <div className="relative pointer-events-auto w-full transition-all duration-300">
+            <div className="flex items-center bg-white/95 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl p-1 border border-mertha-border/50">
+              <div className="pl-3 pr-2 text-mertha-primary">
+                {isSearching ? (
+                  <div className="w-5 h-5 border-[2.5px] border-mertha-primary border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Search size={20} />
+                )}
+              </div>
+              <input
+                id="search-input"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={userAddress ? userAddress : "Mau cari di daerah mana?"}
+                className="w-full bg-transparent py-2.5 pr-4 text-sm font-medium text-mertha-text focus:outline-none placeholder:text-mertha-muted truncate"
+              />
+            </div>
 
+            {/* Autocomplete Dropdown */}
             {searchResults.length > 0 && searchQuery.length >= 3 && (
-              <div className="absolute top-full left-0 w-full mt-2 bg-white shadow-lg rounded-xl overflow-hidden border border-mertha-border max-h-60 overflow-y-auto">
-                {searchResults.map((result) => (
+              <div className="absolute top-full left-0 w-full mt-2 bg-white/95 backdrop-blur-xl shadow-xl rounded-2xl overflow-hidden border border-mertha-border max-h-60 overflow-y-auto animate-slide-down">
+                {searchResults.map((result, idx) => (
                   <button
                     key={result.placeId}
                     onClick={() => handleResultClick(result)}
-                    className="w-full text-left px-4 py-3 hover:bg-mertha-bg border-b border-mertha-border last:border-0 flex items-start gap-3"
+                    className={`w-full text-left px-4 py-3.5 hover:bg-mertha-bg flex items-start gap-3 transition-colors ${idx !== searchResults.length - 1 ? 'border-b border-mertha-border/50' : ''}`}
                   >
-                    <MapPin className="shrink-0 text-mertha-primary mt-0.5" size={16} />
+                    <MapPin className="shrink-0 text-mertha-primary mt-0.5" size={18} />
                     <span className="text-sm font-medium text-mertha-text line-clamp-2">
                       {result.displayName}
                     </span>
@@ -333,54 +381,40 @@ function JelajahiPetaContent() {
                 ))}
               </div>
             )}
+            
             {searchError && (
-              <div className="absolute top-full left-0 w-full mt-2 bg-white shadow-lg rounded-xl p-4 border border-red-200" role="alert">
-                <span className="text-xs text-red-600">{searchError}</span>
+              <div className="absolute top-full left-0 w-full mt-2 bg-white/95 backdrop-blur-xl shadow-xl rounded-2xl p-4 border border-red-200 animate-slide-down">
+                <span className="text-sm font-medium text-red-600">{searchError}</span>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col gap-2 pointer-events-auto">
-            {/* Radius Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
-              {(['1km', '3km', '5km', '10km', 'Semua'] as RadiusFilter[]).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setActiveRadius(filter)}
-                  className={`flex items-center gap-1 shrink-0 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm transition-colors ${activeRadius === filter ? 'bg-mertha-primary text-white border-transparent' : 'bg-white border border-mertha-border text-mertha-subtext hover:bg-mertha-bg'}`}
-                >
-                  Radius {filter}
-                </button>
-              ))}
-            </div>
+          {/* Filters Container */}
+          <div className="pointer-events-auto w-full overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
+            <div className="flex items-center gap-2 w-max">
 
-            {/* Sort Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
-              <div className="flex items-center gap-1.5 shrink-0 bg-white border border-mertha-border px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm text-mertha-text">
-                <SlidersHorizontal size={14} className="text-mertha-muted" />
-                Urutkan:
+              {/* Radius Pills Only */}
+              <div className="flex items-center bg-white/90 backdrop-blur-md shadow-sm border border-mertha-border rounded-xl p-1 shrink-0">
+                <div className="px-3 py-1.5 text-xs font-bold text-mertha-muted border-r border-mertha-border/50">
+                  Jarak
+                </div>
+                <div className="flex items-center gap-1 pl-1">
+                  {(['1km', '3km', '5km', '10km', 'Semua'] as RadiusFilter[]).map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setActiveRadius(filter)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                        activeRadius === filter 
+                          ? 'bg-mertha-primary text-white shadow-md scale-100' 
+                          : 'text-mertha-subtext hover:bg-mertha-bg scale-95 hover:scale-100'
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
               </div>
-              {(['Terdekat', 'Tersedia', 'Rating Tertinggi'] as SortFilter[]).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setActiveSort(filter)}
-                  className={`flex items-center gap-1 shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm transition-colors ${activeSort === filter ? 'bg-mertha-primary/10 border-mertha-primary text-mertha-primary' : 'bg-white border border-mertha-border text-mertha-subtext hover:bg-mertha-bg'}`}
-                >
-                  {filter}
-                </button>
-              ))}
             </div>
-          </div>
-
-          {userAddress && (
-            <div className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow border border-mertha-border/50 flex items-start gap-2 pointer-events-auto max-w-sm">
-              <MapPin size={16} className="text-mertha-primary mt-0.5 shrink-0" />
-              <p className="text-xs text-mertha-text font-medium line-clamp-2">{userAddress}</p>
-            </div>
-          )}
-          <div className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow text-xs font-mono z-50 pointer-events-auto mt-2 text-red-600 max-h-40 overflow-auto">
-            DEBUG: Loaded {merchants.length} | Displaying {displayMerchants.length}
-            <pre className="mt-2 text-[10px] break-all whitespace-pre-wrap">{JSON.stringify(rawDebugData, null, 2)}</pre>
           </div>
         </div>
 
@@ -411,7 +445,7 @@ function JelajahiPetaContent() {
 
         <Link
           href="/jelajahi"
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-mertha-text text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm z-[500] transition-transform active:scale-95 pointer-events-auto"
+          className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-mertha-text text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm z-[500] transition-transform active:scale-95 pointer-events-auto"
         >
           <List size={18} />
           Daftar
@@ -425,7 +459,7 @@ function JelajahiPetaContent() {
 
 export default function JelajahiPeta() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen">Memuat peta...</div>}>
+    <Suspense fallback={<GlobalLoading fullScreen={true} />}>
       <JelajahiPetaContent />
     </Suspense>
   );

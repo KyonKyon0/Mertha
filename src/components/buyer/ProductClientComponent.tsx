@@ -34,20 +34,23 @@ export default function ProductClientComponent({ product }: { product: ProductDa
   const [quantity, setQuantity] = useState(1);
   const [distance, setDistance] = useState<string | null>(null);
 
-  const discount = Math.round((1 - product.price / product.originalPrice) * 100);
+  const discount = product.originalPrice > 0 ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
 
   useEffect(() => {
-    // Only ask for location if the user clicks a button, but here we can just check if we already have permission or gracefully ask.
-    // Wait, the prompt says "Map/Distance: panggil reverse geocoding atau hitung jarak HP ke lokasi toko hanya setelah mendapat izin lokasi".
-    // We shouldn't ask for permission on mount. So distance is null initially.
-    
     // Check if we can get location without prompting (e.g. if already granted)
+    if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== "localhost") {
+       // Do nothing automatically on HTTP, wait for user to click "Hitung Jarak"
+       return;
+    }
+
     if (navigator.permissions) {
       navigator.permissions.query({ name: 'geolocation' }).then(result => {
         if (result.state === 'granted') {
           navigator.geolocation.getCurrentPosition(pos => {
             const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, product.latitude, product.longitude);
             setDistance(formatDistance(dist));
+          }, () => {
+            // Silently fail if unable to get location despite permission
           });
         }
       });
@@ -73,6 +76,27 @@ export default function ProductClientComponent({ product }: { product: ProductDa
   };
 
   const handleGetDistance = () => {
+    if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== "localhost") {
+      const manualLocation = window.prompt("GPS otomatis diblokir browser. Masukkan kota atau area Anda untuk menghitung jarak:");
+      if (manualLocation && manualLocation.trim().length > 0) {
+        fetch(`/api/location/search?q=${encodeURIComponent(manualLocation.trim())}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              const result = data[0];
+              const dist = calculateDistance(result.latitude, result.longitude, product.latitude, product.longitude);
+              setDistance(formatDistance(dist));
+            } else {
+              alert("Lokasi tidak ditemukan.");
+            }
+          })
+          .catch(e => {
+            alert("Gagal mencari lokasi.");
+          });
+      }
+      return;
+    }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         pos => {
@@ -80,11 +104,19 @@ export default function ProductClientComponent({ product }: { product: ProductDa
           setDistance(formatDistance(dist));
         },
         err => {
-          alert("Gagal mendapatkan lokasi: " + err.message);
+          let errorMsg = "Gagal mendapatkan lokasi.";
+          if (err.code === err.PERMISSION_DENIED) errorMsg = "Izin lokasi ditolak. Silakan izinkan di pengaturan browser.";
+          else if (err.code === err.POSITION_UNAVAILABLE) errorMsg = "Informasi lokasi tidak tersedia saat ini.";
+          else if (err.code === err.TIMEOUT) errorMsg = "Waktu permintaan lokasi habis.";
+          alert(errorMsg);
         }
       );
+    } else {
+      alert("Browser Anda tidak mendukung Geolocation.");
     }
   };
+
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${product.latitude},${product.longitude}`;
 
   return (
     <div className="bg-white min-h-screen flex flex-col pb-24 relative">
@@ -132,10 +164,14 @@ export default function ProductClientComponent({ product }: { product: ProductDa
           
           <div className="flex items-end gap-2 mt-4">
             <span className="text-2xl font-bold text-mertha-primary">{formatCurrency(product.price)}</span>
-            <span className="text-sm text-mertha-muted line-through mb-1">{formatCurrency(product.originalPrice)}</span>
-            <span className="bg-mertha-error/10 text-mertha-error text-xs font-bold px-2 py-1 rounded-md mb-1 ml-auto">
-              Hemat {discount}%
-            </span>
+            {product.originalPrice > product.price && (
+              <span className="text-sm text-mertha-muted line-through mb-1">{formatCurrency(product.originalPrice)}</span>
+            )}
+            {discount > 0 && (
+              <span className="bg-mertha-error/10 text-mertha-error text-xs font-bold px-2 py-1 rounded-md mb-1 ml-auto">
+                Hemat {discount}%
+              </span>
+            )}
           </div>
         </section>
 
@@ -169,10 +205,16 @@ export default function ProductClientComponent({ product }: { product: ProductDa
                 )}
               </div>
               <p className="text-sm text-mertha-subtext mb-2 leading-relaxed">{product.address}</p>
-              <Link href={`/jelajahi/peta?merchant=${product.merchantSlug}`} className="text-sm font-bold text-mertha-primary flex items-center gap-1 active:scale-95 transition-transform inline-flex">
-                Lihat di Peta
-                <ChevronRight size={16} />
-              </Link>
+              <div className="flex gap-4 mt-2">
+                <a href={`https://www.google.com/maps/search/?api=1&query=${product.latitude},${product.longitude}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-mertha-primary flex items-center gap-1 active:scale-95 transition-transform inline-flex">
+                  Buka Peta
+                  <ChevronRight size={16} />
+                </a>
+                <a href={`https://www.google.com/maps/dir/?api=1&destination=${product.latitude},${product.longitude}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-mertha-primary flex items-center gap-1 active:scale-95 transition-transform inline-flex">
+                  Petunjuk Arah
+                  <ChevronRight size={16} />
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -181,10 +223,10 @@ export default function ProductClientComponent({ product }: { product: ProductDa
         <section className="p-4 border-b border-mertha-border">
           <h3 className="text-base font-bold text-mertha-text mb-2">Tentang Produk Ini</h3>
           <p className="text-sm text-mertha-subtext leading-relaxed mb-4">
-            {product.description}
+            {product.description || "Tidak ada deskripsi."}
           </p>
           
-          {product.allergens.length > 0 && (
+          {product.allergens && product.allergens.length > 0 && (
             <div className="bg-mertha-bg rounded-xl p-3 flex gap-3">
               <Info size={20} className="text-mertha-subtext shrink-0" />
               <div>
@@ -225,12 +267,18 @@ export default function ProductClientComponent({ product }: { product: ProductDa
             </button>
           </div>
           
-          <Link href={`/checkout?productId=${product.id}&qty=${quantity}`} className="flex-1 bg-mertha-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-lg shadow-mertha-primary/30 active:scale-95 transition-transform">
-            Pesan Sekarang
-          </Link>
+          {product.stock > 0 ? (
+            <Link href={`/checkout?productId=${product.id}&qty=${quantity}`} className="flex-1 bg-mertha-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-lg shadow-mertha-primary/30 active:scale-95 transition-transform">
+              Pesan Sekarang
+            </Link>
+          ) : (
+            <button disabled className="flex-1 bg-gray-300 text-gray-500 font-bold py-3.5 rounded-xl flex items-center justify-center cursor-not-allowed">
+              Habis Terjual
+            </button>
+          )}
         </div>
         <p className="text-center text-[10px] text-mertha-muted mt-2">
-          Sisa {product.stock} bag! Segera amankan sebelum kehabisan.
+          {product.stock > 0 ? `Sisa ${product.stock} bag! Segera amankan sebelum kehabisan.` : "Nantikan stok selanjutnya!"}
         </p>
       </div>
     </div>

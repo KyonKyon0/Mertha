@@ -3,8 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { House, Compass, ReceiptText, User, Map } from 'lucide-react';
+import { House, Compass, ReceiptText, User } from 'lucide-react';
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
 
 export default function BottomNavigation() {
   const pathname = usePathname();
@@ -12,21 +13,18 @@ export default function BottomNavigation() {
   const navItems = [
     { href: '/', icon: House, label: 'Beranda' },
     { href: '/jelajahi', icon: Compass, label: 'Jelajahi' },
-    { href: '/jelajahi/peta', icon: Map, label: 'Peta' },
     { href: '/pesanan', icon: ReceiptText, label: 'Pesanan' },
     { href: '/profil', icon: User, label: 'Profil' },
   ];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[430px] border-t border-outline-variant/30 bg-surface shadow-lg rounded-t-xl flex justify-around items-center min-h-[64px] px-2 pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px] border border-outline-variant/30 bg-surface/90 backdrop-blur-xl shadow-lg rounded-full flex justify-around items-center min-h-[68px] px-2 py-2">
       {navItems.map((item) => {
         let isActive = false;
         if (item.href === '/') {
           isActive = pathname === '/';
         } else if (item.href === '/jelajahi') {
-          isActive = pathname === '/jelajahi';
-        } else if (item.href === '/jelajahi/peta') {
-          isActive = pathname === '/jelajahi/peta';
+          isActive = pathname === '/jelajahi' || pathname === '/jelajahi/peta';
         } else if (item.href === '/pesanan') {
           isActive = pathname?.startsWith('/pesanan');
         } else {
@@ -39,13 +37,40 @@ export default function BottomNavigation() {
           <Link 
             key={item.href} 
             href={item.href}
-            className={clsx(
-              "flex flex-col items-center justify-center gap-1 transition-all duration-200 min-w-[44px] min-h-[44px]",
-              isActive ? "text-primary bg-secondary-container/30 rounded-full px-4 py-1 scale-110" : "text-on-surface-variant hover:text-primary"
-            )}
+            className="relative flex flex-col items-center justify-center w-full h-full min-h-[52px] group"
           >
-            <Icon size={24} strokeWidth={isActive ? 2.5 : 2} fill={isActive ? "currentColor" : "none"} />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            {isActive && (
+              <motion.div
+                layoutId="bottom-nav-indicator"
+                className="absolute inset-0 bg-primary/10 rounded-full"
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 30
+                }}
+              />
+            )}
+            <motion.div 
+              className="relative flex flex-col items-center gap-1 z-10"
+              whileTap={{ scale: 0.9 }}
+              animate={isActive ? { y: -2 } : { y: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <Icon 
+                size={22} 
+                strokeWidth={isActive ? 2.5 : 2} 
+                className={clsx(
+                  "transition-colors duration-300",
+                  isActive ? "text-primary" : "text-on-surface-variant group-hover:text-primary"
+                )}
+              />
+              <span className={clsx(
+                "text-[10px] font-bold transition-colors duration-300",
+                isActive ? "text-primary" : "text-on-surface-variant opacity-70 group-hover:text-primary"
+              )}>
+                {item.label}
+              </span>
+            </motion.div>
           </Link>
         );
       })}

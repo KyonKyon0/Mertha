@@ -1,20 +1,43 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
+import LocationStatus from '@/components/buyer/LocationStatus';
 import PromoCarousel from '@/components/buyer/PromoCarousel';
 import BottomNavigation from '@/components/buyer/BottomNavigation';
+import useLocationStore from '@/store/useLocationStore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, MapPin, Navigation, Map, Gift, Apple, Sprout, Croissant, Utensils, Store, Clock, ShoppingBag, PiggyBank, Recycle, ShoppingCart, Footprints } from 'lucide-react';
+import { Search, MapPin, Navigation, Map, Gift, Apple, Sprout, Croissant, Utensils, Store, Clock, ShoppingBag, PiggyBank, Recycle, ShoppingCart, Footprints, Users, Newspaper, Ticket } from 'lucide-react';
 import Image from 'next/image';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 export default function Home() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [location, setLocation] = useState(null);
-  const [isLocating, setIsLocating] = useState(false);
+  const [topProducts, setTopProducts] = useState([]);
   
+  useEffect(() => {
+    async function fetchTopProducts() {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          merchants (name, logo_url, address),
+          product_images (image_url)
+        `)
+        .eq('is_active', true)
+        .limit(2);
+      
+      if (data) {
+        setTopProducts(data);
+      }
+    }
+    fetchTopProducts();
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -24,197 +47,201 @@ export default function Home() {
     }
   };
 
-  const handleUseLocation = () => {
-    if (navigator.geolocation) {
-      setIsLocating(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-          setIsLocating(false);
-          router.push(`/jelajahi`);
-        },
-        (error) => {
-          console.error("Error getting location", error);
-          setIsLocating(false);
-        },
-        { timeout: 10000 }
-      );
-    }
+  const handleCategoryClick = (category) => {
+    router.push(`/jelajahi?category=${encodeURIComponent(category)}`);
   };
 
   return (
     <div className="bg-surface text-on-surface font-sans min-h-screen">
-      <BuyerHeader showLogo={true} />
+      <BuyerHeader />
       
-      {/* Location pill below header */}
-      <div className="bg-surface pt-2 pb-3 px-5">
-        <div className="bg-surface-container-lowest rounded-full py-1.5 px-3 inline-flex items-center gap-2 border border-outline-variant/30">
-           <MapPin size={16} className="text-primary" />
-           <span className="text-xs font-bold text-on-surface">Jl. Sudirman No. 12, Jakarta</span>
-        </div>
-      </div>
+      <LocationStatus />
 
       <main className="flex-1 pb-[calc(80px+env(safe-area-inset-bottom))] overflow-y-auto">
         <div className="relative">
           <PromoCarousel />
           
-          <div className="px-5 relative -mt-6 z-20">
-            <div className="bg-surface-container-lowest rounded-xl shadow-lg p-4 border border-outline-variant/30 flex flex-col gap-4">
+          <div className="px-5 relative -mt-6 z-20 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-both">
+            <div className="bg-surface-container-lowest rounded-full shadow-lg border border-outline-variant/30 flex items-center px-4 py-2 transition-all hover:shadow-xl focus-within:ring-2 focus-within:ring-primary/50 focus-within:shadow-primary/20">
+              <button 
+                onClick={async () => {
+                  try {
+                    await useLocationStore.getState().fetchGpsLocation();
+                    router.push('/jelajahi?sort=nearest');
+                  } catch (e) {
+                    // error handled in store
+                  }
+                }}
+                className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors shrink-0"
+                aria-label="GPS Location"
+              >
+                <Navigation size={20} />
+              </button>
               
-              <form onSubmit={handleSearch} className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
+              <form onSubmit={handleSearch} className="flex-1 mx-2">
                 <input 
                   type="text" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari makanan atau merchant" 
-                  className="w-full h-12 bg-surface rounded-lg pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/50 text-on-surface"
+                  placeholder="Cari makanan di sekitarku..." 
+                  className="w-full h-10 bg-transparent text-sm focus:outline-none text-on-surface placeholder:text-on-surface-variant/70"
                 />
               </form>
-              
-              <div className="flex gap-2">
+
+              <div className="flex items-center gap-2 shrink-0 border-l border-outline-variant/50 pl-3">
                 <button 
                   onClick={handleSearch}
-                  className="flex-1 bg-primary text-on-primary h-12 rounded-lg font-bold flex justify-center items-center gap-2 text-sm shadow-sm active:bg-primary-container transition-colors"
+                  className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-full transition-colors"
                 >
-                  Cari di Sekitarku
+                  <Search size={20} />
                 </button>
-                <button 
-                  onClick={handleUseLocation}
-                  aria-label="Gunakan Lokasiku"
-                  className="w-12 h-12 rounded-lg border border-primary text-primary flex justify-center items-center hover:bg-primary-fixed-dim transition-colors"
-                  disabled={isLocating}
-                >
-                  <Navigation size={20} className={isLocating ? "animate-pulse" : ""} />
-                </button>
-              </div>
-
-              <div className="pt-2 border-t border-outline-variant/30">
                 <Link 
                   href="/jelajahi/peta"
-                  className="w-full bg-surface-container-lowest border border-outline-variant/50 text-on-surface h-12 rounded-lg font-bold flex items-center justify-center gap-2 text-sm hover:bg-surface-container transition-colors"
+                  className="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-full transition-colors"
                 >
-                  <Map size={18} />
-                  Lihat Peta
+                  <Map size={20} />
                 </Link>
               </div>
-
             </div>
           </div>
         </div>
-
         {/* Kategori */}
-        <section className="px-5 mt-8 overflow-hidden">
-            <h2 className="text-[24px] leading-[32px] font-semibold mb-4 text-on-surface">Kategori</h2>
-            <div className="grid grid-cols-3 gap-2">
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
-                        <MapPin size={24} aria-hidden="true" />
+        <section className="px-5 mt-10 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-both">
+            <h2 className="text-lg font-bold mb-4 text-on-surface tracking-tight">Kategori Terpopuler</h2>
+            <div className="grid grid-cols-3 gap-3">
+                <button onClick={() => handleCategoryClick('Semua')} className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-primary/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-secondary-container/30 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                        <MapPin size={22} aria-hidden="true" />
                     </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Terdekat</span>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-primary transition-colors">Terdekat</span>
+                </button>
+                <button onClick={() => handleCategoryClick('Mystery Bag')} className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-tertiary-container/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-tertiary-fixed/30 text-tertiary-container flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-white transition-colors">
+                        <Gift size={22} aria-hidden="true" />
+                    </div>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-tertiary-container transition-colors">Mystery Bag</span>
+                </button>
+                <button onClick={() => handleCategoryClick('Sayur & Buah')} className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-primary/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-primary-fixed/30 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                        <Apple size={22} aria-hidden="true" />
+                    </div>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-primary transition-colors">Sayur & Buah</span>
+                </button>
+                <button onClick={() => handleCategoryClick('Roti & Pastry')} className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-tertiary-container/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-tertiary-fixed/30 text-tertiary-container flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-white transition-colors">
+                        <Croissant size={22} aria-hidden="true" />
+                    </div>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-tertiary-container transition-colors">Bakery</span>
+                </button>
+                <button onClick={() => handleCategoryClick('Nasi & Lauk')} className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-primary/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-secondary-container/30 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                        <Utensils size={22} aria-hidden="true" />
+                    </div>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-primary transition-colors">Siap Saji</span>
+                </button>
+                <a href="https://oscartambunan.dev/martha" target="_blank" rel="noopener noreferrer" className="bg-surface-container-lowest rounded-xl p-3 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-2 hover:shadow-md hover:border-error/30 hover:-translate-y-1 active:scale-95 transition-all group">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-error-container/30 text-error flex items-center justify-center group-hover:bg-error group-hover:text-white transition-colors">
+                        <Users size={22} aria-hidden="true" />
+                    </div>
+                    <span className="text-[11px] font-bold text-center text-on-surface-variant group-hover:text-error transition-colors">Upcoming</span>
+                </a>
+            </div>
+        </section>
+
+        {/* Berita & Edukasi Impact */}
+        <section className="px-5 mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
+            <h2 className="text-lg font-bold mb-4 text-on-surface tracking-tight flex items-center gap-2">
+              <Newspaper className="text-primary" size={20} /> Kabar Impact
+            </h2>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x">
+                <div className="min-w-[280px] snap-center bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/20 flex flex-col gap-3">
+                    <div className="w-full h-32 bg-primary/10 rounded-xl flex items-center justify-center text-primary relative overflow-hidden">
+                       <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
+                       <Sprout size={48} className="opacity-80" />
+                    </div>
+                    <div>
+                        <span className="text-[10px] font-bold text-primary tracking-wider uppercase mb-1 block">Climate Action</span>
+                        <h3 className="font-bold text-sm leading-tight text-on-surface">Mengurangi Jejak Karbon dari Piring Kita</h3>
+                        <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">Pelajari bagaimana menyelamatkan makanan dapat menurunkan emisi gas rumah kaca secara drastis.</p>
+                    </div>
                 </div>
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
-                        <Gift size={24} aria-hidden="true" />
+                <div className="min-w-[280px] snap-center bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-outline-variant/20 flex flex-col gap-3">
+                    <div className="w-full h-32 bg-tertiary-container/20 rounded-xl flex items-center justify-center text-tertiary-container relative overflow-hidden">
+                       <div className="absolute inset-0 bg-gradient-to-tr from-tertiary-container/20 to-transparent"></div>
+                       <Recycle size={48} className="opacity-80" />
                     </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Mystery Bag</span>
+                    <div>
+                        <span className="text-[10px] font-bold text-tertiary-container tracking-wider uppercase mb-1 block">Zero Waste</span>
+                        <h3 className="font-bold text-sm leading-tight text-on-surface">Ubah Sisa Sayur Menjadi Kaldu Lezat</h3>
+                        <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">Tips dan trik mengolah bahan makanan berlebih di dapur Anda agar tidak terbuang sia-sia.</p>
+                    </div>
                 </div>
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
-                        <Apple size={24} aria-hidden="true" />
+            </div>
+
+            {/* Kupon Promo */}
+            <div className="mt-4 relative bg-primary text-on-primary rounded-2xl p-4 shadow-lg overflow-hidden">
+                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
+                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface rounded-full"></div>
+                
+                <div className="absolute inset-0 border-2 border-dashed border-white/30 rounded-2xl m-2 pointer-events-none"></div>
+                
+                <div className="relative z-10 flex items-center justify-between pl-4 pr-2">
+                    <div>
+                        <div className="flex items-center gap-1 mb-1">
+                            <Ticket size={16} className="text-tertiary-container" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-primary-container">Promo Spesial</span>
+                        </div>
+                        <h3 className="font-black text-xl leading-tight">Diskon 50%</h3>
+                        <p className="text-xs text-primary-container mt-1">Untuk transaksi pertamamu!</p>
                     </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Buah</span>
-                </div>
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-primary-fixed/50 text-primary flex items-center justify-center mb-1">
-                        <Sprout size={24} aria-hidden="true" />
-                    </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Sayur</span>
-                </div>
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center mb-1">
-                        <Croissant size={24} aria-hidden="true" />
-                    </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Bakery</span>
-                </div>
-                <div className="bg-surface-container-lowest rounded-lg p-1.5 sm:p-2 shadow-sm border border-outline-variant/20 flex flex-col items-center justify-center gap-1 min-h-[96px]">
-                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full bg-secondary-container/50 text-primary flex items-center justify-center mb-1">
-                        <Utensils size={24} aria-hidden="true" />
-                    </div>
-                    <span className="text-[11px] sm:text-[12px] leading-tight font-bold text-center break-words w-full">Siap Saji</span>
+                    <button className="bg-tertiary-container text-on-tertiary px-4 py-2 rounded-xl font-bold text-sm shadow-md hover:scale-105 transition-transform active:scale-95">
+                        Klaim
+                    </button>
                 </div>
             </div>
         </section>
 
-        {/* Pilihan Hemat di Dekatmu */}
-        <section className="pl-5 mt-8">
-            <h2 className="text-[24px] leading-[32px] font-semibold mb-4 pr-5 text-on-surface">Pilihan Hemat di Dekatmu</h2>
+        <section className="pl-5 mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
+            <div className="flex justify-between items-end pr-5 mb-4">
+              <h2 className="text-lg font-bold text-on-surface tracking-tight">Pilihan Hemat di Dekatmu</h2>
+              <button onClick={() => router.push('/jelajahi')} className="text-xs font-bold text-primary hover:underline">Lihat Semua</button>
+            </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-6 pr-5 snap-x">
-                
-                <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
-                    <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('/images/carousel/hero3.jpg')"}}>
-                        <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
-                            TERSEDIA
-                        </div>
-                        <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-[12px] flex items-center gap-1">
-                            <Clock size={14} className="shrink-0" aria-hidden="true" /> 19:00 - 21:00
-                        </div>
-                    </div>
-                    <div className="p-4 flex flex-col flex-1 gap-2">
-                        <div>
-                            <p className="text-[12px] font-bold text-on-surface-variant flex items-center gap-1">
-                                <Store size={14} className="shrink-0" aria-hidden="true" /> Bakery Makmur
-                            </p>
-                            <h3 className="text-[18px] leading-[28px] font-semibold mt-1 line-clamp-1">Mystery Bag Bakery</h3>
-                        </div>
-                        <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
-                            <div>
-                                <p className="text-on-surface-variant text-[12px] line-through">Rp 50.000</p>
-                                <p className="text-[18px] font-bold text-primary">Rp 20.000</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <span className="text-[12px] font-bold text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 3</span>
-                                <span className="text-[12px] font-bold text-on-surface-variant flex items-center"><MapPin size={14} className="mr-1 shrink-0" aria-hidden="true" />1.2 km</span>
-                            </div>
-                        </div>
-                        <Link href="/produk/m-1" className="w-full mt-2 py-2 border border-primary text-primary rounded-lg text-[14px] font-semibold hover:bg-primary/5 transition-colors flex justify-center items-center">
-                            Lihat Detail
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 flex flex-col overflow-hidden">
-                    <div className="h-[140px] w-full relative bg-cover bg-center" style={{backgroundImage: "url('/images/carousel/hero1.jpg')"}}>
-                        <div className="absolute top-2 left-2 bg-surface/90 backdrop-blur text-primary px-2 py-1 rounded text-[10px] font-bold tracking-wide">
-                            TERSEDIA
-                        </div>
-                        <div className="absolute bottom-2 right-2 bg-tertiary-container text-on-tertiary px-2 py-1 rounded-full text-[12px] flex items-center gap-1">
-                            <Clock size={14} className="shrink-0" aria-hidden="true" /> 18:00 - 20:00
-                        </div>
-                    </div>
-                    <div className="p-4 flex flex-col flex-1 gap-2">
-                        <div>
-                            <p className="text-[12px] font-bold text-on-surface-variant flex items-center gap-1">
-                                <Store size={14} className="shrink-0" aria-hidden="true" /> Sayur Segar Jaya
-                            </p>
-                            <h3 className="text-[18px] leading-[28px] font-semibold mt-1 line-clamp-1">Paket Sayur Mix</h3>
-                        </div>
-                        <div className="flex items-end justify-between mt-auto pt-2 border-t border-surface-variant">
-                            <div>
-                                <p className="text-on-surface-variant text-[12px] line-through">Rp 45.000</p>
-                                <p className="text-[18px] font-bold text-primary">Rp 15.000</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <span className="text-[12px] font-bold text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa 5</span>
-                                <span className="text-[12px] font-bold text-on-surface-variant flex items-center"><MapPin size={14} className="mr-1 shrink-0" aria-hidden="true" />2.5 km</span>
-                            </div>
-                        </div>
-                        <Link href="/produk/m-2" className="w-full mt-2 py-2 border border-primary text-primary rounded-lg text-[14px] font-semibold hover:bg-primary/5 transition-colors flex justify-center items-center">
-                            Lihat Detail
-                        </Link>
-                    </div>
-                </div>
-
+                {topProducts.length > 0 ? topProducts.map(product => (
+                  <div key={product.id} className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 flex flex-col overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all group">
+                      <div className="h-[140px] w-full relative bg-cover bg-center overflow-hidden" style={{backgroundImage: `url('${product.product_images?.[0]?.image_url || '/images/placeholder.jpg'}')`}}>
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur text-primary px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide shadow-sm">
+                              TERSEDIA
+                          </div>
+                          <div className="absolute bottom-3 right-3 bg-tertiary-container/95 backdrop-blur text-on-tertiary px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 shadow-sm">
+                              <Clock size={12} className="shrink-0" aria-hidden="true" /> {product.pickup_time_start?.substring(0,5)} - {product.pickup_time_end?.substring(0,5)}
+                          </div>
+                      </div>
+                      <div className="p-4 flex flex-col flex-1 gap-2">
+                          <div>
+                              <p className="text-[11px] font-bold text-on-surface-variant flex items-center gap-1 mb-1">
+                                  <Store size={12} className="shrink-0" aria-hidden="true" /> {product.merchants?.name}
+                              </p>
+                              <h3 className="text-[15px] leading-snug font-bold line-clamp-2 text-on-surface group-hover:text-primary transition-colors">{product.name}</h3>
+                          </div>
+                          <div className="flex items-end justify-between mt-auto pt-3 border-t border-outline-variant/20">
+                              <div>
+                                  <p className="text-on-surface-variant text-[11px] line-through decoration-on-surface-variant/50">Rp {product.original_price?.toLocaleString('id-ID')}</p>
+                                  <p className="text-[16px] font-black text-primary">Rp {product.price?.toLocaleString('id-ID')}</p>
+                              </div>
+                              <div className="flex flex-col items-end">
+                                  <span className="text-[10px] font-bold text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-full mb-1">Sisa {product.stock}</span>
+                              </div>
+                          </div>
+                          <Link href={`/produk/${product.slug}`} className="w-full mt-3 py-2 bg-primary/5 border border-primary/20 text-primary rounded-xl text-[13px] font-bold hover:bg-primary hover:text-white transition-colors flex justify-center items-center">
+                              Lihat Detail
+                          </Link>
+                      </div>
+                  </div>
+                )) : (
+                  <p className="text-sm text-on-surface-variant">Memuat pilihan hemat...</p>
+                )}
             </div>
         </section>
 
@@ -293,13 +320,13 @@ export default function Home() {
         {/* Footer */}
         <footer className="bg-surface-container mt-12 w-full p-8 pb-8">
             <div className="flex flex-col items-center text-center gap-6 w-full max-w-7xl mx-auto">
-                <Image src="/images/logo/mertha-logo.png" alt="Mertha" width={120} height={40} className="h-10 object-contain mb-2" />
+                <Image src="/logo.png" alt="Martha Official Store" width={180} height={180} className="h-24 object-contain mb-4" />
                 <p className="text-[16px] font-medium text-on-surface-variant max-w-xs">Menyelamatkan makanan, melestarikan bumi.</p>
                 <div className="flex gap-4 flex-wrap justify-center">
-                    <Link href="/tentang" className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Tentang</Link>
-                    <Link href="/bantuan" className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Bantuan</Link>
-                    <Link href="/merchant" className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Merchant</Link>
-                    <Link href="/privasi" className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Privasi</Link>
+                    <button onClick={() => alert("Fitur Tentang segera hadir!")} className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Tentang</button>
+                    <button onClick={() => alert("Fitur Bantuan segera hadir!")} className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Bantuan</button>
+                    <button onClick={() => alert("Pendaftaran Merchant segera hadir!")} className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Merchant</button>
+                    <button onClick={() => alert("Kebijakan Privasi segera hadir!")} className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Privasi</button>
                 </div>
                 <div className="text-[12px] font-bold text-on-surface-variant mt-4">
                     © 2026 Mertha
