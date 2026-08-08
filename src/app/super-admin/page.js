@@ -1,4 +1,5 @@
 "use client";
+// Force Recompile
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -28,11 +29,26 @@ export default function SuperAdminDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userLogs, setUserLogs] = useState([]);
   const [loadingUserLogs, setLoadingUserLogs] = useState(false);
+  const [isDesktopMode, setIsDesktopMode] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
+
+  useEffect(() => {
+    if (isDesktopMode) {
+      document.body.classList.remove('max-w-md');
+      document.body.classList.add('max-w-full');
+    } else {
+      document.body.classList.add('max-w-md');
+      document.body.classList.remove('max-w-full');
+    }
+    return () => {
+       document.body.classList.add('max-w-md');
+       document.body.classList.remove('max-w-full');
+    };
+  }, [isDesktopMode]);
 
   useEffect(() => {
     checkAuth();
@@ -241,21 +257,6 @@ export default function SuperAdminDashboard() {
     }
   };
 
-  const [isDesktopMode, setIsDesktopMode] = useState(false);
-
-  useEffect(() => {
-    if (isDesktopMode) {
-      document.body.classList.remove('max-w-md');
-      document.body.classList.add('max-w-full');
-    } else {
-      document.body.classList.add('max-w-md');
-      document.body.classList.remove('max-w-full');
-    }
-    return () => {
-       document.body.classList.add('max-w-md');
-       document.body.classList.remove('max-w-full');
-    };
-  }, [isDesktopMode]);
 
   const toolItems = [
     { label: 'Analitik Pengguna', icon: <Users size={18} />, onClick: () => setActiveTab('users') },

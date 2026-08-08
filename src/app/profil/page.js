@@ -126,7 +126,7 @@ export default function ProfilPage() {
           avatar: profileData.avatar_url || null,
           is_email_verified: profileData.is_email_verified || false,
           is_phone_verified: profileData.is_phone_verified || false,
-          has_pin: profileData.has_pin || false,
+          has_pin: !!profileData.pin_code,
           is_mertha_plus: profileData.is_mertha_plus || false
         });
         setEditForm({ 
