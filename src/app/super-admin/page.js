@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
-import { ShieldAlert, Users, Store, Package, Activity, MapPin, X, Laptop, Clock, Globe, Monitor } from 'lucide-react';
+import { ShieldAlert, Users, Store, Package, Activity, MapPin, X, Laptop, Clock, Globe, Monitor, Trash2 } from 'lucide-react';
 import FloatingTools from '@/components/ui/FloatingTools';
 
 export default function SuperAdminDashboard() {
