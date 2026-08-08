@@ -85,29 +85,34 @@ export default function SuperAdminDashboard() {
 
   const fetchData = async () => {
     setLoading(true);
-    // Fetch logs
-    const { data: logData } = await supabase.from('login_logs').select('*').order('created_at', { ascending: false }).limit(100);
-    if (logData) setLogs(logData);
-
-    // Fetch merchants
-    const { data: merchantData } = await supabase.from('merchants').select('*').order('name');
-    if (merchantData) setMerchants(merchantData);
-
-    // Fetch products
-    const { data: productData } = await supabase.from('products').select('*, merchants(name)').order('created_at', { ascending: false });
-    if (productData) setProducts(productData);
-
-    // Fetch profiles
-    const { data: profileData } = await supabase.from('profiles').select('*').order('name');
-    if (profileData) setUsers(profileData);
+    
+    try {
+      const res = await fetch('/api/admin/data', {
+        headers: {
+          'x-admin-email': 'admin@gmail.com'
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setLogs(data.logs || []);
+        setUsers(data.profiles || []);
+        setMerchants(data.merchants || []);
+        setProducts(data.products || []);
+      } else {
+        console.error("Failed to fetch admin data:", await res.text());
+      }
+    } catch(e) {
+      console.error(e);
+    }
 
     setLoading(false);
   };
 
   const fetchUserLogs = async (userId) => {
     setLoadingUserLogs(true);
-    const { data } = await supabase.from('login_logs').select('*').eq('user_id', userId).order('created_at', { ascending: false });
-    setUserLogs(data || []);
+    const userSpecificLogs = logs.filter(log => log.user_id === userId);
+    setUserLogs(userSpecificLogs);
     setLoadingUserLogs(false);
   };
 

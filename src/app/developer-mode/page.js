@@ -29,8 +29,15 @@ export default function DeveloperModePage() {
       return;
     }
     
-    const { data: profile } = await supabase.from('profiles').select('pin_code').eq('id', user.id).single();
-    if (profile && profile.pin_code) {
+    const { data: profile } = await supabase.from('profiles').select('pin_code, role').eq('id', user.id).single();
+    
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+      alert("Akses Ditolak: Anda tidak memiliki otorisasi untuk mode ini.");
+      router.push('/profil');
+      return;
+    }
+
+    if (profile.pin_code) {
       setCorrectPin(profile.pin_code);
     }
     setLoading(false);

@@ -127,6 +127,7 @@ export default function ProfilPage() {
           is_email_verified: profileData.is_email_verified || false,
           is_phone_verified: profileData.is_phone_verified || false,
           has_pin: !!profileData.pin_code,
+          role: profileData.role || 'user',
           is_mertha_plus: profileData.is_mertha_plus || false
         });
         setEditForm({ 
@@ -524,35 +525,39 @@ export default function ProfilPage() {
             <ChevronRight size={18} className="text-mertha-muted" />
           </button>
           
-          <button onClick={() => {
-            if (devMode) {
-              setDevMode(false);
-              localStorage.setItem('developer_mode', 'false');
-            } else {
-              router.push('/developer-mode');
-            }
-          }} className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
-            <div className="flex items-center gap-3">
-              <Settings size={18} className={devMode ? "text-mertha-primary" : "text-mertha-subtext"} />
-              <span className={`text-sm font-semibold ${devMode ? 'text-mertha-primary' : 'text-mertha-text'}`}>Developer Mode</span>
-            </div>
-            <div className={`w-11 h-6 rounded-full relative cursor-pointer shadow-inner transition-colors ${devMode ? 'bg-mertha-primary' : 'bg-mertha-border'}`}>
-              <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${devMode ? 'right-0.5' : 'left-0.5'}`}></div>
-            </div>
-          </button>
+          {(profile.role === 'admin' || profile.role === 'super_admin') && (
+            <button onClick={() => {
+              if (devMode) {
+                setDevMode(false);
+                localStorage.setItem('developer_mode', 'false');
+              } else {
+                router.push('/developer-mode');
+              }
+            }} className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
+              <div className="flex items-center gap-3">
+                <Settings size={18} className={devMode ? "text-mertha-primary" : "text-mertha-subtext"} />
+                <span className={`text-sm font-semibold ${devMode ? 'text-mertha-primary' : 'text-mertha-text'}`}>Developer Mode</span>
+              </div>
+              <div className={`w-11 h-6 rounded-full relative cursor-pointer shadow-inner transition-colors ${devMode ? 'bg-mertha-primary' : 'bg-mertha-border'}`}>
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${devMode ? 'right-0.5' : 'left-0.5'}`}></div>
+              </div>
+            </button>
+          )}
           
-          <div className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border bg-mertha-bg opacity-70">
-            <div className="flex items-center gap-3">
-              <Store size={18} className="text-mertha-muted" />
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-semibold text-mertha-muted">Mode Merchant</span>
-                <span className="text-[10px] font-bold text-mertha-subtext uppercase">Up Coming</span>
+          {devMode && (
+            <div className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border bg-mertha-bg opacity-70">
+              <div className="flex items-center gap-3">
+                <Store size={18} className="text-mertha-muted" />
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-semibold text-mertha-muted">Mode Merchant</span>
+                  <span className="text-[10px] font-bold text-mertha-subtext uppercase">Up Coming</span>
+                </div>
+              </div>
+              <div className="w-11 h-6 bg-mertha-border/50 rounded-full relative shadow-inner">
+                <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 shadow-sm"></div>
               </div>
             </div>
-            <div className="w-11 h-6 bg-mertha-border/50 rounded-full relative shadow-inner">
-              <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 shadow-sm"></div>
-            </div>
-          </div>
+          )}
 
           <button className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors">
             <div className="flex items-center gap-3">
