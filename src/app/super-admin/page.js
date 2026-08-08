@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
-import { ShieldAlert, Users, Store, Package, Activity, MapPin, X, Laptop, Clock, Globe } from 'lucide-react';
+import { ShieldAlert, Users, Store, Package, Activity, MapPin, X, Laptop, Clock, Globe, Monitor } from 'lucide-react';
 import FloatingTools from '@/components/ui/FloatingTools';
 
 export default function SuperAdminDashboard() {
@@ -168,6 +168,63 @@ export default function SuperAdminDashboard() {
     fetchData();
   };
 
+  const handleUpdateRole = async (userId, newRole) => {
+    if (selectedUser?.email === 'admin@gmail.com' && newRole !== 'super_admin') {
+      alert("Super Admin utama (admin@gmail.com) tidak bisa diubah rolenya!");
+      return;
+    }
+    
+    if (newRole === 'super_admin' && selectedUser?.email !== 'admin@gmail.com') {
+      alert("Hanya admin@gmail.com yang bisa menjadi Super Admin!");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_role', userId, role: newRole, adminEmail: 'admin@gmail.com' })
+      });
+      if (res.ok) {
+        alert("Role berhasil diubah!");
+        fetchData();
+        setSelectedUser({...selectedUser, role: newRole});
+      } else {
+        const err = await res.json();
+        alert("Gagal mengubah role: " + err.error);
+      }
+    } catch(e) {
+      alert("Terjadi kesalahan.");
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (selectedUser?.email === 'admin@gmail.com') {
+      alert("Super Admin utama tidak bisa dihapus!");
+      return;
+    }
+    
+    if(!confirm(`PERINGATAN KERAS! Anda yakin ingin menghapus permanen akun ${selectedUser?.name}? Seluruh data terkait akun ini akan hilang dan tidak bisa dikembalikan!`)) return;
+    
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_user', userId, adminEmail: 'admin@gmail.com' })
+      });
+      if (res.ok) {
+        alert("Akun berhasil dihapus permanen!");
+        setSelectedUser(null);
+        fetchData();
+      } else {
+        const err = await res.json();
+        alert("Gagal menghapus akun: " + err.error);
+      }
+    } catch(e) {
+      alert("Terjadi kesalahan.");
+    }
+  };
+
   const renderDeviceMeta = (metaStr) => {
     try {
       const meta = JSON.parse(metaStr);
@@ -184,6 +241,22 @@ export default function SuperAdminDashboard() {
     }
   };
 
+  const [isDesktopMode, setIsDesktopMode] = useState(false);
+
+  useEffect(() => {
+    if (isDesktopMode) {
+      document.body.classList.remove('max-w-md');
+      document.body.classList.add('max-w-full');
+    } else {
+      document.body.classList.add('max-w-md');
+      document.body.classList.remove('max-w-full');
+    }
+    return () => {
+       document.body.classList.add('max-w-md');
+       document.body.classList.remove('max-w-full');
+    };
+  }, [isDesktopMode]);
+
   const toolItems = [
     { label: 'Analitik Pengguna', icon: <Users size={18} />, onClick: () => setActiveTab('users') },
     { label: 'Live Login Logs', icon: <Activity size={18} />, onClick: () => setActiveTab('logs') },
@@ -196,12 +269,23 @@ export default function SuperAdminDashboard() {
     <div className="min-h-screen bg-[#0a0a0a] text-gray-300 font-mono w-full">
       
       {/* Header */}
-      <div className="border-b border-[#333] p-6 sticky top-0 bg-[#0a0a0a]/90 backdrop-blur-md z-40">
-        <div className="flex items-center gap-3 text-yellow-500 font-bold text-2xl">
-          <ShieldAlert size={32} className="animate-pulse" />
-          <span>SUPER ADMIN DASHBOARD</span>
+      <div className="border-b border-[#333] p-6 sticky top-0 bg-[#0a0a0a]/90 backdrop-blur-md z-40 flex justify-between items-center">
+        <div>
+          <div className="flex items-center gap-3 text-yellow-500 font-bold text-xl md:text-2xl">
+            <ShieldAlert size={32} className="animate-pulse" />
+            <span>SUPER ADMIN DASHBOARD</span>
+          </div>
+          <p className="text-gray-500 text-sm mt-1">Akses mutlak ke seluruh inti data aplikasi.</p>
         </div>
-        <p className="text-gray-500 text-sm mt-1">Akses mutlak ke seluruh inti data aplikasi.</p>
+        
+        <button 
+          onClick={() => setIsDesktopMode(!isDesktopMode)}
+          className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${isDesktopMode ? 'bg-yellow-500/20 text-yellow-500' : 'bg-[#222] text-gray-400 hover:bg-[#333]'}`}
+          title="Toggle Desktop Mode"
+        >
+          <Monitor size={20} className="mb-1" />
+          <span className="text-[10px] font-bold uppercase tracking-wider">{isDesktopMode ? 'Desktop' : 'Mobile'}</span>
+        </button>
       </div>
 
       {/* Main Content */}
@@ -360,10 +444,31 @@ export default function SuperAdminDashboard() {
                 <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                   <Users size={24} className="text-yellow-500"/> Buku Riwayat: {selectedUser.name}
                 </h2>
-                <div className="text-gray-400 text-sm mt-2 flex flex-wrap gap-4">
+                <div className="text-gray-400 text-sm mt-3 flex flex-wrap gap-4 items-center">
                   <span className="bg-[#111] px-2 py-1 rounded border border-[#222]">📧 {selectedUser.email || (userLogs[0] ? userLogs[0].email : 'Tidak ada email')}</span>
                   <span className="bg-[#111] px-2 py-1 rounded border border-[#222]">📱 {selectedUser.phone || 'Tidak ada nomor HP'}</span>
                   <span className="bg-[#111] px-2 py-1 rounded border border-[#222] font-mono text-xs">ID: {selectedUser.id}</span>
+                  
+                  <div className="flex items-center gap-2 bg-[#222] px-2 py-1 rounded border border-[#333]">
+                    <span className="text-xs font-bold text-gray-400 uppercase">Role:</span>
+                    <select 
+                      value={selectedUser.role || 'user'}
+                      onChange={(e) => handleUpdateRole(selectedUser.id, e.target.value)}
+                      className="bg-transparent text-yellow-500 font-bold text-xs outline-none cursor-pointer"
+                    >
+                      <option value="user" className="bg-[#111]">User Biasa</option>
+                      <option value="merchant" className="bg-[#111]">Merchant</option>
+                      <option value="admin" className="bg-[#111]">Admin</option>
+                      <option value="super_admin" className="bg-[#111]">Super Admin</option>
+                    </select>
+                  </div>
+                  
+                  <button 
+                    onClick={() => handleDeleteUser(selectedUser.id)}
+                    className="flex items-center gap-1 bg-red-900/30 text-red-500 px-2 py-1 rounded border border-red-900 hover:bg-red-900/50 transition-colors text-xs font-bold"
+                  >
+                    <Trash2 size={12} /> Hapus Akun
+                  </button>
                 </div>
               </div>
               <button onClick={() => setSelectedUser(null)} className="p-2 text-gray-500 hover:text-white bg-[#222] rounded-full transition-colors">
