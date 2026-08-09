@@ -240,7 +240,7 @@ export default function MapComponent({
                   Coba Lagi
                 </button>
               )}
-              <button onClick={() => {}} className="flex-1 min-w-[120px] text-xs bg-gray-50 border border-gray-200 px-3 py-2 rounded-xl font-bold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-300 text-center">Cari Manual</button>
+              <button onClick={() => { const input = document.getElementById('search-input'); if (input) input.focus(); }} className="flex-1 min-w-[120px] text-xs bg-gray-50 border border-gray-200 px-3 py-2 rounded-xl font-bold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-300 text-center">Cari Manual</button>
               <button onClick={resetLocation} className="w-full text-xs bg-gray-800 text-white px-3 py-2.5 rounded-xl font-bold hover:bg-gray-700 active:scale-95 transition-all duration-300 text-center">Tampilkan Semua Area</button>
             </div>
           </div>

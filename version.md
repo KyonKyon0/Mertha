@@ -4,6 +4,12 @@
 
 ---
 
+## v090826.2100
+**fix: improve geolocation error handling and manual location search fallback**
+- Tangani error geolocation (Permission / Position Unavailable / Timeout) dengan log informatif
+- Perbaiki tombol 'Cari Manual' pada banner peta agar fokus ke kolom pencarian alamat
+- Tambahkan prompt lokasi manual jika diakses via koneksi non-localhost HTTP
+
 ## v090826.2019
 **feat: add Groq AI fallback with model attribution badge**
 - Tambah Groq sebagai fallback AI (Gemini → Groq → default)

@@ -187,8 +187,8 @@ function JelajahiPetaContent() {
   }, [debouncedQuery]);
 
   const handleLocateClick = () => {
-    if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== "localhost") {
-      const manualLocation = window.prompt("GPS otomatis diblokir browser. Masukkan kota atau area Anda (Contoh: Jakarta Selatan):");
+    if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+      const manualLocation = window.prompt("GPS otomatis diblokir browser (Koneksi HTTP). Masukkan kota atau area Anda (Contoh: Jakarta Selatan):");
       if (manualLocation && manualLocation.trim().length > 0) {
         setIsLocating(true);
         fetch(`/api/location/search?q=${encodeURIComponent(manualLocation.trim())}`)
@@ -199,11 +199,12 @@ function JelajahiPetaContent() {
               setUserLocation({ lat: result.latitude, lng: result.longitude });
               setAccuracy(100);
               setUserAddress(result.displayName);
+              setLocationError(null);
             } else {
               alert("Lokasi tidak ditemukan. Silakan coba kata kunci lain.");
             }
           })
-          .catch(e => {
+          .catch(() => {
             alert("Gagal mencari lokasi.");
           })
           .finally(() => setIsLocating(false));
@@ -241,16 +242,17 @@ function JelajahiPetaContent() {
       },
       (error) => {
         setIsLocating(false);
-        console.error("Geolocation Error callback:", error);
+        const codeMsg = error.code === 1 ? "Izin Ditolak" : error.code === 2 ? "Posisi Tidak Tersedia" : "Timeout";
+        console.warn(`Geolocation info (${error.code} - ${codeMsg}): ${error.message || 'No detail'}`);
 
         let errorData: LocationError = { type: 'unknown', message: 'Terjadi kesalahan saat mengambil lokasi.' };
 
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorData = { type: 'denied', message: 'Izin lokasi ditolak.' };
+            errorData = { type: 'denied', message: 'Izin lokasi ditolak browser atau disetel ke Block.' };
             break;
           case error.POSITION_UNAVAILABLE:
-            errorData = { type: 'unavailable', message: 'Lokasi Anda tidak dapat ditemukan saat ini.' };
+            errorData = { type: 'unavailable', message: 'Layanan lokasi (GPS / Windows Location) tidak aktif.' };
             break;
           case error.TIMEOUT:
             errorData = { type: 'timeout', message: 'Waktu permintaan lokasi habis.' };
@@ -261,7 +263,7 @@ function JelajahiPetaContent() {
       },
       {
         enableHighAccuracy: false,
-        timeout: 20000,
+        timeout: 10000,
         maximumAge: 60000
       }
     );
