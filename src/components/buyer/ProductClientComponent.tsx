@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Share2, MapPin, Clock, Info, ShieldCheck, ChevronRight, Star, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, Share2, MapPin, Clock, Info, ShieldCheck, ChevronRight, Star, Minus, Plus, HeartHandshake, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '@/lib/utils';
 import { calculateDistance, formatDistance } from '@/lib/geo';
 
@@ -24,15 +25,18 @@ interface ProductData {
   originalPrice: number;
   stock: number;
   description: string;
+  advanceModeText?: string | null;
   allergens: string[];
   imageUrl: string;
   galleryUrls: string[];
+  merchantIsActive?: boolean;
 }
 
 export default function ProductClientComponent({ product }: { product: ProductData }) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [distance, setDistance] = useState<string | null>(null);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const discount = product.originalPrice > 0 ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
 
@@ -131,16 +135,23 @@ export default function ProductClientComponent({ product }: { product: ProductDa
       </div>
 
       {/* Image Gallery */}
-      <div className="w-full aspect-[4/3] bg-mertha-bg relative overflow-hidden">
-        <Image 
-          src={product.imageUrl} 
-          alt={product.name}
-          fill
-          className="object-cover"
-          priority
+      <div className="w-full relative bg-gray-100">
+        <div 
+          className="w-full aspect-[4/3] bg-cover bg-center"
+          style={{ backgroundImage: `url('${product.imageUrl}')` }}
         />
+        {product.galleryUrls && product.galleryUrls.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto p-3 snap-x bg-white">
+            {product.galleryUrls.map((img, idx) => (
+              <div key={idx} className="w-20 h-20 shrink-0 rounded-lg overflow-hidden snap-start shadow-sm border border-gray-100 relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img} alt={`Kondisi Makanan ${idx}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
         <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-lg">
-          1/{Math.max(1, product.galleryUrls.length)}
+          1/{1 + (product.galleryUrls?.length || 0)} Foto
         </div>
       </div>
 
@@ -221,11 +232,25 @@ export default function ProductClientComponent({ product }: { product: ProductDa
 
         {/* Details */}
         <section className="p-4 border-b border-mertha-border">
-          <h3 className="text-base font-bold text-mertha-text mb-2">Tentang Produk Ini</h3>
-          <p className="text-sm text-mertha-subtext leading-relaxed mb-4">
-            {product.description || "Tidak ada deskripsi."}
+          <h3 className="text-base font-bold text-mertha-text mb-3">Tentang Produk Ini</h3>
+          <p className="text-sm text-mertha-subtext leading-relaxed mb-4 whitespace-pre-wrap">
+            {product.description || "Tidak ada deskripsi tersedia."}
           </p>
-          
+
+          {product.advanceModeText && (
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-4 flex gap-4 shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                <HeartHandshake size={20} />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-blue-900 mb-1">Dukung Misi Sosial</h4>
+                <p className="text-xs text-blue-800 leading-relaxed">
+                  Jika tidak laku, barang ini akan {product.advanceModeText.toLowerCase()}
+                </p>
+              </div>
+            </div>
+          )}
+
           {product.allergens && product.allergens.length > 0 && (
             <div className="bg-mertha-bg rounded-xl p-3 flex gap-3">
               <Info size={20} className="text-mertha-subtext shrink-0" />
@@ -243,6 +268,43 @@ export default function ProductClientComponent({ product }: { product: ProductDa
           <p className="text-xs text-mertha-subtext">
             Kualitas terjamin! Klaim refund mudah jika makanan tidak layak konsumsi saat diambil.
           </p>
+        </section>
+        {/* FAQs */}
+        <section className="p-5 bg-gray-50 border-t border-gray-100 pb-8">
+          <h3 className="text-base font-bold text-mertha-text mb-4">Pertanyaan Sering Diajukan</h3>
+          <div className="space-y-3">
+            {[
+              { q: "Apa isi Mystery Bag ini?", a: "Isi tas ini adalah kejutan! Berisi makanan berkualitas dari toko ini yang belum terjual hari ini." },
+              { q: "Apakah makanannya masih layak?", a: "Tentu saja. Semua makanan dijamin masih sangat layak konsumsi dan enak." },
+              { q: "Bagaimana jika kualitas buruk?", a: "Mertha memiliki garansi refund penuh jika makanan terbukti basi atau tidak layak saat Anda ambil." }
+            ].map((faq, idx) => (
+              <div key={idx} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <button 
+                  onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                  className="w-full text-left px-4 py-3 flex items-center justify-between font-bold text-sm text-gray-800 focus:outline-none"
+                >
+                  {faq.q}
+                  <motion.div animate={{ rotate: activeFaq === idx ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown size={18} className="text-gray-400" />
+                  </motion.div>
+                </button>
+                <AnimatePresence>
+                  {activeFaq === idx && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      <div className="px-4 pb-4 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-50">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </section>
       </main>
 
@@ -267,7 +329,11 @@ export default function ProductClientComponent({ product }: { product: ProductDa
             </button>
           </div>
           
-          {product.stock > 0 ? (
+          {(!product.merchantIsActive) ? (
+            <button disabled className="flex-1 bg-gray-300 text-gray-500 font-bold py-3.5 rounded-xl flex items-center justify-center cursor-not-allowed">
+              Toko Tutup
+            </button>
+          ) : product.stock > 0 ? (
             <Link href={`/checkout?productId=${product.id}&qty=${quantity}`} className="flex-1 bg-mertha-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-lg shadow-mertha-primary/30 active:scale-95 transition-transform">
               Pesan Sekarang
             </Link>

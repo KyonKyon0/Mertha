@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import MerthaLogo from '@/components/ui/MerthaLogo';
+import Image from 'next/image';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 export default function Daftar() {
@@ -103,7 +103,7 @@ export default function Daftar() {
       {/* Main Form */}
       <div className={`transition-all duration-700 ${success ? 'opacity-50 pointer-events-none blur-[2px]' : 'opacity-100'}`}>
         <div className="mb-8 flex justify-center">
-          <MerthaLogo size="lg" />
+          <Image src="/mertha.png" alt="Mertha Logo" width={240} height={240} className="object-contain" priority />
         </div>
         <h1 className="text-2xl font-bold text-mertha-text mb-2 text-center">Buat Akun Baru</h1>
         <p className="text-sm text-mertha-subtext text-center mb-8">

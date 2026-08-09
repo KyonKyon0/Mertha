@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
-import BottomNavigation from '@/components/buyer/BottomNavigation';
+import MerchantBottomNav from '@/components/merchant/MerchantBottomNav';
 import { User, Phone, ChevronRight, LogOut, Camera, Bell, HelpCircle, Info, Shield, ShieldCheck, Mail, Key, Star, X, Lock, Home as HomeIcon, Briefcase, Frown, Loader2, Ticket, Settings, Store, Truck, Gavel, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -448,6 +448,12 @@ export default function ProfilPage() {
                 Akun Aktif
               </div>
               <RoleBadge role={profile.role} />
+              {merchantData && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-amber-200">
+                  <Store size={10} />
+                  Merchant
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -537,7 +543,7 @@ export default function ProfilPage() {
         {/* User Data */}
         <section className="bg-white border-y border-mertha-border mb-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
           <div className="flex items-center justify-between px-4 py-3 border-b border-mertha-border bg-mertha-primary/5">
-            <h2 className="text-xs font-bold text-mertha-primary uppercase tracking-wider">Informasi Pribadi</h2>
+            <h2 className="text-xs font-bold text-mertha-primary uppercase tracking-wider">Informasi Toko</h2>
             <button 
               onClick={() => setShowEditModal(true)}
               className="text-xs font-bold text-mertha-primary hover:underline px-3 py-1 bg-mertha-primary/10 rounded-full active:scale-95 transition-all"
@@ -555,24 +561,27 @@ export default function ProfilPage() {
             </div>
           </div>
           
-          <div className="flex items-center gap-4 px-4 py-3.5 border-b border-mertha-border">
-            <div className="w-10 h-10 rounded-full bg-mertha-primary/10 flex items-center justify-center shrink-0">
-              <HomeIcon size={18} className="text-mertha-primary" />
+          <div 
+            className="flex items-center gap-4 px-4 py-3.5 border-b border-mertha-border cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            onClick={() => {
+              setActiveMapField('address');
+              setShowMap(true);
+            }}
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${!merchantData?.address ? 'bg-red-100 text-red-500' : 'bg-mertha-primary/10 text-mertha-primary'}`}>
+              <Store size={18} />
             </div>
             <div className="flex-1">
-              <p className="text-[11px] font-bold text-mertha-subtext uppercase tracking-wider">Alamat Rumah</p>
-              <p className="text-sm font-semibold text-mertha-text mt-0.5 line-clamp-1">{profile.address || <span className="text-mertha-error italic">Kosong (Silakan atur alamat)</span>}</p>
+              <p className="text-[11px] font-bold text-mertha-subtext uppercase tracking-wider">Alamat Toko</p>
+              {!merchantData?.address ? (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-md border border-red-200">Toko Buka: Lokasi belum ditetapkan!</span>
+                </div>
+              ) : (
+                <p className="text-sm font-semibold text-mertha-text mt-0.5 line-clamp-2">{merchantData.address}</p>
+              )}
             </div>
-          </div>
-
-          <div className="flex items-center gap-4 px-4 py-3.5">
-            <div className="w-10 h-10 rounded-full bg-mertha-primary/10 flex items-center justify-center shrink-0">
-              <Briefcase size={18} className="text-mertha-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="text-[11px] font-bold text-mertha-subtext uppercase tracking-wider">Alamat Kantor</p>
-              <p className="text-sm font-semibold text-mertha-text mt-0.5 line-clamp-1">{profile.office_address || <span className="text-mertha-error italic">Kosong (Silakan atur alamat)</span>}</p>
-            </div>
+            <ChevronRight size={16} className="text-gray-400" />
           </div>
         </section>
 
@@ -613,9 +622,9 @@ export default function ProfilPage() {
           )}
           
           {/* Mode Merchant Toggle */}
-          {(['admin', 'super_admin', 'juri'].includes(profile.role) || merchantData) ? (
+          {(devMode || ['admin', 'super_admin', 'juri'].includes(profile.role) || merchantData) && (
             <button 
-              onClick={handleBecomeMerchant}
+              onClick={handleReturnToBuyer}
               className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -625,48 +634,15 @@ export default function ProfilPage() {
                     Mode Merchant
                   </span>
                   <span className="text-[10px] font-bold text-mertha-muted uppercase">
-                    {merchantData ? 'Dashboard Tersedia' : 'Bypass Pendaftaran'}
+                    Aktif
                   </span>
                 </div>
               </div>
-              <div className="w-11 h-6 rounded-full relative shadow-inner transition-colors bg-gray-900">
-                <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 shadow-sm transition-all"></div>
+              <div className="w-11 h-6 rounded-full relative shadow-inner transition-colors bg-amber-500">
+                <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5 shadow-sm transition-all"></div>
               </div>
-            </button>
-          ) : (
-            <button 
-              onClick={() => alert("Fitur registrasi Merchant reguler akan segera hadir di update selanjutnya.")}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors active:bg-mertha-border/50"
-            >
-              <div className="flex items-center gap-3">
-                <Store size={18} className="text-mertha-subtext" />
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-semibold text-mertha-text">Become Merchant</span>
-                  <span className="text-[10px] font-bold text-red-500 uppercase flex items-center gap-1 animate-pulse mt-0.5">
-                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Next Update
-                  </span>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-mertha-muted" />
             </button>
           )}
-
-          {/* Mitra Kurir */}
-          <button 
-            onClick={() => alert("Fitur registrasi Mitra Kurir akan segera hadir di update selanjutnya.")}
-            className="w-full flex items-center justify-between px-4 py-4 border-b border-mertha-border hover:bg-mertha-bg transition-colors active:bg-mertha-border/50"
-          >
-            <div className="flex items-center gap-3">
-              <Truck size={18} className="text-mertha-subtext" />
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-semibold text-mertha-text">Become Mitra Kurir</span>
-                <span className="text-[10px] font-bold text-red-500 uppercase flex items-center gap-1 animate-pulse mt-0.5">
-                  <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Next Update
-                </span>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-mertha-muted" />
-          </button>
 
 
           
@@ -696,20 +672,13 @@ export default function ProfilPage() {
         </div>
 
         {/* Hapus Akun */}
-        <div className="px-4 mb-4">
+        <div className="px-4 mb-8">
           <button 
             onClick={() => setShowDeleteModal(true)}
             className="w-full bg-transparent text-mertha-muted text-xs hover:text-mertha-error font-bold py-3 flex items-center justify-center transition-all active:scale-95"
           >
             Hapus Akun Secara Permanen
           </button>
-        </div>
-
-        {/* Version info */}
-        <div className="flex justify-center pb-8">
-          <p className="text-[10px] font-semibold text-mertha-muted tracking-widest uppercase">
-            v2.09/08/Sun/2026/1522
-          </p>
         </div>
 
       </main>
@@ -994,20 +963,34 @@ export default function ProfilPage() {
       {showMap && (
         <MapPicker 
           initialPosition={null}
-          onConfirm={(pos) => {
-            const locStr = `Lokasi Peta (${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)})`;
-            setEditForm(prev => ({
-              ...prev,
-              [activeMapField]: prev[activeMapField] ? `${prev[activeMapField]}\n${locStr}` : locStr
-            }));
+          onConfirm={async (pos) => {
+            const locStr = `Lat: ${pos.lat.toFixed(6)}, Lng: ${pos.lng.toFixed(6)}`;
+            if (activeMapField === 'address' && merchantData) {
+              const { error } = await supabase.from('merchants').update({ 
+                address: locStr,
+                lat: pos.lat,
+                lng: pos.lng 
+              }).eq('id', merchantData.id);
+              
+              if (!error) {
+                setMerchantData(prev => ({ ...prev, address: locStr, lat: pos.lat, lng: pos.lng }));
+              } else {
+                alert("Gagal menyimpan lokasi toko.");
+              }
+            } else {
+              setEditForm(prev => ({
+                ...prev,
+                [activeMapField]: prev[activeMapField] ? `${prev[activeMapField]}\n${locStr}` : locStr
+              }));
+            }
             setShowMap(false);
           }}
           onCancel={() => setShowMap(false)}
         />
       )}
 
-      <BottomNavigation />
-      <RoleSwitchLoader isVisible={switchingMerchant} />
+      <MerchantBottomNav />
+      <RoleSwitchLoader isVisible={switchingMerchant} toRole="buyer" />
     </>
   );
 }

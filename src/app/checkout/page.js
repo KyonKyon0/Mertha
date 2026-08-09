@@ -4,7 +4,7 @@ import React, { useState, Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BuyerHeader from '@/components/buyer/BuyerHeader';
 import GlobalLoading from '@/components/ui/GlobalLoading';
-import { ArrowLeft, MapPin, Receipt, Wallet, ChevronRight, Copy, CheckCircle2, Check, Navigation, Package, Ticket } from 'lucide-react';
+import { ArrowLeft, MapPin, Receipt, Wallet, ChevronRight, Copy, CheckCircle2, Check, Navigation, Package, Ticket, QrCode, Lock, ShieldCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 
@@ -109,6 +109,7 @@ function CheckoutContent() {
   const [copied, setCopied] = useState(false);
   const [payCode, setPayCode] = useState('');
   const [newOrderId, setNewOrderId] = useState(null);
+  const [paymentState, setPaymentState] = useState('idle'); // 'idle' | 'verify' | 'checking' | 'approval' | 'success'
   
   // Coupon states
   const [couponCode, setCouponCode] = useState('');
@@ -287,10 +288,8 @@ function CheckoutContent() {
       // Mark Coupon as used if applied
       if (appliedCoupon) {
         if (appliedCoupon.id) {
-          // It's an existing claimed user_coupon
           await supabase.from('user_coupons').update({ is_used: true }).eq('id', appliedCoupon.id);
         } else if (appliedCoupon.is_new) {
-          // They typed a valid public code that they hadn't claimed yet. Let's record its usage.
           await supabase.from('user_coupons').insert({
             user_id: user.id,
             coupon_id: appliedCoupon.coupons.id,
@@ -299,8 +298,20 @@ function CheckoutContent() {
         }
       }
 
-      // Redirect to order detail
-      router.replace(`/pesanan/${orderData.id}`);
+      // Start animation sequence
+      setPaymentState('verify');
+      setTimeout(() => {
+        setPaymentState('checking');
+        setTimeout(() => {
+          setPaymentState('approval');
+          setTimeout(() => {
+            setPaymentState('success');
+            setTimeout(() => {
+              router.replace(`/pesanan/${orderData.id}`);
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }, 1000);
 
     } catch (err) {
       console.error('Payment error:', err);
@@ -317,54 +328,86 @@ function CheckoutContent() {
 
   if (step === 'payment') {
     return (
-      <div className="bg-mertha-bg min-h-screen flex flex-col animate-in slide-in-from-right-4 fade-in duration-300">
-        <header className="bg-white px-4 py-3 flex items-center justify-between border-b border-mertha-border sticky top-0 z-40 shadow-sm">
+      <div className="bg-mertha-primary min-h-screen flex flex-col animate-in slide-in-from-right-4 fade-in duration-300 relative">
+        <header className="px-4 py-4 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.replace('/')} className="text-mertha-text hover:bg-mertha-bg p-1 rounded-full transition-colors">
+            <button onClick={() => router.replace('/')} className="text-white hover:bg-white/20 p-2 rounded-full transition-colors">
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-lg font-bold text-mertha-text">Pembayaran</h1>
+            <h1 className="text-lg font-bold text-white">Pembayaran</h1>
           </div>
         </header>
 
-        <main className="flex-1 p-4 flex flex-col items-center mt-4 space-y-6">
-          <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-lg border border-mertha-border flex flex-col items-center">
-            <h2 className="text-sm font-bold text-mertha-subtext mb-1 uppercase tracking-wider">Total Pembayaran</h2>
-            <p className="text-3xl font-black text-mertha-primary mb-6">Rp {total.toLocaleString('id-ID')}</p>
+        <main className="flex-1 p-4 flex flex-col items-center justify-center space-y-6">
+          {/* Main QRIS Card */}
+          <div className="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl flex flex-col items-center relative overflow-hidden">
             
-            <div className="w-full border-t border-mertha-border/50 border-dashed mb-6"></div>
+            <div className="flex items-center gap-2 mb-6">
+              <Lock size={16} className="text-mertha-primary" />
+              <span className="text-sm font-bold text-mertha-primary tracking-wide">Powered By Mertha Gate Payment</span>
+            </div>
+
+            <p className="text-sm font-semibold text-mertha-subtext mb-1 uppercase tracking-widest">Total Pembayaran</p>
+            <p className="text-4xl font-black text-mertha-text mb-8">Rp {total.toLocaleString('id-ID')}</p>
             
+            <div className="bg-white p-5 rounded-3xl mb-8 border-4 border-mertha-primary/10 shadow-lg shadow-mertha-primary/5 flex items-center justify-center relative group">
+              <img src="/assets/qr/QR Dummy.png" alt="QRIS Mertha" className="w-52 h-52 object-contain rounded-xl" />
+              <div className="absolute inset-0 bg-mertha-primary/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                <span className="text-xs font-bold text-mertha-primary px-3 py-1 bg-white rounded-full shadow-sm">QRIS</span>
+              </div>
+            </div>
+
             <div className="w-full">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-mertha-subtext">Metode: <strong className="text-mertha-text">{paymentMethod === 'qris' ? 'QRIS' : 'GoPay'}</strong></span>
-                <span className="text-xs text-red-500 font-medium">Batas Waktu: 15:00</span>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-bold text-mertha-subtext">METODE</span>
+                <span className="text-xs font-bold text-mertha-text bg-gray-100 px-3 py-1 rounded-full">{paymentMethod === 'qris' ? 'QRIS' : 'GoPay'}</span>
               </div>
-              <p className="text-xs text-mertha-subtext mb-2">Silakan transfer / bayar menggunakan kode berikut:</p>
-              
-              <div className="bg-mertha-bg border-2 border-mertha-border rounded-xl p-4 flex items-center justify-between group hover:border-mertha-primary transition-colors cursor-pointer" onClick={handleCopy}>
-                <div>
-                  <p className="text-[10px] text-mertha-muted font-semibold mb-1">KODE PEMBAYARAN</p>
-                  <p className="font-mono text-lg font-bold text-mertha-text tracking-wider">{payCode}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-mertha-subtext">KODE PEMBAYARAN</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-mono font-bold text-mertha-text">{payCode}</span>
+                  <button onClick={handleCopy} className={`p-1.5 rounded-lg transition-colors ${copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-mertha-subtext hover:text-mertha-primary'}`}>
+                    {copied ? <CheckCircle2 size={16} /> : <Copy size={16} />}
+                  </button>
                 </div>
-                <button className={`p-2 rounded-lg transition-colors ${copied ? 'bg-green-100 text-green-600' : 'bg-white text-mertha-subtext group-hover:text-mertha-primary shadow-sm'}`}>
-                  {copied ? <CheckCircle2 size={20} /> : <Copy size={20} />}
-                </button>
               </div>
             </div>
             
-            <div className="w-full mt-6 bg-blue-50 text-blue-800 text-xs p-3 rounded-xl flex gap-2 items-start">
-              <span className="text-lg leading-none">💡</span>
-              <p className="leading-relaxed">Ini adalah simulasi pembayaran. Cukup geser tombol di bawah untuk menyelesaikan pesanan.</p>
-            </div>
+            {/* Animated Overlay */}
+            {paymentState !== 'idle' && (
+              <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in duration-300">
+                {paymentState === 'success' ? (
+                  <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-white animate-in zoom-in duration-500 shadow-xl shadow-green-500/30">
+                    <Check size={40} strokeWidth={3} />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Loader2 size={48} className="text-mertha-primary animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <ShieldCheck size={20} className="text-mertha-primary" />
+                    </div>
+                  </div>
+                )}
+                
+                <h3 className="mt-6 text-lg font-bold text-mertha-text transition-all duration-300">
+                  {paymentState === 'verify' && 'Memverifikasi...'}
+                  {paymentState === 'checking' && 'Mengecek Pembayaran...'}
+                  {paymentState === 'approval' && 'Mengirim Approval...'}
+                  {paymentState === 'success' && 'Pembayaran Berhasil!'}
+                </h3>
+              </div>
+            )}
           </div>
         </main>
 
-        <div className="bg-white border-t border-mertha-border p-4 pb-safe animate-in slide-in-from-bottom duration-500">
-          <SlideToConfirm 
-            onConfirm={handlePaymentConfirm} 
-            isLoading={isProcessing} 
-            text="Geser jika Sudah Bayar"
-          />
+        <div className="p-4 pb-safe animate-in slide-in-from-bottom duration-500">
+          <div className="bg-white/10 p-1 rounded-2xl backdrop-blur-md border border-white/20">
+            <SlideToConfirm 
+              onConfirm={handlePaymentConfirm} 
+              isLoading={paymentState !== 'idle'} 
+              text="Geser jika Sudah Bayar"
+            />
+          </div>
         </div>
       </div>
     );

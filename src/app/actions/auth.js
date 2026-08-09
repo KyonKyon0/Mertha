@@ -15,7 +15,7 @@ export async function login(formData) {
   const { error, data: authData } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    return { error: error.message }
+    redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
   
   // Track Login
@@ -32,8 +32,24 @@ export async function login(formData) {
     console.error("Failed to log tracking data", err);
   }
 
+  // Check role
+  let redirectPath = '/';
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', authData.user.id)
+      .single();
+    
+    if (profile && profile.role === 'super_admin') {
+      redirectPath = '/developer-analytics';
+    }
+  } catch (err) {
+    console.error("Failed to check role", err);
+  }
+
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(redirectPath)
 }
 
 export async function signup(formData) {
@@ -52,7 +68,7 @@ export async function signup(formData) {
   const { error, data: authData } = await supabase.auth.signUp(data)
 
   if (error) {
-    return { error: error.message }
+    redirect(`/daftar?error=${encodeURIComponent(error.message)}`)
   }
 
   // Create profile
@@ -97,7 +113,7 @@ export async function resetPassword(formData) {
   })
   
   if (error) {
-    return { error: error.message }
+    redirect(`/lupa-kata-sandi?error=${encodeURIComponent(error.message)}`)
   }
-  return { success: 'Link reset password telah dikirim ke email Anda' }
+  redirect('/lupa-kata-sandi?message=Link reset password telah dikirim ke email Anda')
 }

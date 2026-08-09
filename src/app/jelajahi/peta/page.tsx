@@ -102,8 +102,8 @@ function JelajahiPetaContent() {
             description: d.description,
             address: d.address,
             postalCode: d.postal_code,
-            latitude: d.latitude,
-            longitude: d.longitude,
+            latitude: d.lat ?? d.latitude,
+            longitude: d.lng ?? d.longitude,
             imageUrl: d.image_url,
             rating: d.rating
           }));

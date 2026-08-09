@@ -31,7 +31,7 @@ export default function DeveloperModePage() {
     
     const { data: profile } = await supabase.from('profiles').select('pin_code, role').eq('id', user.id).single();
     
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+    if (!profile || !['admin', 'super_admin', 'juri'].includes(profile.role)) {
       alert("Akses Ditolak: Anda tidak memiliki otorisasi untuk mode ini.");
       router.push('/profil');
       return;

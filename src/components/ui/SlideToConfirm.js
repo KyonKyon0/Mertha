@@ -5,22 +5,25 @@ export default function SlideToConfirm({ onConfirm, disabled, isLoading, text = 
   const [isDragging, setIsDragging] = useState(false);
   const [slideWidth, setSlideWidth] = useState(0);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const isConfirmedRef = useRef(false);
   const containerRef = useRef(null);
   const buttonRef = useRef(null);
 
   const startDrag = (e) => {
-    if (disabled || isLoading || isConfirmed) return;
+    if (disabled || isLoading || isConfirmedRef.current) return;
     setIsDragging(true);
   };
 
   const onDrag = (e) => {
-    if (!isDragging || !containerRef.current) return;
+    if (!isDragging || !containerRef.current || isConfirmedRef.current) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const containerRect = containerRef.current.getBoundingClientRect();
     const newWidth = Math.max(0, Math.min(clientX - containerRect.left, containerRect.width));
     setSlideWidth(newWidth);
 
     if (newWidth >= containerRect.width * 0.9) {
+      if (isConfirmedRef.current) return;
+      isConfirmedRef.current = true;
       setIsDragging(false);
       setIsConfirmed(true);
       setSlideWidth(containerRect.width);

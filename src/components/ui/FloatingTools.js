@@ -17,9 +17,11 @@ export default function FloatingTools({ items = [], defaultOpen = false }) {
   }, []);
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [loadingRole, setLoadingRole] = useState(true);
   
   useEffect(() => {
-    // Check if user is super admin
+    // Check if user is super admin and get role
     const checkUser = async () => {
       try {
         const { createBrowserClient } = await import('@supabase/ssr');
@@ -28,13 +30,36 @@ export default function FloatingTools({ items = [], defaultOpen = false }) {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
         );
         const { data: { user } } = await supabase.auth.getUser();
-        if (user && user.email === 'admin@gmail.com') {
-          setIsAdmin(true);
+        if (user) {
+          if (user.email === 'oss.tam1137@gmail.com') {
+            setIsAdmin(true); // Super Admin for Developer Tools link
+          }
+          
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+            
+          if (profile) {
+            setUserRole(profile.role);
+          }
         }
-      } catch(e) {}
+      } catch(e) {
+        console.error(e);
+      } finally {
+        setLoadingRole(false);
+      }
     };
     checkUser();
   }, []);
+
+  if (loadingRole) return null;
+  
+  // Restrict FloatingTools visibility
+  if (!['admin', 'super_admin', 'juri'].includes(userRole)) {
+    return null;
+  }
 
   // Merge items
   const finalItems = [...items];
@@ -44,7 +69,7 @@ export default function FloatingTools({ items = [], defaultOpen = false }) {
     finalItems.push({
       label: 'Developer Tools',
       icon: <ShieldAlert size={18} />,
-      onClick: () => { window.location.href = '/super-admin' },
+      onClick: () => { window.location.href = '/developer-analytics' },
       isSpecial: true
     });
   }

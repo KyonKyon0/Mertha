@@ -1,12 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import { withLogging } from '@/lib/logger';
 
 export async function POST(req) {
-  try {
-    const { action, userId, role, adminEmail } = await req.json();
+  return withLogging(req, async (request) => {
+    try {
+      const { action, userId, role, adminEmail } = await request.json();
 
-    if (!adminEmail || adminEmail !== 'admin@gmail.com') {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 403 });
-    }
+      if (!adminEmail || adminEmail !== 'oss.tam1137@gmail.com') {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 403 });
+      }
 
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -38,7 +40,8 @@ export async function POST(req) {
 
     return new Response(JSON.stringify({ error: "Invalid action" }), { status: 400 });
 
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-  }
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    }
+  });
 }

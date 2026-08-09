@@ -60,30 +60,42 @@ function JelajahiContent() {
         `)
         .eq('is_active', true);
 
-      if (q) {
-        query = query.ilike('name', `%${q}%`);
-      }
-
       const { data, error } = await query;
       
       if (data) {
         let filtered = data;
+        
+        if (q) {
+          const lowerQ = q.toLowerCase();
+          filtered = filtered.filter(p => 
+            (p.name && p.name.toLowerCase().includes(lowerQ)) || 
+            (p.merchants?.name && p.merchants.name.toLowerCase().includes(lowerQ))
+          );
+        }
+
         if (activeCategory !== 'Semua') {
-           filtered = data.filter(p => p.categories?.name === activeCategory);
+           filtered = filtered.filter(p => p.categories?.name === activeCategory);
         }
         
+        const formatTime = (isoString) => {
+          if (!isoString) return '??:??';
+          return new Date(isoString).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' });
+        };
+
         // Map to expected ProductCard format
         const formattedProducts = filtered.map(p => ({
            id: p.id,
-           slug: p.slug, // Use slug for routing
+           slug: p.slug || p.id, // Fallback to id if slug is missing
            product: p.name,
            merchant: p.merchants?.name,
            price: p.price,
            originalPrice: p.original_price,
            stock: p.stock,
            distance: 1.2, // Dummy distance for now
-           pickupTime: `${p.pickup_time_start?.substring(0,5)} - ${p.pickup_time_end?.substring(0,5)}`,
-           imageUrl: p.product_images?.[0]?.image_url || "/images/placeholder.jpg"
+           pickupTime: p.pickup_start 
+             ? `${formatTime(p.pickup_start)} - ${formatTime(p.pickup_end)} WIB`
+             : `${p.pickup_time_start?.substring(0,5) || '??:??'} - ${p.pickup_time_end?.substring(0,5) || '??:??'} WIB`,
+           imageUrl: p.product_images?.[0]?.image_url || p.image_url || "/images/logo/mertha-logo.png"
         }));
         setProducts(formattedProducts);
       }

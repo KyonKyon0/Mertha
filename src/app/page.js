@@ -47,7 +47,18 @@ export default function Home() {
         .limit(2);
       
       if (data) {
-        setTopProducts(data);
+        const formatTime = (isoString) => {
+          if (!isoString) return '??:??';
+          return new Date(isoString).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' });
+        };
+        const mappedData = data.map(p => ({
+           ...p,
+           computed_pickup_time: p.pickup_start 
+             ? `${formatTime(p.pickup_start)} - ${formatTime(p.pickup_end)} WIB`
+             : `${p.pickup_time_start?.substring(0,5) || '??:??'} - ${p.pickup_time_end?.substring(0,5) || '??:??'} WIB`,
+           computed_image_url: p.product_images?.[0]?.image_url || p.image_url || '/images/logo/mertha-logo.png'
+        }));
+        setTopProducts(mappedData);
       }
     }
 
@@ -318,13 +329,13 @@ export default function Home() {
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-6 pr-5 snap-x">
                 {topProducts.length > 0 ? topProducts.map(product => (
                   <div key={product.id} className="min-w-[240px] w-[240px] snap-start bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 flex flex-col overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all group">
-                      <div className="h-[140px] w-full relative bg-cover bg-center overflow-hidden" style={{backgroundImage: `url('${product.product_images?.[0]?.image_url || '/images/placeholder.jpg'}')`}}>
+                      <div className="h-[140px] w-full relative bg-cover bg-center overflow-hidden" style={{backgroundImage: `url('${product.computed_image_url}')`}}>
                           <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
                           <div className="absolute top-3 left-3 bg-white/95 backdrop-blur text-primary px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide shadow-sm">
                               TERSEDIA
                           </div>
                           <div className="absolute bottom-3 right-3 bg-tertiary-container/95 backdrop-blur text-on-tertiary px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 shadow-sm">
-                              <Clock size={12} className="shrink-0" aria-hidden="true" /> {product.pickup_time_start?.substring(0,5)} - {product.pickup_time_end?.substring(0,5)}
+                              <Clock size={12} className="shrink-0" aria-hidden="true" /> {product.computed_pickup_time}
                           </div>
                       </div>
                       <div className="p-4 flex flex-col flex-1 gap-2">
@@ -429,7 +440,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="bg-surface-container mt-12 w-full p-8 pb-8">
             <div className="flex flex-col items-center text-center gap-6 w-full max-w-7xl mx-auto">
-                <Image src="/logo.png" alt="Martha Official Store" width={180} height={180} className="h-24 object-contain mb-4" />
+                <Image src="/mertha.png" alt="Martha Official Store" width={180} height={180} className="h-24 object-contain mb-4" />
                 <p className="text-[16px] font-medium text-on-surface-variant max-w-xs">Menyelamatkan makanan, melestarikan bumi.</p>
                 <div className="flex gap-4 flex-wrap justify-center">
                     <button onClick={() => alert("Fitur Tentang segera hadir!")} className="text-[12px] font-bold text-on-surface-variant hover:underline hover:text-primary transition-opacity">Tentang</button>

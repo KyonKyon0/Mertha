@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 import SlideToConfirm from '@/components/ui/SlideToConfirm';
 import { XCircle, Info } from 'lucide-react';
+import Barcode from 'react-barcode';
 
 // Animated progress bar score
 function ScoreBar({ label, value, inverted = false }) {
@@ -182,7 +183,7 @@ export default function OrderDetail({ params }) {
                 })
                 .then(res => res.ok ? res.json() : Promise.reject('API Error'))
                 .then(newAiData => {
-                  setAiReview({ ...newAiData, parsedData: newAiData });
+                  setAiReview({ ...newAiData, parsedData: { ...newAiData, ai_model: newAiData.ai_model } });
                 })
                 .catch(err => console.error("AI Error:", err))
                 .finally(() => setIsProcessingAI(false));
@@ -200,6 +201,22 @@ export default function OrderDetail({ params }) {
       }
     };
     fetchOrder();
+
+    // Listen for real-time updates (e.g. from Merchant Scan)
+    const channel = supabase
+      .channel(`order_${orderId}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` },
+        (payload) => {
+          setOrder(prev => prev ? { ...prev, ...payload.new } : payload.new);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [orderId, supabase]);
 
   const handleBetaComplete = async () => {
@@ -263,14 +280,23 @@ export default function OrderDetail({ params }) {
           </p>
           
           {isActive && !isDelivery && (
-            <div className="bg-mertha-primary/5 rounded-xl p-5 border border-mertha-primary/20 inline-block w-full max-w-[260px] animate-in zoom-in duration-300">
+            <div className="bg-mertha-primary/5 rounded-xl p-5 border border-mertha-primary/20 flex flex-col items-center w-full max-w-[280px] mx-auto animate-in zoom-in duration-300">
               <p className="text-xs text-mertha-primary font-bold mb-2 tracking-widest">KODE PENGAMBILAN</p>
-              <p className="text-3xl font-black tracking-[0.2em] text-mertha-text">{order.pickup_code || "N/A"}</p>
+              
+              <div className="bg-white p-2 rounded-lg w-full mb-3 shadow-sm border border-mertha-border flex justify-center">
+                {order.pickup_code ? (
+                  <Barcode value={order.pickup_code} width={1.8} height={60} displayValue={false} />
+                ) : (
+                  <div className="h-[60px] flex items-center justify-center text-mertha-subtext">Kode tidak tersedia</div>
+                )}
+              </div>
+              
+              <p className="text-2xl font-black tracking-[0.2em] text-mertha-text">{order.pickup_code || "N/A"}</p>
             </div>
           )}
           {isActive && !isDelivery && (
             <p className="text-xs text-mertha-subtext mt-4 leading-relaxed max-w-[240px] mx-auto">
-              Tunjukkan kode ini kepada kasir saat mengambil pesanan di lokasi.
+              Tunjukkan barcode ini kepada merchant saat mengambil pesanan.
             </p>
           )}
 
@@ -326,7 +352,13 @@ export default function OrderDetail({ params }) {
               <Clock size={20} className="text-mertha-primary shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-sm text-mertha-text">Waktu Pengambilan</p>
-                <p className="text-sm text-mertha-subtext mt-1">Hari ini, Sesuai Jam Operasional</p>
+                {order.status === 'completed' ? (
+                  <p className="text-sm font-bold text-green-600 mt-1">
+                    Selesai Diambil: {new Date(order.updated_at || order.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+                  </p>
+                ) : (
+                  <p className="text-sm text-mertha-subtext mt-1">Hari ini, Sesuai Jam Operasional</p>
+                )}
               </div>
             </div>
           )}
@@ -472,6 +504,24 @@ export default function OrderDetail({ params }) {
             )
           )}
           
+          {/* AI Attribution — hanya tampil kalau ada model yang diketahui */}
+          {(() => {
+            const model = aiReview?.parsedData?.ai_model ?? aiReview?.ai_model ?? null;
+            if (!model) return null;
+            return (
+              <div className="flex items-center justify-center gap-1.5 py-2">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-mertha-primary flex-shrink-0" style={{color:'var(--color-mertha-primary)'}}>
+                  <path d="M12 2L13.09 8.26L19 7L15.45 12L19 17L13.09 15.74L12 22L10.91 15.74L5 17L8.55 12L5 7L10.91 8.26L12 2Z" fill="currentColor"/>
+                </svg>
+                <span className="text-[10px] text-mertha-subtext font-medium tracking-wide">
+                  Generated by <span className="text-mertha-primary font-bold">Mertha AI</span>
+                  <span className="mx-1 opacity-40">|</span>
+                  <span className="font-semibold">{model}</span>
+                </span>
+              </div>
+            );
+          })()}
+
           <button className="w-full bg-surface-container border border-outline-variant/50 text-on-surface font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-variant active:scale-95 transition-all shadow-sm">
             Hubungi Bantuan
           </button>
